@@ -20,6 +20,6 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login_submit');
+Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AdminController::class, 'login'])->name('login_submit');
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

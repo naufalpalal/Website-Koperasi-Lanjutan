@@ -10,7 +10,7 @@ class AdminController extends Controller
     // Menampilkan halaman login
     public function showLoginForm()
     {
-        return view('admin.login');
+        return view('auth.login');
     }
 
     // Proses login
@@ -18,18 +18,29 @@ class AdminController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+        // Coba login sebagai admin
         if (Auth::guard('admin')->attempt($credentials)) {
-            // Login sukses → redirect ke dashboard
             return redirect()->route('admin.dashboard');
-        } else {
-            // Login gagal → kembali ke login dengan error
-            return redirect()->route('admin.login')->with('error', 'Invalid credentials');
         }
+
+        // Coba login sebagai user
+        if (Auth::attempt($credentials)) {
+            return redirect()->route('dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
     // Halaman dashboard
     public function dashboard()
     {
         return view('admin.dashboard');
+    }
+
+     public function dashboardUser()
+    {
+        return view('dashboard');
     }
 }
