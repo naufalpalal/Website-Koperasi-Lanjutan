@@ -31,6 +31,7 @@ class AdminController extends Controller
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ]);
+        
     }
 
     // Halaman dashboard
