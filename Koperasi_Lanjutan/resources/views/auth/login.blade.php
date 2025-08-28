@@ -22,16 +22,16 @@
                     <!-- Judul -->
                     <h2 class="text-4xl font-normal text-center text-gray-800 mb-2">Login</h2>
                     <p class="text-center text-gray-500 mb-6 text-lg">To Continue Your Account</p>
-                    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('login_submit') }}" class="space-y-6">
                         @csrf
                         <!-- Email -->
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-700 text-xl">
-                                <i class="fa-solid fa-user"></i>
+                                <i class="fa-solid fa-id-card"></i>
                             </span>
-                            <input type="text" name="email" value="{{ old('email') }}" required autofocus
+                            <input type="text" name="nip" value="{{ old('nip') }}" required autofocus
                                 class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-transparent text-lg focus:ring-0 focus:outline-none"
-                                placeholder="NIK/NIPP/">
+                                placeholder="NIP">
                         </div>
                         <!-- Password -->
                         <div class="relative">
