@@ -9,8 +9,7 @@
 </head>
 <body class="bg-[#428dff] flex items-center justify-center min-h-screen">
 
-    <!-- Background Blur Card -->
-    <div class="relative w-full max-w-xl flex flex-col items-center justify-center min-h-screen">
+    <div class="relative w-full max-w-xl flex flex-col items-center justify-center min-h-screen px-2">
         <div class="relative z-10 w-full">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto overflow-hidden">
                 <!-- Header Biru -->
@@ -18,10 +17,10 @@
                     <img src="{{ asset('assets/favicon.png') }}" alt="Logo" class="w-20 h-20 mr-4">
                 </div>
                 <!-- Form -->
-                <div class="p-8">
+                <div class="p-8 sm:p-10">
                     <!-- Judul -->
-                    <h2 class="text-4xl font-normal text-center text-gray-800 mb-2">Login</h2>
-                    <p class="text-center text-gray-500 mb-6 text-lg">To Continue Your Account</p>
+                    <h2 class="text-3xl sm:text-4xl font-normal text-center text-gray-800 mb-2">Login</h2>
+                    <p class="text-center text-gray-500 mb-6 text-base sm:text-lg">To Continue Your Account</p>
                     <form method="POST" action="{{ route('login_submit') }}" class="space-y-6">
                         @csrf
                         <!-- Email -->
@@ -30,7 +29,7 @@
                                 <i class="fa-solid fa-id-card"></i>
                             </span>
                             <input type="text" name="nip" value="{{ old('nip') }}" required autofocus
-                                class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-transparent text-lg focus:ring-0 focus:outline-none"
+                                class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-blue-50 text-lg focus:ring-0 focus:outline-none"
                                 placeholder="NIP">
                         </div>
                         <!-- Password -->
@@ -39,7 +38,7 @@
                                 <i class="fa-solid fa-lock"></i>
                             </span>
                             <input type="password" name="password" required
-                                class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-transparent text-lg focus:ring-0 focus:outline-none"
+                                class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-blue-50 text-lg focus:ring-0 focus:outline-none"
                                 placeholder="Password">
                         </div>
                         <!-- Forgot Password -->
@@ -48,7 +47,7 @@
                         </div>
                         <!-- Submit -->
                         <button type="submit"
-                            class="w-full bg-blue-500 text-white text-3xl font-normal py-2 rounded-lg mt-2 border border-blue-500 hover:bg-blue-600 transition">
+                            class="w-full bg-blue-500 text-white text-2xl sm:text-3xl font-normal py-2 rounded-lg mt-2 border border-blue-500 hover:bg-blue-600 transition">
                             Login
                         </button>
                     </form>
