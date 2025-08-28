@@ -1,54 +1,60 @@
-<x-guest-layout>
-    <div class="flex items-center justify-center min-h-screen bg-blue-500">
-        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-10 flex flex-col items-center">
-            <!-- Logo -->
-            <a href="/" class="mb-6">
-                <x-application-logo class="w-16 h-16 fill-current text-blue-500" />
-            </a>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-[#428dff] flex items-center justify-center min-h-screen">
 
-            <!-- Session Status -->
-            <x-auth-session-status class="mb-4" :status="session('status')" />
-
-            <h2 class="text-3xl font-bold text-center text-blue-600 mb-8">Login</h2>
-
-            <form method="POST" action="{{ route('login_submit') }}" class="w-full">
-                @csrf
-
-                <!-- Email Address -->
-                <div class="mb-6">
-                    <x-input-label for="nip" :value="__('NIP')" class="text-blue-700 font-semibold" />
-                    <x-text-input id="nip" class="block mt-2 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 px-4 py-2" type="text" name="nip" :value="old('nip')" required autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('nip')" class="mt-2 text-red-500" />
+    <!-- Background Blur Card -->
+    <div class="relative w-full max-w-xl flex flex-col items-center justify-center min-h-screen">
+        <div class="relative z-10 w-full">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto overflow-hidden">
+                <!-- Header Biru -->
+                <div class="bg-blue-600 h-28 flex items-center justify-center">
+                    <img src="{{ asset('assets/favicon.png') }}" alt="Logo" class="w-20 h-20 mr-4">
                 </div>
-
-                <!-- Password -->
-                <div class="mb-6">
-                    <x-input-label for="password" :value="__('Password')" class="text-blue-700 font-semibold" />
-                    <x-text-input id="password" class="block mt-2 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 px-4 py-2"
-                        type="password"
-                        name="password"
-                        required autocomplete="current-password" />
-                    <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500" />
+                <!-- Form -->
+                <div class="p-8">
+                    <!-- Judul -->
+                    <h2 class="text-4xl font-normal text-center text-gray-800 mb-2">Login</h2>
+                    <p class="text-center text-gray-500 mb-6 text-lg">To Continue Your Account</p>
+                    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                        @csrf
+                        <!-- Email -->
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-700 text-xl">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" name="email" value="{{ old('email') }}" required autofocus
+                                class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-transparent text-lg focus:ring-0 focus:outline-none"
+                                placeholder="NIK/NIPP/">
+                        </div>
+                        <!-- Password -->
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-700 text-xl">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <input type="password" name="password" required
+                                class="w-full pl-12 pr-3 py-3 border-b border-gray-400 bg-transparent text-lg focus:ring-0 focus:outline-none"
+                                placeholder="Password">
+                        </div>
+                        <!-- Forgot Password -->
+                        <div class="flex justify-end">
+                            <a href="{{ route('password.request') }}" class="text-base text-blue-500 hover:underline">Forgot password?</a>
+                        </div>
+                        <!-- Submit -->
+                        <button type="submit"
+                            class="w-full bg-blue-500 text-white text-3xl font-normal py-2 rounded-lg mt-2 border border-blue-500 hover:bg-blue-600 transition">
+                            Login
+                        </button>
+                    </form>
                 </div>
-
-                <!-- Remember Me -->
-                <div class="flex items-center mb-6">
-                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" name="remember">
-                    <label for="remember_me" class="ml-2 text-sm text-gray-700">{{ __('Remember me') }}</label>
-                </div>
-
-                <div class="flex items-center justify-between mb-8">
-                    @if (Route::has('password.request'))
-                        <a class="text-sm text-blue-500 hover:underline" href="{{ route('password.request') }}">
-                            {{ __('Forgot your password?') }}
-                        </a>
-                    @endif
-                </div>
-
-                <x-primary-button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                    {{ __('Log in') }}
-                </x-primary-button>
-            </form>
+            </div>
         </div>
     </div>
-</x-guest-layout>
+</body>
+</html>
