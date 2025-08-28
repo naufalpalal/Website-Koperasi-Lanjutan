@@ -16,9 +16,9 @@
 
                 <!-- Email Address -->
                 <div class="mb-6">
-                    <x-input-label for="email" :value="__('Email')" class="text-blue-700 font-semibold" />
-                    <x-text-input id="email" class="block mt-2 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 px-4 py-2" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500" />
+                    <x-input-label for="nip" :value="__('NIP')" class="text-blue-700 font-semibold" />
+                    <x-text-input id="nip" class="block mt-2 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 px-4 py-2" type="text" name="nip" :value="old('nip')" required autofocus autocomplete="username" />
+                    <x-input-error :messages="$errors->get('nip')" class="mt-2 text-red-500" />
                 </div>
 
                 <!-- Password -->

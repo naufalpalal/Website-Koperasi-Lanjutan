@@ -16,7 +16,7 @@ class AdminController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('nip', 'password');
 
         // Coba login sebagai admin
         if (Auth::guard('admin')->attempt($credentials)) {
@@ -29,7 +29,7 @@ class AdminController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
+            'nip' => 'NIP atau password salah.',
         ]);
         
     }

@@ -14,10 +14,13 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $obj = new Admin();
-        $obj->name = "Admin";
-        $obj->email = "admin@example.com";
-        $obj->password = Hash::make("123");
-        $obj->save();
+        Admin::create([
+            'nama' => 'Admin Utama',
+            'nip' => '1234567890',
+            'no_telepon' => '081234567890',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin',
+            'status' => 'aktif',
+        ]);
     }
 }
