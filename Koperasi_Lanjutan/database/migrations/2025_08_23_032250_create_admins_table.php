@@ -13,18 +13,20 @@ return new class extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
              $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('token')->nullable();
-            $table->string('photo')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('role')->default('admin');
-            $table->string('status')->default('1');
-            $table->rememberToken();
-            $table->timestamps();
+        $table->string('nama');
+        $table->string('no_telepon')->unique();
+        $table->string('password');
+        $table->string('nip')->nullable();
+        $table->string('tempat_lahir')->nullable();
+        $table->date('tanggal_lahir')->nullable();
+        $table->text('alamat_rumah')->nullable();
+        $table->string('unit_kerja')->nullable();
+        $table->string('sk_perjanjian_kerja')->nullable();
+        $table->string('photo_path')->nullable();
+        $table->enum('role', ['anggota', 'admin'])->default('anggota');
+        $table->enum('status', ['pending', 'aktif', 'ditolak'])->default('pending');
+        $table->rememberToken();
+        $table->timestamps();
         });
     }
 
