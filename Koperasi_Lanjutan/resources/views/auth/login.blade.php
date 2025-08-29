@@ -16,14 +16,14 @@
 
                 <!-- Email Address -->
                 <div class="mb-6">
-                    <x-input-label for="email" :value="__('Email')" class="text-blue-700 font-semibold" />
+                    <x-input-label for="email" :value="('Email')" class="text-blue-700 font-semibold" />
                     <x-text-input id="email" class="block mt-2 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 px-4 py-2" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
                     <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500" />
                 </div>
 
                 <!-- Password -->
                 <div class="mb-6">
-                    <x-input-label for="password" :value="__('Password')" class="text-blue-700 font-semibold" />
+                    <x-input-label for="password" :value="('Password')" class="text-blue-700 font-semibold" />
                     <x-text-input id="password" class="block mt-2 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 px-4 py-2"
                         type="password"
                         name="password"
