@@ -48,7 +48,7 @@
                         <!-- Submit -->
                         <button type="submit"
                             class="w-full bg-blue-500 text-white text-2xl sm:text-3xl font-normal py-2 rounded-lg mt-2 border border-blue-500 hover:bg-blue-600 transition">
-                            Login
+                            Masuk
                         </button>
                     </form>
                 </div>
