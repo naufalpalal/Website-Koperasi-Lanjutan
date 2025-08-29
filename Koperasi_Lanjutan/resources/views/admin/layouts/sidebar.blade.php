@@ -34,7 +34,7 @@
                 <div x-data="{ open: false, simpananOpen: false }" class="w-full">
                     <!-- Tombol Simpan Pinjam -->
                     <button @click="open = !open" 
-                        class="flex items-center justify-between w-full px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                        class="flex items-center justify-between w-full px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                         <span class="flex items-center">
                             Simpan Pinjam
                         </span>
@@ -90,7 +90,7 @@
             </nav>
         </div>
         <!-- User Info -->
-        <div class="border-t border-gray-700 px-6 py-4 flex items-center">
+       <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-10 w-10 rounded-full mr-3">
             <div>
                 <span class="font-semibold">mdo</span>
