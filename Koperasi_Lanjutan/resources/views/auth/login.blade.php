@@ -43,7 +43,9 @@
                         </div>
                         <!-- Forgot Password -->
                         <div class="flex justify-end">
-                            <span class="text-base text-gray-400">Forgot password?</span>
+                            <a href="{{ route('password.request') }}" class="text-base text-blue-500 hover:underline">
+                                Forgot password?
+                            </a>
                         </div>
                         <!-- Submit -->
                         <button type="submit"
