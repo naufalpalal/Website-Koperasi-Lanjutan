@@ -12,7 +12,7 @@
         <!-- Nomor Telepon -->
         <div>
             <x-input-label for="phone" :value="__('Nomor Telepon')" />
-            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required autofocus placeholder="contoh: 081234567890"/>
+            <x-text-input id="phone" class="block mt-1 w-full border border-gray-400 rounded-md p-2 bg-white text-gray-900" type="text" name="phone" :value="old('phone')" required autofocus placeholder="contoh: 081234567890"/>
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
