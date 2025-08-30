@@ -36,7 +36,7 @@
                 <div x-data="{ open: false, simpananOpen: false }" class="w-full">
                     <!-- Tombol Simpan Pinjam -->
                     <button @click="open = !open"
-                        class="flex items-center justify-between w-full px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                        class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800 justify-between w-full"
                         <span class="flex items-center">
                             Simpan Pinjam
                         </span>
@@ -61,20 +61,20 @@
                         </button>
                         <!-- Dropdown Simpanan -->
                         <div x-show="simpananOpen" x-transition class="ml-6 space-y-2">
-                            <a href="#"
+                            <a href="{{ route('admin.layouts.simpanan.wajib.index') }}"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                                 Simpanan Wajib
                             </a>
-                            <a href="#"
+                            <a href="{{ route('admin.layouts.simpanan.sukarela.index') }}"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                                 Simpanan Sukarela
                             </a>
-                            <a href="#"
+                            <!-- <a href="#"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                                 Simpanan Pokok
-                            </a>
+                            </a> -->
                         </div>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('admin.layouts.pinjaman.index') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                             Pinjaman
                         </a>
                     </div>
@@ -82,10 +82,10 @@
                 <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pembayaran Pinjaman
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                    Pengajuan Pinjaman
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <!-- <a href="{{ route('admin.layouts.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Pinjaman
+                </a> -->
+                <a href="{{ route('admin.layouts.laporan.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Laporan
                 </a>
                 <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
