@@ -31,7 +31,11 @@ class AdminController extends Controller
         $admin = Admin::where('nip', $request->nip)->first();
         if ($admin && Hash::check($request->password, $admin->password)) {
             Auth::guard('admin')->login($admin);
-            return redirect()->route('admin.dashboard');
+            if ($admin->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            } else {
+                return redirect()->route('dashboard');
+            }
         }
 
         // 🔹 Coba login sebagai User
