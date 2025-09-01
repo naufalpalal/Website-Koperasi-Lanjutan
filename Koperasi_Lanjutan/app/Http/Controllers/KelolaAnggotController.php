@@ -11,7 +11,7 @@ class KelolaAnggotController extends Controller
 {
     public function index()
     {
-        return view('admin.layouts.anggota.index');
+        return view('admin.anggota.index');
     }
 }
 //     public function create()

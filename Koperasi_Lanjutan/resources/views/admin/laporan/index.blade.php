@@ -1,8 +1,8 @@
-@extends('admin.dashboard')
+@extends('admin.index')
 
 @section('content')
 <div class="container">
-    <h3>Kelola Pinjaman</h3>
+    <h3>Kelola Laporan</h3>
     {{-- <a href="{{ route('laporan.create') }}" class="btn btn-primary mb-3">Tambah Laporan</a>
 
     @if(session('success'))

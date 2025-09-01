@@ -8,6 +8,6 @@ class PinjamanController extends Controller
 {
     public function index()
     {
-        return view('admin.layouts.pinjaman.index');
+        return view('admin.pinjaman.index');
     }
 }

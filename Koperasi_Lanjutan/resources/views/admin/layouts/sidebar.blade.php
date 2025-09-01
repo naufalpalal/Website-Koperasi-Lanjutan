@@ -24,10 +24,10 @@
             </div>
             <!-- Menu Items -->
             <nav class="mt-6">
-                <a href="#" class="flex items-center px-6 py-3 rounded-lg mx-4 mb-2 transition hover:bg-blue-700">
+                <a href="{{route('admin.dashboard.index')}}" class="flex items-center px-6 py-3 rounded-lg mx-4 mb-2 transition hover:bg-blue-700">
                     Dashboard
                 </a>
-                <a href="{{ route('admin.layouts.anggota.index') }}"
+                <a href="{{ route('admin.anggota.index') }}"
                     class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition 
                   hover:bg-gray-800 {{ request()->routeIs('anggota.*') ? 'bg-gray-800' : '' }}">
                     Kelola Anggota
@@ -61,11 +61,11 @@
                         </button>
                         <!-- Dropdown Simpanan -->
                         <div x-show="simpananOpen" x-transition class="ml-6 space-y-2">
-                            <a href="{{ route('admin.layouts.simpanan.wajib.index') }}"
+                            <a href="{{ route('admin.simpanan.wajib.index') }}"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                                 Simpanan Wajib
                             </a>
-                            <a href="{{ route('admin.layouts.simpanan.sukarela.index') }}"
+                            <a href="{{ route('admin.simpanan.sukarela.index') }}"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                                 Simpanan Sukarela
                             </a>
@@ -74,7 +74,7 @@
                                 Simpanan Pokok
                             </a> -->
                         </div>
-                        <a href="{{ route('admin.layouts.pinjaman.index') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('admin.pinjaman.index') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg">
                             Pinjaman
                         </a>
                     </div>
@@ -82,10 +82,10 @@
                 <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pembayaran Pinjaman
                 </a>
-                <!-- <a href="{{ route('admin.layouts.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <!-- <a href="{{ route('admin.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pinjaman
                 </a> -->
-                <a href="{{ route('admin.layouts.laporan.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <a href="{{ route('admin.laporan.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Laporan
                 </a>
                 <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">

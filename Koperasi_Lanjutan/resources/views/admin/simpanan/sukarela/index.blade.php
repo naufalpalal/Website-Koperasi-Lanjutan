@@ -1,8 +1,8 @@
-@extends('admin.dashboard')
+@extends('admin.index')
 
 @section('content')
 <div class="container mt-4">
-    <h2>Daftar Simpanan Wajib</h2>
+    <h2>Daftar Simpanan Sukarela</h2>
     <table class="table table-bordered mt-3">
         <thead>
             <tr>

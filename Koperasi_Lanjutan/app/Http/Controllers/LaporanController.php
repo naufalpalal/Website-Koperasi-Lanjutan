@@ -9,7 +9,7 @@ class LaporanController extends Controller
 
     public function index()
     {
-        return view('admin.layouts.laporan.index');
+        return view('admin.laporan.index');
     }
 
     // Laporan Simpanan

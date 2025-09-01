@@ -32,7 +32,7 @@ class AdminController extends Controller
         if ($admin && Hash::check($request->password, $admin->password)) {
             Auth::guard('admin')->login($admin);
             if ($admin->role === 'admin') {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('admin.dashboard.index');
             } else {
                 return redirect()->route('dashboard');
             }
@@ -55,11 +55,16 @@ class AdminController extends Controller
     // Halaman dashboard
     public function dashboard()
     {
-        return view('admin.dashboard');
+        return view('admin.index');
     }
 
     public function dashboardUser()
     {
         return view('dashboard');
+    }
+
+    public function dashboardView()
+    {
+        return view('admin.dashboard.index');
     }
 }

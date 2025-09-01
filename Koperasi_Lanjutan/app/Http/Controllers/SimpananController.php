@@ -8,11 +8,11 @@ class SimpananController extends Controller
 {
     public function indexSukarela()
     {
-        return view('admin.layouts.simpanan.sukarela.index');
+        return view('admin.simpanan.sukarela.index');
     }
 
     public function indexWajib()
     {
-        return view('admin.layouts.simpanan.wajib.index');
+        return view('admin.simpanan.wajib.index');
     }
 }
