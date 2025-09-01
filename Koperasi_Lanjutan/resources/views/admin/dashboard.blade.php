@@ -13,11 +13,9 @@
     <!-- Main Content -->
     <main class="flex-1 px-8 py-6 md:ml-64">
 
-        <div class="flex-1 p-6">
-            @yield('content')
-        </div>
+
         <!-- Statistik Koperasi -->
-        {{-- <div class="mb-6">
+        <div class="mb-6">
             <div class="text-gray-700 font-semibold mb-2 ml-10">Statistik Koperasi</div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white rounded-xl shadow p-4 flex items-center gap-3">
@@ -48,21 +46,21 @@
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
 
         <!-- Menu Grid -->
         <!-- @include('admin.layouts.menu_grid') -->
 
         <!-- Grafik Perkembangan Koperasi -->
-        {{-- <div class="mb-6">
+        <div class="mb-6">
             <div class="font-semibold text-gray-700 mb-2">Grafik Perkembangan Koperasi</div>
             <div class="bg-white rounded-xl shadow p-6 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 20v-6m4 6V10m4 10V4m4 16v-8"/><path d="M4 20h16"/></svg>
             </div>
-        </div> --}}
+        </div>
 
         <!-- Riwayat Aktivitas Anggota -->
-        {{-- <div class="mb-6">
+        <div class="mb-6">
             <div class="bg-blue-400 rounded-xl p-4 text-white">
                 <div class="font-semibold mb-2">Riwayat Aktivitas Anggota:</div>
                 <div class="flex items-center gap-2 mb-1">
@@ -74,7 +72,11 @@
                     <span>Andi Mengajukan Pinjaman (10:45)</span>
                 </div>
             </div>
-        </div> --}}
+        </div>
+
+        <div class="flex-1 p-6">
+            @yield('content')
+        </div>
     </main>
 
     <!-- Footer Navigation -->
