@@ -33,13 +33,12 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboardView'])->name(
 // routes/web.php
 // Route::middleware(['auth', 'role:pengurus'])->group(function () {
     Route::get('/anggota', [App\Http\Controllers\KelolaAnggotController::class, 'index'])->name('admin.anggota.index');
-//     Route::get('/anggota/create', [App\Http\Controllers\AnggotaController::class, 'create'])->name('anggota.create');
-//     Route::post('/anggota', [App\Http\Controllers\AnggotaController::class, 'store'])->name('anggota.store');
-//     Route::get('/anggota/{id}/edit', [App\Http\Controllers\AnggotaController::class, 'edit'])->name('anggota.edit');
-//     Route::put('/anggota/{id}', [App\Http\Controllers\AnggotaController::class, 'update'])->name('anggota.update');
-//     Route::delete('/anggota/{id}', [App\Http\Controllers\AnggotaController::class, 'destroy'])->name('anggota.destroy');
-// });
-// });
+    Route::get('/anggota/create', [App\Http\Controllers\KelolaAnggotController::class, 'create'])->name('admin.anggota.create');
+    Route::post('/anggota', [App\Http\Controllers\KelolaAnggotController::class, 'store'])->name('admin.anggota.store');
+    Route::get('/anggota/{id}/edit', [App\Http\Controllers\KelolaAnggotController::class, 'edit'])->name('admin.anggota.edit');
+    Route::put('/anggota/{id}', [App\Http\Controllers\KelolaAnggotController::class, 'update'])->name('admin.anggota.update');
+    Route::delete('/anggota/{id}', [App\Http\Controllers\KelolaAnggotController::class, 'destroy'])->name('admin.anggota.destroy');
+//});
 
 //route laporan
 //Route::middleware(['auth', 'role:pengurus'])->group(function () {
