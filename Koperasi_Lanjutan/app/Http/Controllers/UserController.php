@@ -8,8 +8,7 @@ use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-
-class AdminController extends Controller
+class UserController extends Controller
 {
     // Menampilkan halaman login
     public function showLoginForm()
@@ -28,10 +27,10 @@ class AdminController extends Controller
         $credentials = $request->only('nip', 'password');
 
         // 🔹 Coba login sebagai Admin
-        $admin = Admin::where('nip', $request->nip)->first();
+        $admin = User::where('nip', $request->nip)->first();
         if ($admin && Hash::check($request->password, $admin->password)) {
-            Auth::guard('admin')->login($admin);
-            if ($admin->role === 'admin') {
+            Auth::guard('web')->login($admin);
+            if ($admin->role === 'pengurus') {
                 return redirect()->route('admin.dashboard.index');
             } else {
                 return redirect()->route('dashboard');

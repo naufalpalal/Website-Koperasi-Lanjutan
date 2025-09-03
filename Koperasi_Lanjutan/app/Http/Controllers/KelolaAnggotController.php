@@ -13,7 +13,7 @@ class KelolaAnggotController extends Controller
     // Tampilkan semua anggota
     public function index()
     {
-        $anggota = Admin::all();
+        $anggota = User::all();
         return view('admin.anggota.index', compact('anggota'));
     }
 
@@ -36,7 +36,7 @@ class KelolaAnggotController extends Controller
             'alamat_rumah'  => 'nullable|string|max:255',
         ]);
 
-        Admin::create($validated);
+        User::create($validated);
 
         return redirect()->route('admin.anggota.index')
                          ->with('success', 'Anggota berhasil ditambahkan');
@@ -45,14 +45,14 @@ class KelolaAnggotController extends Controller
     // Tampilkan form edit anggota
     public function edit($id)
     {
-        $anggota = Admin::findOrFail($id);
+        $anggota = User::findOrFail($id);
         return view('admin.anggota.edit', compact('anggota'));
     }
 
     // Update data anggota
     public function update(Request $request, $id)
     {
-        $anggota = Admin::findOrFail($id);
+        $anggota = User::findOrFail($id);
 
         $validated = $request->validate([
             'nama'          => 'required|string|max:255',
@@ -72,7 +72,7 @@ class KelolaAnggotController extends Controller
     // Hapus anggota
     public function destroy($id)
     {
-        $anggota = Admin::findOrFail($id);
+        $anggota = User::findOrFail($id);
         $anggota->delete();
 
         return redirect()->route('admin.anggota.index')
