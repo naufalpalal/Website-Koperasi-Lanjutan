@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Kelola Anggota</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
 @extends('admin.index')
 
 @section('content')
@@ -5,8 +15,8 @@
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Kelola Anggota</h5>
-            <a href="{{ route('admin.anggota.create') }}" class="btn btn-light btn-sm">
-                <i class="bi bi-plus-circle"></i> Tambah Anggota
+            <a href="{{ route('admin.anggota.create') }}" class="btn btn-warning">
+                <i class="bi bi-plus-circle"></i>
             </a>
         </div>
         <div class="card-body">
@@ -14,38 +24,34 @@
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered align-middle text-center">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>No Telepon</th>
-                            <th>NIP</th>
-                            <th>Tempat Lahir</th>
-                            <th>Tanggal Lahir</th>
-                            <th>Alamat Rumah</th>
-                            <th width="180px">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($anggota as $index => $a)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $a->nama }}</td>
-                            <td>{{ $a->no_telepon }}</td>
-                            <td>{{ $a->nip ?? '-' }}</td>
-                            <td>{{ $a->tempat_lahir ?? '-' }}</td>
-                            <td>
-                                @if($a->tanggal_lahir)
-                                    {{ \Carbon\Carbon::parse($a->tanggal_lahir)->format('d-m-Y') }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td>{{ $a->alamat_rumah ?? '-' }}</td>
-                            <td>
-                                <a href="{{ route('admin.anggota.edit', $a->id) }}" class="btn btn-warning btn-sm">
+            @if($anggota->count())
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach($anggota as $index => $a)
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.5rem;">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">{{ $a->nama }}</h5>
+                                    <small class="text-muted">{{ $a->nip ?? '-' }}</small>
+                                </div>
+                            </div>
+                            <ul class="list-unstyled mb-3">
+                                <li><i class="bi bi-telephone"></i> {{ $a->no_telepon }}</li>
+                                <li><i class="bi bi-geo-alt"></i> {{ $a->alamat_rumah ?? '-' }}</li>
+                                <li><i class="bi bi-calendar"></i>
+                                    @if($a->tanggal_lahir)
+                                        {{ $a->tempat_lahir ?? '-' }}, {{ \Carbon\Carbon::parse($a->tanggal_lahir)->format('d-m-Y') }}
+                                    @else
+                                        {{ $a->tempat_lahir ?? '-' }}
+                                    @endif
+                                </li>
+                            </ul>
+                            <div>
+                                <a href="{{ route('admin.anggota.edit', $a->id) }}" class="btn btn-success btn-sm me-2">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
                                 <form action="{{ route('admin.anggota.destroy', $a->id) }}" method="POST" class="d-inline">
@@ -55,17 +61,18 @@
                                         <i class="bi bi-trash"></i> Hapus
                                     </button>
                                 </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted">Belum ada data anggota</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
             </div>
+            @else
+            <div class="text-center text-muted py-5">Belum ada data anggota</div>
+            @endif
         </div>
     </div>
 </div>
 @endsection
+</body>
+</html>
