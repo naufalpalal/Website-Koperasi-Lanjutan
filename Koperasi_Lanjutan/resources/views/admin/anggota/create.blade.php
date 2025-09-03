@@ -12,31 +12,32 @@
                 @csrf
                 <div class="mb-3">
                     <label for="nama" class="form-label">Nama</label>
-                    <input type="text" class="form-control" id="nama" name="nama" required>
+                    <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" required>
+                    <label for="no_telepon" class="form-label">No Telepon</label>
+                    <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" required>
-                        <option value="">-- Pilih --</option>
-                        <option value="Laki-laki">Laki-laki</option>
-                        <option value="Perempuan">Perempuan</option>
-                    </select>
+                    <label for="nip" class="form-label">NIP</label>
+                    <input type="text" class="form-control" id="nip" name="nip" value="{{ old('nip') }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="alamat" class="form-label">Alamat</label>
-                    <textarea class="form-control" id="alamat" name="alamat" rows="3" required></textarea>
+                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                    <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
-                    <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk" required>
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                    <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="alamat_rumah" class="form-label">Alamat Rumah</label>
+                    <textarea class="form-control" id="alamat_rumah" name="alamat_rumah" rows="3">{{ old('alamat_rumah') }}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-success">Simpan</button>

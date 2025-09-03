@@ -20,6 +20,16 @@ class Admin extends Authenticatable
     protected $guard = 'admin';
     protected $guarded = [];
 
+    protected $fillable = [
+        'nama',
+        'no_telepon',
+        'password',
+        'nip',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'alamat_rumah',
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *

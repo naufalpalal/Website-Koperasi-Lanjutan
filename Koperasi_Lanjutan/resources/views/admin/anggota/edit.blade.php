@@ -19,29 +19,32 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir"
-                        value="{{ old('tgl_lahir', $anggota->tgl_lahir) }}" required>
+                    <label for="no_telepon" class="form-label">No Telepon</label>
+                    <input type="text" class="form-control" id="no_telepon" name="no_telepon"
+                        value="{{ old('no_telepon', $anggota->no_telepon) }}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" required>
-                        <option value="">-- Pilih --</option>
-                        <option value="Laki-laki" {{ old('jenis_kelamin', $anggota->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="Perempuan" {{ old('jenis_kelamin', $anggota->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                    </select>
+                    <label for="nip" class="form-label">NIP</label>
+                    <input type="text" class="form-control" id="nip" name="nip"
+                        value="{{ old('nip', $anggota->nip) }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="alamat" class="form-label">Alamat</label>
-                    <textarea class="form-control" id="alamat" name="alamat" rows="3" required>{{ old('alamat', $anggota->alamat) }}</textarea>
+                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                    <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir"
+                        value="{{ old('tempat_lahir', $anggota->tempat_lahir) }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
-                    <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk"
-                        value="{{ old('tgl_masuk', $anggota->tgl_masuk) }}" required>
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                    <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir"
+                        value="{{ old('tanggal_lahir', $anggota->tanggal_lahir) }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="alamat_rumah" class="form-label">Alamat Rumah</label>
+                    <textarea class="form-control" id="alamat_rumah" name="alamat_rumah" rows="3">{{ old('alamat_rumah', $anggota->alamat_rumah) }}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Update</button>

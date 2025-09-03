@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admins', function (Blueprint $table) {
-             $table->id();
+        $table->id();
         $table->string('nama');
         $table->string('no_telepon')->unique();
-        $table->string('password');
+        $table->string('password')->nullable();
         $table->string('nip')->nullable();
         $table->string('tempat_lahir')->nullable();
         $table->date('tanggal_lahir')->nullable();
@@ -36,5 +36,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('admins');
+        
     }
 };

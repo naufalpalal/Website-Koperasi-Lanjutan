@@ -12,11 +12,13 @@ class Anggot extends Model
     protected $table = 'anggots';
 
     protected $fillable = [
-        'nama',
-        'tgl_lahir',
-        'jenis_kelamin',
-        'alamat',
-        'tgl_masuk',
+        'nama'          => 'required|string|max:255',
+        'no_telepon'    => 'required|string|max:20',
+        'password'      => 'required|string|min:8|confirmed',
+        'nip'            => 'required|string|max:20',
+        'tempat_lahir'  => 'required|string|max:255',
+        'tanggal_lahir' => 'required|date',
+        'alamat_rumah'  => 'required|string|max:255',
 
     ];
 

@@ -20,10 +20,11 @@
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
+                            <th>No Telepon</th>
+                            <th>NIP</th>
+                            <th>Tempat Lahir</th>
                             <th>Tanggal Lahir</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Alamat</th>
-                            <th>Tanggal Masuk</th>
+                            <th>Alamat Rumah</th>
                             <th width="180px">Aksi</th>
                         </tr>
                     </thead>
@@ -32,10 +33,17 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $a->nama }}</td>
-                            <td>{{ \Carbon\Carbon::parse($a->tgl_lahir)->format('d-m-Y') }}</td>
-                            <td>{{ ucfirst($a->jenis_kelamin) }}</td>
-                            <td>{{ $a->alamat }}</td>
-                            <td>{{ \Carbon\Carbon::parse($a->tgl_masuk)->format('d-m-Y') }}</td>
+                            <td>{{ $a->no_telepon }}</td>
+                            <td>{{ $a->nip ?? '-' }}</td>
+                            <td>{{ $a->tempat_lahir ?? '-' }}</td>
+                            <td>
+                                @if($a->tanggal_lahir)
+                                    {{ \Carbon\Carbon::parse($a->tanggal_lahir)->format('d-m-Y') }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>{{ $a->alamat_rumah ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('admin.anggota.edit', $a->id) }}" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil-square"></i> Edit
@@ -51,7 +59,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">Belum ada data anggota</td>
+                            <td colspan="8" class="text-center text-muted">Belum ada data anggota</td>
                         </tr>
                         @endforelse
                     </tbody>
