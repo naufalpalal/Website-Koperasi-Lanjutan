@@ -9,7 +9,7 @@
         <div class="flex justify-between items-center border-b pb-4 mb-6">
             <h5 class="text-xl font-semibold text-gray-700">Edit Anggota</h5>
             <a href="{{ route('admin.anggota.index') }}" 
-               class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg shadow text-sm transition">
+               class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow text-sm transition">
                 Kembali
             </a>
         </div>

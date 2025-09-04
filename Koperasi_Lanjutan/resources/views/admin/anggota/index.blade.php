@@ -8,7 +8,7 @@
         <div class="flex justify-between items-center border-b pb-4 mb-4">
             <h5 class="text-xl font-semibold text-gray-700">Kelola Anggota</h5>
             <a href="{{ route('admin.anggota.create') }}" 
-               class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg shadow transition">
+               class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow transition">
                 <i class="bi bi-plus-circle"></i> Tambah
             </a>
         </div>
