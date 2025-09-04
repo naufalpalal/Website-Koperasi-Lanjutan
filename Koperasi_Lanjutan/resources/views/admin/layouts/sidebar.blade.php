@@ -24,19 +24,18 @@
             </div>
             <!-- Menu Items -->
             <nav class="mt-6">
-                <a href="{{route('admin.dashboard.index')}}" class="flex items-center px-6 py-3 rounded-lg mx-4 mb-2 transition hover:bg-blue-700">
+                <a href="{{route('admin.dashboard.index')}}" class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                     Dashboard
                 </a>
                 <a href="{{ route('admin.anggota.index') }}"
-                    class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition 
-                  hover:bg-gray-800 {{ request()->routeIs('anggota.*') ? 'bg-gray-800' : '' }}">
-                    Kelola Anggota
+                class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
+                Kelola Anggota
                 </a>
                 <!-- Dropdown Simpan Pinjam -->
                 <div x-data="{ open: false, simpananOpen: false }" class="w-full">
                     <!-- Tombol Simpan Pinjam -->
                     <button @click="open = !open"
-                        class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800 justify-between w-full"
+                        class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800 justify-between w-full"
                         <span class="flex items-center">
                             Simpan Pinjam
                         </span>
@@ -79,16 +78,16 @@
                         </a>
                     </div>
                 </div>
-                <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <a href="#" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pembayaran Pinjaman
                 </a>
                 <!-- <a href="{{ route('admin.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pinjaman
                 </a> -->
-                <a href="{{ route('admin.laporan.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <a href="{{ route('admin.laporan.index') }}" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Laporan
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <a href="#" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Kirim Notifikasi
                 </a>
             </nav>
