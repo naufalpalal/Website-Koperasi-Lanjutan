@@ -12,6 +12,14 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return redirect('/login');
+})->name('logout');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -30,6 +38,10 @@ Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('login_submit');
 Route::get('/admin/index', [UserController::class, 'dashboard'])->name('admin.index');
 Route::get('/admin/dashboard', [UserController::class, 'dashboardView'])->name('admin.dashboard.index');
+
+
+Route::get('/user/index', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+//Route::get('/user/dashboard', [UserController::class, 'dashboardUser'])->name('user.index');
 
 // routes/web.php
 // Route::middleware(['auth', 'role:pengurus'])->group(function () {

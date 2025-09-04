@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Admin;
+//use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -32,17 +32,18 @@ class UserController extends Controller
             Auth::guard('web')->login($admin);
             if ($admin->role === 'pengurus') {
                 return redirect()->route('admin.dashboard.index');
-            } else {
-                return redirect()->route('dashboard');
-            }
+            } 
+            // else {
+            //     return redirect()->route('dashboard');
+            // }
         }
 
         // 🔹 Coba login sebagai User
-        // $user = Admin::where('nip', $request->nip)->first();
-        // if ($user && Hash::check($request->password, $user->password)) {
-        //     Auth::guard('Admin')->login($user);
-        //     return redirect()->route('dashboard');
-        // }
+        $user = User::where('nip', $request->nip)->first();
+        if ($user && Hash::check($request->password, $user->password)) {
+            Auth::guard('web')->login($user);
+            return redirect()->route('user.dashboard.index');
+        }
 
         // 🔹 Jika gagal semua
         return back()->withErrors([
@@ -65,5 +66,10 @@ class UserController extends Controller
     public function dashboardView()
     {
         return view('admin.dashboard.index');
+    }
+
+    public function dashboardUserView()
+    {
+        return view('user.dashboard.index');
     }
 }
