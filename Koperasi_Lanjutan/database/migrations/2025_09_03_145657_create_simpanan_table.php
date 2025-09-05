@@ -12,16 +12,15 @@ return new class extends Migration {
     {
         Schema::create('simpanan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('anggota_id')->constrained('users')->onDelete('cascade');
-            $table->enum('jenis', ['pokok', 'wajib', 'sukarela_rutin']);
-            $table->bigInteger('nominal');
-            $table->enum('status', ['aktif', 'ditangguhkan', 'berhenti'])->default('aktif');
-            $table->date('mulai_efektif')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users');
-            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->foreignId('member_id')->constrained('users')->onDelete('cascade');
+            $table->enum('type', ['pokok', 'wajib', 'sukarela']);
+            $table->decimal('amount', 15, 2);
+            $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
+            $table->string('note')->nullable(); // alasan gagal
+            $table->date('month')->nullable(); // bulan simpanan
             $table->timestamps();
-            $table->unique(['anggota_id', 'jenis']);
         });
+
     }
 
     /**

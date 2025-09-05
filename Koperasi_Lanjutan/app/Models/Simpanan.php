@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Simpanan extends Model
 {
-  use HasFactory;
+    protected $table = 'simpanan'; // <- gunakan tabel 'simpanan'
 
+    protected $fillable = [
+        'member_id', 'type', 'amount', 'status', 'note', 'month'
+    ];
 
-protected $table = 'simpanan';
-protected $fillable = ['anggota_id','jenis','nominal','status','mulai_efektif','created_by','updated_by'];
-
-
-public function anggota(){ return $this->belongsTo(User::class,'anggota_id'); }
+    public function member()
+    {
+        return $this->belongsTo(User::class, 'member_id');
+    }
 }
