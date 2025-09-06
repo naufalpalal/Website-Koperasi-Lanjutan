@@ -25,6 +25,9 @@
             <!-- Menu Items -->
             <nav class="mt-6">
                 <a href="{{route('admin.dashboard.index')}}" class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3z"></path>
+                    </svg>
                     Dashboard
                 </a>
                 <a href="{{ route('admin.anggota.index') }}"
@@ -51,6 +54,18 @@
                 </a>
             </nav>
         </div>
+            <!-- Logout -->
+        <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                @csrf
+                <button type="submit"
+                    class="flex items-center w-full px-4 sm:px-6 py-3 rounded-lg mx-2 sm:mx-0 text-left transition-colors duration-200 hover:bg-red-700 text-sm sm:text-base">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    <span class="truncate">Logout</span>
+                </button>
+            </form>
+
         <!-- User Info -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">

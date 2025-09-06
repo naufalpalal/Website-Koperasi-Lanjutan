@@ -75,7 +75,17 @@ Route::get('/pinjaman', [PinjamanController::class, 'index'])->name('admin.pinja
 //Route::middleware(['auth', 'role:pengurus'])->group(function () {
 // Route::get('/simpanan/sukarela', [App\Http\Controllers\SimpananController::class, 'indexSukarela'])->name('admin.layouts.simpanan.sukarela.index');
 // Route::get('/simpanan/wajib', [App\Http\Controllers\SimpananController::class, 'indexWajib'])->name('admin.layouts.simpanan.wajib.index');
+   Route::get('/simpanan/sukarela/pending', [App\Http\Controllers\SimpananSukarelaController::class, 'indexPending'])->name('simpanan.sukarela.pending');
+   Route::patch('/simpanan/sukarela/{simpanan}/process', [App\Http\Controllers\SimpananSukarelaController::class, 'process'])->name('simpanan.sukarela.process');
+   Route::get('/simpanan/sukarela/laporan', [App\Http\Controllers\SimpananSukarelaController::class, 'laporan'])->name('simpanan.sukarela.laporan');
 //});
+
+// Route untuk anggota mengajukan Simpanan Sukarela
+// Route::middleware(['auth', 'role:anggota'])->group(function () {
+   Route::get('/simpanan/sukarela', [App\Http\Controllers\SimpananSukarelaController::class, 'index'])->name('user.simpanan.sukarela.index');
+   Route::post('/simpanan/sukarela', [App\Http\Controllers\SimpananSukarelaController::class, 'store'])->name('user.simpanan.sukarela.store');
+// });
+
 
 Route::prefix('admin/simpanan')->middleware('auth')->group(function () {
     Route::get('transactions', [SimpananController::class, 'index'])->name('admin.simpanan.index');
