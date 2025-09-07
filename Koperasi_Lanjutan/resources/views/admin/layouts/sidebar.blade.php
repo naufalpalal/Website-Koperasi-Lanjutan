@@ -38,6 +38,13 @@
                     Kelola Simpanan
                 </a>  
 
+                <a href="{{ route('admin.simpanan.kelola.pending') }}" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Pengajuan Simpanan Sukarela
+                </a>
+                <a href="{{ route('admin.pinjaman.index') }}" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Kelola Pinjaman
+                </a>
+
 
                 
                 <a href="#" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">

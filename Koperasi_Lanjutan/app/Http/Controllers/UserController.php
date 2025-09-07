@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-//use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Menampilkan halaman login
+    // 🔹 Menampilkan halaman login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Proses login
+    // 🔹 Proses login
     public function login(Request $request)
     {
         $request->validate([
@@ -24,45 +23,38 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('nip', 'password');
-
-        // 🔹 Coba login sebagai Admin
-        $admin = User::where('nip', $request->nip)->first();
-        if ($admin && Hash::check($request->password, $admin->password)) {
-            Auth::guard('web')->login($admin);
-            if ($admin->role === 'pengurus') {
-                return redirect()->route('admin.dashboard.index');
-            } 
-            // else {
-            //     return redirect()->route('dashboard');
-            // }
-        }
-
-        // 🔹 Coba login sebagai User
         $user = User::where('nip', $request->nip)->first();
+
         if ($user && Hash::check($request->password, $user->password)) {
-            Auth::guard('web')->login($user);
-            return redirect()->route('user.dashboard.index');
+            Auth::login($user);
+
+            // Redirect sesuai role
+            switch ($user->role) {
+                case 'pengurus':
+                    return redirect()->route('admin.dashboard.index'); // kalau ada dashboard khusus pengurus bisa diarahkan ke sana
+                   
+                case 'anggota':
+                    return redirect()->route('user.dashboard.index');
+
+                default:
+                    Auth::logout();
+                    return redirect()->route('login')->withErrors([
+                        'role' => 'Role tidak dikenali. Hubungi admin.',
+                    ]);
+            }
         }
 
-        // 🔹 Jika gagal semua
+        // 🔹 Jika gagal login
         return back()->withErrors([
-            'nip' => 'NIP salah',
-            'password' => 'Password salah',
+            'nip' => 'NIP atau Password salah.',
         ])->withInput();
     }
 
-    // Halaman dashboard
+
     public function dashboard()
     {
         return view('admin.index');
     }
-
-    public function dashboardUser()
-    {
-        return view('dashboard');
-    }
-
     public function dashboardView()
     {
         return view('admin.dashboard.index');
@@ -72,4 +64,6 @@ class UserController extends Controller
     {
         return view('user.dashboard.index');
     }
+
+    
 }

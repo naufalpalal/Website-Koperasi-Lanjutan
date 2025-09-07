@@ -7,52 +7,78 @@ use App\Models\Simpanan;
 use Illuminate\Http\Request;
 // use App\Services\WhatsappService;
 use App\Models\User;
+use Carbon\Carbon;
 
 class SimpananController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bulanSekarang = now()->format('Y-m-01');
+        // default bulan = bulan sekarang
+        $bulan = $request->input('bulan', now()->format('Y-m-01'));
 
-        $anggota = User::where('role', 'anggota')->get();
-
+        // Ambil data simpanan grup per anggota & bulan
         $transactions = Simpanan::with('member')
-            ->where('month', $bulanSekarang)
+            ->where('month', $bulan)
             ->get()
             ->groupBy('member_id');
 
-        return view('admin.simpanan.index', compact('transactions'));
+        // daftar bulan untuk dropdown (misalnya 12 bulan terakhir)
+        $bulanList = [];
+        for ($i = 0; $i < 12; $i++) {
+            $bulanList[] = now()->subMonths($i)->format('Y-m-01');
+        }
+
+        return view('admin.simpanan.index', compact('transactions', 'bulan', 'bulanList'));
     }
 
-    public function edit(simpanan $transaction)
+    public function edit(Simpanan $transaction)
     {
-        return view('admin.simpanan.edit', compact('transaction'));
+        // Ambil semua simpanan bulan yang sama (wajib & sukarela)
+        $simpanans = Simpanan::where('member_id', $transaction->member_id)
+            ->where('month', $transaction->month)
+            ->get();
+
+        return view('admin.simpanan.edit', compact('simpanans', 'transaction'));
     }
+
 
     public function update(Request $request, Simpanan $transaction)
     {
         $request->validate([
-            'status' => 'required|in:success,failed',
-            'note' => 'nullable|string'
+            'status' => 'required|array',
+            'status.*' => 'in:success,failed,pending',
+            'note' => 'nullable|array',
+            'note.*' => 'nullable|string'
         ]);
 
-        $transaction->update([
-            'status' => $request->status,
-            'note' => $request->note,
-        ]);
+        $simpanans = Simpanan::where('member_id', $transaction->member_id)
+            ->where('month', $transaction->month)
+            ->get();
 
-        $message = "Halo {$transaction->member->nama}, status simpanan bulan {$transaction->month} adalah *{$transaction->status}*.";
-        if ($transaction->note) {
-            $message .= "\nCatatan: {$transaction->note}";
+        foreach ($simpanans as $simpanan) {
+            $simpanan->update([
+                'status' => $request->status[$simpanan->id] ?? $simpanan->status,
+                'note' => $request->note[$simpanan->id] ?? $simpanan->note,
+            ]);
+        }
+
+        // Ambil ulang untuk pesan WA
+        $simpanans->fresh();
+
+        $pesan = "Halo {$transaction->member->nama}, berikut status simpanan bulan {$transaction->month}:\n";
+        foreach ($simpanans as $simpanan) {
+            $pesan .= "- {$simpanan->type}: *{$simpanan->status}*";
+            if ($simpanan->note) {
+                $pesan .= " (Catatan: {$simpanan->note})";
+            }
+            $pesan .= "\n";
         }
 
         $phone = preg_replace('/^0/', '62', $transaction->member->no_telepon);
-
-        $url = "https://wa.me/{$phone}?text=" . urlencode($message);
+        $url = "https://wa.me/{$phone}?text=" . urlencode($pesan);
 
         return redirect()->away($url);
     }
-
     public function generate()
     {
         $bulanSekarang = now()->format('Y-m-01');
@@ -67,7 +93,7 @@ class SimpananController extends Controller
                 ->where('type', 'wajib')
                 ->first();
 
-            $amountWajib = 100000; // nominal default wajib
+            $amountWajib = 50000; // nominal default wajib
 
             // Jika bulan lalu failed, dobel
             if ($wajibLalu && $wajibLalu->status === 'failed') {

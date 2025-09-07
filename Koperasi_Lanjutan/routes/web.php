@@ -2,95 +2,86 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelolaAnggotController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\Admin\SimpananController;
+use App\Http\Controllers\SimpananSukarelaController;
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
+// Logout
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-
     return redirect('/login');
 })->name('logout');
 
+// Dashboard umum
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Profile user (auth wajib)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//require _DIR_.'/auth.php';
-
-// Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
-// Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+// Login
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('login_submit');
-Route::get('/admin/index', [UserController::class, 'dashboard'])->name('admin.index');
-Route::get('/admin/dashboard', [UserController::class, 'dashboardView'])->name('admin.dashboard.index');
 
+// Dashboard Admin
+Route::middleware(['auth', 'role:pengurus'])->group(function () {
+    Route::get('/admin/index', [UserController::class, 'dashboard'])->name('admin.index');
+    Route::get('/admin/dashboard', [UserController::class, 'dashboardView'])->name('admin.dashboard.index');
+});
+// Kelola Anggota (Pengurus)
+Route::middleware(['auth', 'role:pengurus'])->group(function () {
+    Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('admin.anggota.index');
+    Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('admin.anggota.create');
+    Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('admin.anggota.store');
+    Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('admin.anggota.edit');
+    Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('admin.anggota.update');
+    Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('admin.anggota.destroy');
+});
 
-Route::get('/user/index', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
-//Route::get('/user/dashboard', [UserController::class, 'dashboardUser'])->name('user.index');
-
-// routes/web.php
-// Route::middleware(['auth', 'role:pengurus'])->group(function () {
-Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('admin.anggota.index');
-Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('admin.anggota.create');
-Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('admin.anggota.store');
-Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('admin.anggota.edit');
-Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('admin.anggota.update');
-Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('admin.anggota.destroy');
-//});
-
-//route laporan
-//Route::middleware(['auth', 'role:pengurus'])->group(function () {
+// Laporan (Pengurus)
 Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
-//     Route::get('/laporan/simpanan', [LaporanController::class, 'simpanan'])->name('laporan.simpanan');
-//     Route::get('/laporan/pinjaman', [LaporanController::class, 'pinjaman'])->name('laporan.pinjaman');
-//     Route::get('/laporan/keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
-//});
 
-//route pinjaman
-// Route::middleware(['auth', 'role:pengurus'])->group(function () {
+// Pinjaman (Pengurus)
 Route::get('/pinjaman', [PinjamanController::class, 'index'])->name('admin.pinjaman.index');
-// Route::get('/pinjaman/create', [App\Http\Controllers\PinjamanController::class, 'create'])->name('pinjaman.create');
-// Route::post('/pinjaman', [App\Http\Controllers\PinjamanController::class, 'store'])->name('pinjaman.store');
-// Route::get('/pinjaman/{id}/edit', [App\Http\Controllers\PinjamanController::class, 'edit'])->name('pinjaman.edit');
-// Route::put('/pinjaman/{id}', [App\Http\Controllers\PinjamanController::class, 'update'])->name('pinjaman.update');
-// Route::delete('/pinjaman/{id}', [App\Http\Controllers\PinjamanController::class, 'destroy'])->name('pinjaman.destroy');
-// });
 
-//Route simpanan
-//Route::middleware(['auth', 'role:pengurus'])->group(function () {
-// Route::get('/simpanan/sukarela', [App\Http\Controllers\SimpananController::class, 'indexSukarela'])->name('admin.layouts.simpanan.sukarela.index');
-// Route::get('/simpanan/wajib', [App\Http\Controllers\SimpananController::class, 'indexWajib'])->name('admin.layouts.simpanan.wajib.index');
-   Route::get('/simpanan/sukarela/pending', [App\Http\Controllers\SimpananSukarelaController::class, 'indexPending'])->name('simpanan.sukarela.pending');
-   Route::patch('/simpanan/sukarela/{simpanan}/process', [App\Http\Controllers\SimpananSukarelaController::class, 'process'])->name('simpanan.sukarela.process');
-   Route::get('/simpanan/sukarela/laporan', [App\Http\Controllers\SimpananSukarelaController::class, 'laporan'])->name('simpanan.sukarela.laporan');
-//});
-
-// Route untuk anggota mengajukan Simpanan Sukarela
-// Route::middleware(['auth', 'role:anggota'])->group(function () {
-   Route::get('/simpanan/sukarela', [App\Http\Controllers\SimpananSukarelaController::class, 'index'])->name('user.simpanan.sukarela.index');
-   Route::post('/simpanan/sukarela', [App\Http\Controllers\SimpananSukarelaController::class, 'store'])->name('user.simpanan.sukarela.store');
-// });
-
-
-Route::prefix('admin/simpanan')->middleware('auth')->group(function () {
+// Simpanan (Admin)
+Route::prefix('admin/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
     Route::get('transactions', [SimpananController::class, 'index'])->name('admin.simpanan.index');
     Route::get('transactions/{transaction}/edit', [SimpananController::class, 'edit'])->name('admin.simpanan.edit');
     Route::put('transactions/{transaction}', [SimpananController::class, 'update'])->name('admin.simpanan.update');
     Route::post('generate', [SimpananController::class, 'generate'])->name('admin.simpanan.generate');
 });
 
+// Simpanan Sukarela - Pengurus
+Route::middleware(['auth', 'role:pengurus'])->group(function () {
+    Route::get('/admin/simpanan/sukarela/pending', [SimpananSukarelaController::class, 'indexPending'])->name('admin.simpanan.kelola.pending');
+    Route::post('/admin/simpanan/sukarela/{simpanan}/process', [SimpananSukarelaController::class, 'process'])->name('admin.simpanan.sukarela.process');
+});
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dasboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/simpanan/sukarela', [SimpananSukarelaController::class, 'index'])
+        ->name('user.simpanan.sukarela.index');
+    Route::post('/simpanan/sukarela', [SimpananSukarelaController::class, 'store'])
+        ->name('simpanan.sukarela.store');
+});

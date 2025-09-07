@@ -1,46 +1,38 @@
 @extends('user.index')
 
+@section('title', 'Simpanan Sukarela')
+
 @section('content')
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-    <h2 class="text-2xl sm:text-3xl font-semibold mb-6 text-center sm:text-left">Simpanan Sukarela</h2>
+    <div class="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-md">
+        <h2 class="text-xl font-semibold mb-4">Ajukan Simpanan Sukarela</h2>
 
-    {{-- Notifikasi --}}
-    @if(session('success'))
-        <div class="mb-4 p-3 bg-green-100 border border-green-300 text-green-700 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
+        @if (session('success'))
+            <div class="p-3 mb-4 text-green-700 bg-green-100 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
 
-    {{-- Form pengajuan full width --}}
-    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md mt-6 w-full">
-        <form action="{{ route('user.simpanan.sukarela.store') }}" method="POST" class="space-y-4 w-full">
+        <form method="POST" action="{{ route('simpanan.sukarela.store') }}" class="space-y-4">
             @csrf
             <div>
-                <label for="amount" class="block font-medium mb-1">Nominal Pengajuan</label>
-                <input type="number" id="amount" name="amount" min="1000" required 
-                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                       placeholder="Masukkan nominal pengajuan">
+                <label for="amount" class="block text-sm font-medium">Jumlah Simpanan</label>
+                <input type="number" name="amount" id="amount" class="w-full mt-1 p-2 border rounded-lg"
+                    placeholder="Minimal 1000" required>
             </div>
 
             <div>
-                <label for="month" class="block font-medium mb-1">Bulan Simpanan</label>
-                <input type="month" id="month" name="month" required
-                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="month" class="block text-sm font-medium">Bulan</label>
+                <input type="month" name="month" id="month" class="w-full mt-1 p-2 border rounded-lg" required>
             </div>
 
             <div>
-                <label for="note" class="block font-medium mb-1">Catatan (opsional)</label>
-                <textarea id="note" name="note" placeholder="Alasan pengajuan"
-                          class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <label for="note" class="block text-sm font-medium">Catatan (opsional)</label>
+                <textarea name="note" id="note" rows="2" class="w-full mt-1 p-2 border rounded-lg"></textarea>
             </div>
 
-            <div class="text-center sm:text-left">
-                <button type="submit" 
-                        class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors w-full sm:w-auto">
-                    Kirim Pengajuan
-                </button>
-            </div>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Ajukan Simpanan
+            </button>
         </form>
     </div>
-</div>
 @endsection
