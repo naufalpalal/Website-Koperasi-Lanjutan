@@ -82,6 +82,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/simpanan/sukarela', [SimpananSukarelaController::class, 'index'])
         ->name('user.simpanan.sukarela.index');
-    Route::post('/simpanan/sukarela', [SimpananSukarelaController::class, 'store'])
-        ->name('simpanan.sukarela.store');
+    Route::put('/simpanan/sukarela/{id}', [SimpananSukarelaController::class, 'update'])
+        ->name('simpanan.sukarela.update');
 });

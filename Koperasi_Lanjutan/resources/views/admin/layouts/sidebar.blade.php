@@ -1,12 +1,3 @@
-<!-- Responsive Sidebar Navigation -->
-<!-- Toggle Button (visible on mobile) -->
-<button id="sidebarToggle" class="absolute top-4 left-4 z-60 sm:hidden focus:outline-none">
-    <!-- Hamburger Icon -->
-    <svg class="h-5 w-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" />
-    </svg>
-</button>
-
 <!-- Sidebar -->
 <aside id="sidebar"
     class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white flex-col justify-between z-50 shadow-lg transform -translate-x-full sm:translate-x-0 sm:flex transition-transform duration-300 hidden sm:flex">

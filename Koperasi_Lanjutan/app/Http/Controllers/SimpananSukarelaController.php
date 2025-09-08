@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-
 class SimpananSukarelaController extends Controller
 {
-
+    /**
+     * Anggota melihat daftar simpanan sukarela
+     */
     public function index()
     {
         $userId = Auth::id();
@@ -21,58 +22,34 @@ class SimpananSukarelaController extends Controller
 
         return view('user.simpanan.sukarela.index', compact('sukarela'));
     }
+
     /**
-     * Anggota mengajukan Simpanan Sukarela
+     * Anggota mengajukan perubahan nominal simpanan sukarela
      */
-    public function store(Request $request)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'amount' => 'required|numeric|min:1000',
-            'note' => 'nullable|string',
-            'month' => 'required|date_format:Y-m', // contoh: 2025-09
+            'note'   => 'nullable|string',
         ]);
 
-        $month = $request->month . '-01'; // simpan dalam format DATE
+        $sukarela = Simpanan::where('id', $id)
+            ->where('member_id', Auth::id())
+            ->where('type', 'sukarela')
+            ->firstOrFail();
 
-        $sukarela = Simpanan::firstOrCreate(
-            [
-                'member_id' => Auth::id(),
-                'month' => $month,
-                'type' => 'sukarela',
-            ],
-            [
-                'amount' => 0,
-                'status' => 'pending',
-            ]
-        );
-
-        // update data yang diisi anggota
         $sukarela->update([
             'amount' => $request->amount,
-            'note' => $request->note,
-            'status' => 'pending',
+            'note'   => $request->note,
+            'status' => 'pending', // reset status setelah ada perubahan
         ]);
 
         return redirect()->route('user.simpanan.sukarela.index')
-            ->with('success', 'Pengajuan Simpanan Sukarela berhasil diajukan dan menunggu persetujuan.');
-
-        // kirim notifikasi ke pengurus via WA
-        // $message = "📢 Pengajuan Simpanan Sukarela Baru\n\n"
-        //     . "Anggota: {$sukarela->member->nama}\n"
-        //     . "Bulan: {$request->month}\n"
-        //     . "Jumlah: Rp " . number_format($request->amount, 0, ',', '.') . "\n"
-        //     . "Catatan: {$request->note}\n\n"
-        //     . "Status: Pending (menunggu persetujuan Anda)";
-
-        // // ganti nomor pengurus (contoh: 6281234567890)
-        // $phone = "6281234567890";
-        // $waUrl = "https://wa.me/{$phone}?text=" . urlencode($message);
-
-        // return redirect()->away($waUrl);
+            ->with('success', 'Perubahan simpanan sukarela berhasil diajukan dan menunggu persetujuan pengurus.');
     }
 
     /**
-     * Pengurus melihat semua pengajuan Sukarela yang pending
+     * Pengurus melihat semua pengajuan perubahan yang pending
      */
     public function indexPending()
     {
@@ -85,38 +62,21 @@ class SimpananSukarelaController extends Controller
     }
 
     /**
-     * Pengurus memproses pengajuan (approve / reject)
+     * Pengurus memproses pengajuan perubahan
      */
     public function process(Request $request, Simpanan $simpanan)
     {
         $request->validate([
             'status' => 'required|in:success,failed',
-            'note' => 'nullable|string',
+            'note'   => 'nullable|string',
         ]);
 
-        // update status sesuai keputusan pengurus
         $simpanan->update([
             'status' => $request->status,
-            'note' => $request->note ?? $simpanan->note,
+            'note'   => $request->note ?? $simpanan->note,
         ]);
 
         return redirect()->route('admin.simpanan.kelola.pending')
-            ->with('success', 'Pengajuan Simpanan Sukarela telah diproses.');
-
-        // notifikasi ke anggota
-        // $message = "Halo {$simpanan->member->nama},\n\n"
-        //     . "Pengajuan Simpanan Sukarela bulan "
-        //     . Carbon::parse($simpanan->month)->format('F Y')
-        //     . " telah diproses.\n"
-        //     . "Status: *{$simpanan->status}*\n";
-
-        // if ($simpanan->note) {
-        //     $message .= "Catatan: {$simpanan->note}";
-        // }
-
-        // $phone = preg_replace('/^0/', '62', $simpanan->member->no_telepon);
-        // $waUrl = "https://wa.me/{$phone}?text=" . urlencode($message);
-
-        // return redirect()->away($waUrl);
+            ->with('success', 'Perubahan simpanan sukarela telah diproses.');
     }
 }

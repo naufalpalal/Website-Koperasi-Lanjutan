@@ -1,5 +1,7 @@
 @extends ('admin.index')
 
+@extends ('admin.layouts.sidebar')
+
 @section('content')
 
 <!-- 🔍 Search & Profile -->
