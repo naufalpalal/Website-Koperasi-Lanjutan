@@ -1,12 +1,12 @@
 @extends ('admin.index')
 
-@extends ('admin.layouts.sidebar')
 @extends ('admin.layouts.navbar')
+@extends ('admin.layouts.sidebar')
 @section('content')
 
 
     <div class="container">
-        <div class="mb-6">
+        <div class="mb-6 pt-10">
             <div class="text-gray-700 font-semibold mb-2 ml-10">Statistik Koperasi</div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white rounded-xl shadow p-4 flex items-center gap-3">

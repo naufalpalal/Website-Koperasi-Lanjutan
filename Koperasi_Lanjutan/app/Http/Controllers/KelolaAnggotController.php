@@ -35,6 +35,7 @@ class KelolaAnggotController extends Controller
             'tempat_lahir'  => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',
             'alamat_rumah'  => 'nullable|string|max:255',
+            'simpanan_sukarela_awal'=> 'required|numeric|min:10000',
         ]);
 
         // buat user baru
@@ -50,13 +51,11 @@ class KelolaAnggotController extends Controller
             'status'        => 'aktif',
         ]);
 
-        // default simpanan sukarela awal
-        $nominalAwal = 40000;
 
         Simpanan::create([
             'member_id' => $user->id,
             'type'      => 'sukarela',
-            'amount'    => $nominalAwal,
+            'amount'    => $validated['simpanan_sukarela_awal'],
             'note'      => 'Simpanan sukarela awal saat registrasi',
             'month'     => now()->format('Y-m-01'),
             'status'    => 'success',
