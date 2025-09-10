@@ -28,6 +28,12 @@ class User extends Authenticatable
         'role',
     ];
 
+    // Relasi ke Simpanan
+    public function simpanan()
+    {
+        return $this->hasMany(Simpanan::class, 'member_id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

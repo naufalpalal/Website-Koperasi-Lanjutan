@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Simpanan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +37,30 @@ class KelolaAnggotController extends Controller
             'alamat_rumah'  => 'nullable|string|max:255',
         ]);
 
-        User::create($validated);
+        // buat user baru
+        $user = User::create([
+            'nama'          => $validated['nama'],
+            'no_telepon'    => $validated['no_telepon'],
+            'password'      => isset($validated['password']) ? bcrypt($validated['password']) : bcrypt('default123'),
+            'nip'           => $validated['nip'] ?? null,
+            'tempat_lahir'  => $validated['tempat_lahir'] ?? null,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+            'alamat_rumah'  => $validated['alamat_rumah'] ?? null,
+            'role'          => 'anggota',
+            'status'        => 'aktif',
+        ]);
+
+        // default simpanan sukarela awal
+        $nominalAwal = 40000;
+
+        Simpanan::create([
+            'member_id' => $user->id,
+            'type'      => 'sukarela',
+            'amount'    => $nominalAwal,
+            'note'      => 'Simpanan sukarela awal saat registrasi',
+            'month'     => now()->format('Y-m-01'),
+            'status'    => 'success',
+        ]);
 
         return redirect()->route('admin.anggota.index')
                          ->with('success', 'Anggota berhasil ditambahkan');
