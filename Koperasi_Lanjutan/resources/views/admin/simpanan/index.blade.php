@@ -2,8 +2,9 @@
 
 @section('title', 'Transaksi Simpanan Bulanan')
 
+@extends('admin.layouts.navbar')
 @section('content')
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 pt-12">
         <div class="bg-white rounded-xl shadow p-6">
             <h1 class="text-2xl font-semibold text-gray-700 mb-6">Transaksi Simpanan Bulanan</h1>
 

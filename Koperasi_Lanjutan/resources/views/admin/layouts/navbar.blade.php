@@ -1,4 +1,4 @@
-<div class="fixed top-0 left-64 right-0 h-16 bg-gray-900 text-white flex items-center justify-between px-6 shadow z-40">
+<div class="fixed top-0 left-64 right-0 py-6 bg-gray-900 text-white flex items-center justify-between px-6 shadow z-40">
 
     {{-- Search Box --}}
     <div class="flex-1 max-w-lg">

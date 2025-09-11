@@ -1,9 +1,10 @@
 @extends('admin.index')
 
 @section('title', 'Persetujuan Simpanan Sukarela')
+@extends('admin.layouts.navbar')
 
 @section('content')
-    <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md mt-24 p-6">
         <h2 class="text-xl font-semibold mb-4">Daftar Pengajuan Perubahan Simpanan Sukarela</h2>
 
         @if (session('success'))

@@ -1,9 +1,10 @@
 @extends('admin.index')
 
 @section('title', 'Kelola Anggota')
+@extends('admin.layouts.navbar')
 
 @section('content')
-<div class="container mx-auto">
+<div class="container mx-auto pt-12 px-10">
     <div class="bg-white rounded-xl shadow p-6">
         <div class="flex justify-between items-center border-b pb-4 mb-4">
             <h5 class="text-xl font-semibold text-gray-700">Kelola Anggota</h5>
