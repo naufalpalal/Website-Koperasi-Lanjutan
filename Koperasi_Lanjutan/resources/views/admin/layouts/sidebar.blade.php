@@ -35,7 +35,7 @@
                 </button>
                 <!-- Submenu -->
                 <div x-show="open" x-collapse class="ml-6 mt-1 space-y-1">
-                    <a href="#"
+                    <a href="{{ route('admin.nominal_wajib.edit') }}"
                     class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                         Nominal Wajib & cetak tagihan
                     </a>
