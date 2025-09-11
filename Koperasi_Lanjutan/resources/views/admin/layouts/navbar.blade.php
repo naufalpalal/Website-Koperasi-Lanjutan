@@ -5,7 +5,7 @@
         <input 
             type="text" 
             placeholder="Search"
-            class="w-full bg-zinc-950 text-white text-sm rounded-full py-2 px-4 focus:outline-none border border-gray-700 focus:border-blue-500 transition-colors duration-200"
+            class="w-full bg-zinc-950 text-black text-sm rounded-full py-2 px-4 focus:outline-none border border-gray-700 focus:border-blue-500 transition-colors duration-200"
         >
     </div>
 

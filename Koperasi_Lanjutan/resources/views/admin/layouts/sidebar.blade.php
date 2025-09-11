@@ -22,10 +22,44 @@
                 class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                 Kelola Anggota
                 </a>
-                <a href="{{ route('admin.simpanan.index') }}" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                    Kelola Simpanan
-                </a>  
-
+                <div x-data="{ open: false }">
+                <!-- Menu utama -->
+                <button @click="open = !open"
+                        class="flex items-center justify-between w-full px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
+                    <span>Simpanan Wajib</span>
+                    <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform" 
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <!-- Submenu -->
+                <div x-show="open" x-collapse class="ml-6 mt-1 space-y-1">
+                    <a href="#"
+                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                        Nominal Wajib & cetak tagihan
+                    </a>
+                </div>
+            </div>
+            <div x-data="{ open: false }">
+                <!-- Menu utama -->
+                <button @click="open = !open"
+                        class="flex items-center justify-between w-full px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
+                    <span>Simpanan Sukarela</span>
+                    <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform" 
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <!-- Submenu -->
+                <div x-show="open" x-collapse class="ml-6 mt-1 space-y-1">
+                    <a href="#"
+                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                        Nominal Sukarela & cetak tagihan
+                    </a>
+                </div>
+            </div>  
                 <a href="{{ route('admin.simpanan.kelola.pending') }}" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pengajuan Simpanan Sukarela
                 </a>
