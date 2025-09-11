@@ -33,7 +33,7 @@
                         <th class="border p-2">Alamat</th>
                         <th class="border p-2">Tempat, Tanggal Lahir</th>
                         <th class="border p-2">Simpanan Sukarela</th>
-                        <th class="border p-2">Aksi</th>
+                        <th class="border p-2 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,22 +53,21 @@
                         <td class="border p-2 text-gray-600 text-center">
                             Rp{{ number_format($a->simpanan()->where('type','sukarela')->sum('amount'), 0, ',', '.') }}
                         </td>
-                        <td class="border p-2 text-center">
-                            <div class="flex justify-center items-center gap-2">
+                        <td class="border p-2 text-center align-middle">
+                            <div class="flex flex-row justify-center items-center gap-2">
                                 <a href="{{ route('admin.anggota.edit', $a->id) }}" 
-                                   class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-md text-sm shadow flex items-center min-w-[80px] justify-center">
+                                   class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center justify-center min-w-[70px] min-h-[40px]">
                                     <i class="bi bi-pencil-square mr-1"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.anggota.destroy', $a->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.anggota.destroy', $a->id) }}" method="POST" class="m-0 p-0">
                                     @csrf
                                     @method('DELETE')
                                     <button onclick="return confirm('Yakin ingin menghapus?')" 
-                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm shadow flex items-center min-w-[80px] justify-center">
+                                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center justify-center min-w-[70px] min-h-[40px]">
                                         <i class="bi bi-trash mr-1"></i> Hapus
                                     </button>
                                 </form>
                             </div>
-                        </td>
                         </td>
                     </tr>
                     @endforeach
