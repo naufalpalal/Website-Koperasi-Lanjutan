@@ -14,7 +14,7 @@ class KelolaAnggotController extends Controller
     // Tampilkan semua anggota
     public function index()
     {
-        $anggota = User::all();
+        $anggota = User::where('role', 'anggota')->get();
         return view('admin.anggota.index', compact('anggota'));
     }
 
