@@ -13,6 +13,15 @@
                 Kembali
             </a>
         </div>
+        @if ($errors->any())
+            <div class="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded">
+                <ul class="list-disc list-inside text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         {{-- Form --}}
         <form action="{{ route('admin.anggota.store') }}" method="POST" novalidate>
@@ -39,6 +48,19 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <div class="mb-4">
+                    <label for="simpanan_sukarela_awal" class="block text-sm font-medium text-gray-700">
+                        Simpanan Sukarela Awal <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="simpanan_sukarela_awal" name="simpanan_sukarela_awal"
+                        value="{{ old('simpanan_sukarela_awal', 10000) }}"
+                        class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none
+                                @error('simpanan_sukarela_awal') border-red-500 @enderror">
+                    @error('simpanan_sukarela_awal')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
                     <div class="mb-4">
                         <label for="nip" class="block text-sm font-medium text-gray-700">NIP</label>
