@@ -21,6 +21,14 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+
+        Schema::create('wajib', function (Blueprint $table) {
+            $table->id();
+            $table->integer('amount'); // nominal wajib
+            $table->date('start_date'); // aturan berlaku mulai bulan ini
+            $table->timestamps();
+        });
+
     }
 
     /**
@@ -29,5 +37,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('simpanan');
+        Schema::dropIfExists('wajib');
     }
 };

@@ -4,43 +4,58 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Simpanan;
+use App\Models\wajib;
 use Illuminate\Http\Request;
 // use App\Services\WhatsappService;
 use App\Models\User;
 use Carbon\Carbon;
 
-class SimpananController extends Controller
+
+class SimpananWajibController extends Controller
 {
     public function index(Request $request)
     {
-        // default bulan = bulan sekarang
         $bulan = $request->input('bulan', now()->format('Y-m-01'));
 
-        // Ambil data simpanan grup per anggota & bulan
         $transactions = Simpanan::with('member')
             ->where('month', $bulan)
+            ->whereHas('member', function ($q) {
+                $q->where('role', 'anggota');
+            })
             ->get()
             ->groupBy('member_id');
 
-        // daftar bulan untuk dropdown (misalnya 12 bulan terakhir)
         $bulanList = [];
         for ($i = 0; $i < 12; $i++) {
             $bulanList[] = now()->subMonths($i)->format('Y-m-01');
         }
 
-        return view('admin.simpanan.index', compact('transactions', 'bulan', 'bulanList'));
+        return view('admin.simpanan.wajib.wajib', compact('transactions', 'bulan', 'bulanList'));
     }
 
-    public function edit(Simpanan $transaction)
+    // public function edit(Simpanan $transaction)
+    // {
+    //     // Ambil semua simpanan bulan yang sama (wajib & sukarela)
+    //     $simpanans = Simpanan::where('member_id', $transaction->member_id)
+    //         ->where('month', $transaction->month)
+    //         ->get();
+
+    //     return view('admin.simpanan.edit', compact('simpanans', 'transaction'));
+    // }
+    public function store(Request $request)
     {
-        // Ambil semua simpanan bulan yang sama (wajib & sukarela)
-        $simpanans = Simpanan::where('member_id', $transaction->member_id)
-            ->where('month', $transaction->month)
-            ->get();
+        $request->validate([
+            'amount' => 'required|numeric|min:1000',
+            'start_date' => 'required|date',
+        ]);
 
-        return view('admin.simpanan.edit', compact('simpanans', 'transaction'));
+        wajib::create([
+            'amount' => $request->amount,
+            'start_date' => Carbon::parse($request->start_date)->startOfMonth()
+        ]);
+
+        return back()->with('success', 'Aturan simpanan wajib baru berhasil ditambahkan');
     }
-
 
     public function update(Request $request, Simpanan $transaction)
     {
@@ -81,26 +96,30 @@ class SimpananController extends Controller
     }
     public function generate()
     {
+        if (auth()->user()->role !== 'pengurus') {
+            abort(403, 'Anda tidak memiliki akses untuk generate simpanan.');
+        }
         $bulanSekarang = now()->format('Y-m-01');
         $bulanLalu = now()->subMonth()->format('Y-m');
+        $nominal = $this->getNominalWajib($bulanSekarang);
 
         $anggota = User::where('role', 'anggota')->get();
 
         foreach ($anggota as $a) {
-            // Cek simpanan wajib bulan lalu
+
             $wajibLalu = Simpanan::where('member_id', $a->id)
                 ->where('month', $bulanLalu)
                 ->where('type', 'wajib')
                 ->first();
 
-            $amountWajib = 50000; // nominal default wajib
+            $amountWajib = $nominal;
 
-            // Jika bulan lalu failed, dobel
+
             if ($wajibLalu && $wajibLalu->status === 'failed') {
                 $amountWajib = $amountWajib * 2;
             }
 
-            // Generate wajib bulan ini
+            // Generate simpanan wajib bulan ini
             Simpanan::firstOrCreate(
                 [
                     'member_id' => $a->id,
@@ -112,22 +131,16 @@ class SimpananController extends Controller
                     'status' => 'pending',
                 ]
             );
-
-            // Generate sukarela bulan ini (opsional, default 0 atau tidak ada?)
-            $sukarela = Simpanan::firstOrCreate(
-                [
-                    'member_id' => $a->id,
-                    'month' => $bulanSekarang,
-                    'type' => 'sukarela',
-                ],
-                [
-                    'amount' => 0, // default, anggota isi sendiri kalau mau
-                    'status' => 'pending',
-                ]
-            );
         }
 
-        return back()->with('success', 'Simpanan bulan ini berhasil dibuat!');
+        return back()->with('success', 'Simpanan wajib bulan ini berhasil dibuat!');
+    }
+
+    public function getNominalWajib($bulan)
+    {
+        return wajib::where('start_date', '<=', $bulan)
+            ->orderBy('start_date', 'desc')
+            ->value('amount');
     }
 
 

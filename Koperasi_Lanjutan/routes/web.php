@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelolaAnggotController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PinjamanController;
-use App\Http\Controllers\Admin\SimpananController;
 use App\Http\Controllers\SimpananSukarelaController;
-use App\Http\Controllers\SimpananWajibController;
+use App\Http\Controllers\Admin\SimpananWajibController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -62,10 +61,12 @@ Route::get('/pinjaman', [PinjamanController::class, 'index'])->name('admin.pinja
 
 // Simpanan (Admin)
 Route::prefix('admin/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
-    Route::get('transactions', [SimpananController::class, 'index'])->name('admin.simpanan.index');
-    Route::get('transactions/{transaction}/edit', [SimpananController::class, 'edit'])->name('admin.simpanan.edit');
-    Route::put('transactions/{transaction}', [SimpananController::class, 'update'])->name('admin.simpanan.update');
-    Route::post('generate', [SimpananController::class, 'generate'])->name('admin.simpanan.generate');
+    Route::get('transactions', [SimpananWajibController::class, 'index'])->name('admin.simpanan.wajib.wajib');
+    Route::get('transactions/{transaction}/edit', [SimpananWajibController::class, 'edit'])->name('admin.simpanan.edit');
+    Route::put('transactions/{transaction}', [SimpananWajibController::class, 'update'])->name('admin.simpanan.update');
+    Route::post('generate', [SimpananWajibController::class, 'generate'])->name('admin.simpanan.generate');
+    Route::post('/aturan-wajib', [SimpananWajibController::class, 'store'])->name('admin.wajib.store');
+
 });
 
 // Simpanan Sukarela - Pengurus
@@ -88,8 +89,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Simpanan Wajib - Pengurus
-Route::middleware(['auth', 'role:pengurus'])->group(function () {
-    Route::get('/admin/nominal_wajib', [SimpananWajibController::class, 'index'])->name('admin.nominal_wajib.index');
-    Route::get('/admin/nominal_wajib/edit', [SimpananWajibController::class, 'editNominalWajib'])->name('admin.nominal_wajib.edit');
-    Route::post('/admin/nominal_wajib/update', [SimpananWajibController::class, 'updateNominalWajib'])->name('admin.nominal_wajib.update');
-});
+// Route::middleware(['auth', 'role:pengurus'])->group(function () {
+//     Route::get('/admin/nominal_wajib', [SimpananWajibController::class, 'index'])->name('admin.nominal_wajib.index');
+//     Route::get('/admin/nominal_wajib/edit', [SimpananWajibController::class, 'editNominalWajib'])->name('admin.nominal_wajib.edit');
+//     Route::post('/admin/nominal_wajib/update', [SimpananWajibController::class, 'updateNominalWajib'])->name('admin.nominal_wajib.update');
+// });
