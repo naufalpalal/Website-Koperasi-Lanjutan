@@ -1,3 +1,12 @@
+<!-- Responsive Sidebar Navigation -->
+<!-- Toggle Button (visible on mobile) -->
+<button id="sidebarToggle" class="absolute top-4 left-4 z-60 sm:hidden focus:outline-none">
+    <!-- Hamburger Icon -->
+    <svg class="h-5 w-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" />
+    </svg>
+</button>
+
 <!-- Sidebar -->
 <aside id="sidebar"
     class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white flex-col justify-between z-50 shadow-lg transform -translate-x-full sm:translate-x-0 sm:flex transition-transform duration-300 hidden sm:flex">
@@ -17,65 +26,46 @@
             <nav class="mt-6">
                 <a href="{{ route('admin.dashboard.index') }}"
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3z">
+                        </path>
+                    </svg>
                     Dashboard
                 </a>
                 <a href="{{ route('admin.anggota.index') }}"
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                     Kelola Anggota
                 </a>
-                <div x-data="{ open: false }">
-                    <!-- Menu utama -->
-                    <div x-data="{ open: false }">
-                        <!-- Menu utama -->
-                        <button @click="open = !open"
-                            class="flex items-center justify-between w-full px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
-                            <span>Simpanan</span>
-                            <svg :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
+                <a href="{{ route('admin.simpanan.index') }}"
+                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Kelola Simpanan
+                </a>
 
-                        <!-- Submenu -->
-                        <div x-show="open" x-collapse class="ml-6 mt-1 space-y-1">
-                            <a href="{{ route('admin.simpanan.wajib.wajib') }}"
-                                class="flex items-center px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
-                                Simpanan Wajib
-                            </a>
-                            <a href="#"
-                                class="flex items-center px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
-                                Simpanan Sukarela
-                            </a>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('admin.simpanan.kelola.pending') }}"
-                        class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Pengajuan Simpanan Sukarela
-                    </a>
-                    <a href="{{ route('admin.pinjaman.index') }}"
-                        class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Kelola Pinjaman
-                    </a>
+                <a href="{{ route('admin.simpanan.kelola.pending') }}"
+                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Pengajuan Simpanan Sukarela
+                </a>
+                <a href="{{ route('admin.pinjaman.index') }}"
+                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Kelola Pinjaman
+                </a>
 
 
 
-                    <a href="#"
-                        class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Pembayaran Pinjaman
-                    </a>
-                    <!-- <a href="{{ route('admin.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <a href="#" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Pembayaran Pinjaman
+                </a>
+                <!-- <a href="{{ route('admin.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pinjaman
                 </a> -->
-                    <a href="{{ route('admin.laporan.index') }}"
-                        class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Laporan
-                    </a>
-                    <a href="#"
-                        class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Kirim Notifikasi
-                    </a>
+                <a href="{{ route('admin.laporan.index') }}"
+                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Laporan
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                    Kirim Notifikasi
+                </a>
             </nav>
         </div>
         <!-- Logout -->
@@ -92,6 +82,20 @@
                 <span class="truncate">Logout</span>
             </button>
         </form>
+
+        <!-- User Info -->
+        <div class="border-t border-gray-700 px-6 py-4 flex items-center">
+            <a href="{{ route('profile.edit') }}" class="flex items-center">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User"
+                    class="h-10 w-10 rounded-full mr-3">
+                <div>
+                    <span class="font-semibold">mdo</span>
+                    <svg class="inline h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 9l6 6 6-6" stroke-width="2" />
+                    </svg>
+                </div>
+            </a>
+        </div>
     </div>
 </aside>
 

@@ -10,25 +10,30 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        // Tabel aturan simpanan
+        Schema::create('simpanan_rules', function (Blueprint $table) {
+            $table->id();
+            $table->enum('type', ['pokok', 'wajib']); // aturan hanya untuk pokok & wajib
+            $table->decimal('amount', 15, 2);         // nominal simpanan
+            $table->date('start_date');               // mulai berlaku
+            $table->date('end_date')->nullable();     // selesai berlaku (null = masih aktif)
+            $table->timestamps();
+        });
+
+        // Tabel simpanan anggota
         Schema::create('simpanan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained('users')->onDelete('cascade');
             $table->enum('type', ['pokok', 'wajib', 'sukarela']);
             $table->decimal('amount', 15, 2);
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
-            $table->string('note')->nullable(); // alasan gagal
-            $table->date('month')->nullable(); // bulan simpanan
+            $table->string('note')->nullable(); 
+            $table->date('month')->nullable(); 
+            $table->foreignId('rule_id')->nullable()
+                  ->constrained('simpanan_rules')
+                  ->nullOnDelete();
             $table->timestamps();
         });
-
-
-        Schema::create('wajib', function (Blueprint $table) {
-            $table->id();
-            $table->integer('amount'); // nominal wajib
-            $table->date('start_date'); // aturan berlaku mulai bulan ini
-            $table->timestamps();
-        });
-
     }
 
     /**
@@ -37,6 +42,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('simpanan');
-        Schema::dropIfExists('wajib');
+        Schema::dropIfExists('simpanan_rules');
     }
 };
