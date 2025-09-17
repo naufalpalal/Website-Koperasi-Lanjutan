@@ -81,14 +81,6 @@
         <!-- User Info -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">
-                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User"
-                    class="h-10 w-10 rounded-full mr-3">
-                <div>
-                    <span class="font-semibold">mdo</span>
-                    <svg class="inline h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 9l6 6 6-6" stroke-width="2" />
-                    </svg>
-                </div>
             </a>
         </div>
     </div>
