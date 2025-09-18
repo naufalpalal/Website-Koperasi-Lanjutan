@@ -57,7 +57,10 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
 
 // Pinjaman (Pengurus)
-Route::get('/pinjaman', [PinjamanController::class, 'index'])->name('admin.pinjaman.index');
+Route::prefix('admin/pinjaman')->middleware(['auth', 'role:pengurus'])->name('admin.pinjaman.')->group(function () {
+    Route::get('/', [PinjamanController::class, 'index'])->name('index');
+    Route::put('/{id}', [PinjamanController::class, 'update'])->name('update');
+});
 
 // Simpanan (Admin)
 Route::prefix('admin/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
