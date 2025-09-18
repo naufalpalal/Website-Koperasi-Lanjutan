@@ -26,11 +26,6 @@
             <nav class="mt-6">
                 <a href="{{ route('admin.dashboard.index') }}"
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3z">
-                        </path>
-                    </svg>
                     Dashboard
                 </a>
                 <a href="{{ route('admin.anggota.index') }}"
@@ -86,14 +81,6 @@
         <!-- User Info -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">
-                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User"
-                    class="h-10 w-10 rounded-full mr-3">
-                <div>
-                    <span class="font-semibold">mdo</span>
-                    <svg class="inline h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 9l6 6 6-6" stroke-width="2" />
-                    </svg>
-                </div>
             </a>
         </div>
     </div>

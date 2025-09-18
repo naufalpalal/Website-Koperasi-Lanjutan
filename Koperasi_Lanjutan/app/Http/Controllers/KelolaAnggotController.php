@@ -26,44 +26,68 @@ class KelolaAnggotController extends Controller
 
     // Simpan anggota baru
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama'          => 'required|string|max:255',
-            'no_telepon'    => 'required|string|max:20',
-            'password'      => 'nullable',
-            'nip'           => 'nullable|string|max:20',
-            'tempat_lahir'  => 'nullable|string|max:255',
-            'tanggal_lahir' => 'nullable|date',
-            'alamat_rumah'  => 'nullable|string|max:255',
-            'simpanan_sukarela_awal'=> 'required|numeric|min:10000',
-        ]);
+{
+    $validated = $request->validate([
+        'nama'          => 'required|string|max:255',
+        'no_telepon'    => 'required|string|max:20',
+        'password'      => 'nullable',
+        'nip'           => 'nullable|string|max:20',
+        'tempat_lahir'  => 'nullable|string|max:255',
+        'tanggal_lahir' => 'nullable|date',
+        'alamat_rumah'  => 'nullable|string|max:255',
 
-        // buat user baru
-        $user = User::create([
-            'nama'          => $validated['nama'],
-            'no_telepon'    => $validated['no_telepon'],
-            'password'      => isset($validated['password']) ? bcrypt($validated['password']) : bcrypt('default123'),
-            'nip'           => $validated['nip'] ?? null,
-            'tempat_lahir'  => $validated['tempat_lahir'] ?? null,
-            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-            'alamat_rumah'  => $validated['alamat_rumah'] ?? null,
-            'role'          => 'anggota',
-            'status'        => 'aktif',
-        ]);
+        // simpanan
+        'simpanan_pokok'        => 'required|numeric|min:10000',
+        'simpanan_wajib'        => 'required|numeric|min:10000',
+        'simpanan_sukarela_awal'=> 'required|numeric|min:10000',
+    ]);
 
+    // buat user baru
+    $user = User::create([
+        'nama'          => $validated['nama'],
+        'no_telepon'    => $validated['no_telepon'],
+        'password'      => isset($validated['password']) ? bcrypt($validated['password']) : bcrypt('default123'),
+        'nip'           => $validated['nip'] ?? null,
+        'tempat_lahir'  => $validated['tempat_lahir'] ?? null,
+        'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+        'alamat_rumah'  => $validated['alamat_rumah'] ?? null,
+        'role'          => 'anggota',
+        'status'        => 'aktif',
+    ]);
 
-        Simpanan::create([
-            'member_id' => $user->id,
-            'type'      => 'sukarela',
-            'amount'    => $validated['simpanan_sukarela_awal'],
-            'note'      => 'Simpanan sukarela awal saat registrasi',
-            'month'     => now()->format('Y-m-01'),
-            'status'    => 'success',
-        ]);
+    // Simpanan Pokok
+    Simpanan::create([
+        'member_id' => $user->id,
+        'type'      => 'pokok',
+        'amount'    => $validated['simpanan_pokok'],
+        'note'      => 'Simpanan pokok awal saat registrasi',
+        'month'     => now()->format('Y-m-01'),
+        'status'    => 'success',
+    ]);
 
-        return redirect()->route('admin.anggota.index')
-                         ->with('success', 'Anggota berhasil ditambahkan');
-    }
+    // Simpanan Wajib
+    Simpanan::create([
+        'member_id' => $user->id,
+        'type'      => 'wajib',
+        'amount'    => $validated['simpanan_wajib'],
+        'note'      => 'Simpanan wajib awal saat registrasi',
+        'month'     => now()->format('Y-m-01'),
+        'status'    => 'success',
+    ]);
+
+    // Simpanan Sukarela
+    Simpanan::create([
+        'member_id' => $user->id,
+        'type'      => 'sukarela',
+        'amount'    => $validated['simpanan_sukarela_awal'],
+        'note'      => 'Simpanan sukarela awal saat registrasi',
+        'month'     => now()->format('Y-m-01'),
+        'status'    => 'success',
+    ]);
+
+    return redirect()->route('admin.anggota.index')
+                     ->with('success', 'Anggota berhasil ditambahkan beserta simpanannya');
+}
 
     // Tampilkan form edit anggota
     public function edit($id)
@@ -85,6 +109,27 @@ class KelolaAnggotController extends Controller
             'tanggal_lahir' => 'nullable|date',
             'alamat_rumah'  => 'nullable|string|max:255',
         ]);
+
+         // Update simpanan sukarela
+    if ($request->filled('simpanan_sukarela')) {
+        $simpanan = $anggota->simpanan()
+                            ->where('type', 'sukarela')
+                            ->latest('id') // ambil yang terbaru
+                            ->first();
+
+        if ($simpanan) {
+            // update data lama
+            $simpanan->update([
+                'amount' => $request->simpanan_sukarela,
+            ]);
+        } else {
+            // kalau belum ada → buat baru
+            $anggota->simpanan()->create([
+                'type'   => 'sukarela',
+                'amount' => $request->simpanan_sukarela,
+            ]);
+        }
+    }
 
         $anggota->update($validated);
 

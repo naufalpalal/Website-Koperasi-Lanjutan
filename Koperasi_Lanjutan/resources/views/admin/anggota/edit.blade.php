@@ -42,6 +42,21 @@
                         @enderror
                     </div>
 
+                    <div class="mb-3">
+                    <label for="simpanan_pokok">Simpanan Pokok</label>
+                    <input type="number" name="simpanan_pokok" class="form-control" value="50000" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="simpanan_wajib">Simpanan Wajib</label>
+                    <input type="number" name="simpanan_wajib" class="form-control" value="40000" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="simpanan_sukarela">Simpanan Sukarela</label>
+                    <input type="number" name="simpanan_sukarela" class="form-control" value="{{ $anggota->simpanan()->where('type','sukarela')->latest()->value('amount') ?? 0 }}" required>
+                </div>
+
                     <div class="mb-4">
                         <label for="nip" class="block text-sm font-medium text-gray-700">NIP</label>
                         <input type="text" id="nip" name="nip" value="{{ old('nip', $anggota->nip) }}"

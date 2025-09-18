@@ -49,17 +49,19 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
-                    <label for="simpanan_sukarela_awal" class="block text-sm font-medium text-gray-700">
-                        Simpanan Sukarela Awal <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="simpanan_sukarela_awal" name="simpanan_sukarela_awal"
-                        value="{{ old('simpanan_sukarela_awal', 10000) }}"
-                        class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none
-                                @error('simpanan_sukarela_awal') border-red-500 @enderror">
-                    @error('simpanan_sukarela_awal')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <div class="mb-3">
+                    <label for="simpanan_pokok">Simpanan Pokok</label>
+                    <input type="number" name="simpanan_pokok" class="form-control" value="50000" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="simpanan_wajib">Simpanan Wajib</label>
+                    <input type="number" name="simpanan_wajib" class="form-control" value="40000" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="simpanan_sukarela_awal">Simpanan Sukarela Awal</label>
+                    <input type="number" name="simpanan_sukarela_awal" class="form-control" required>
                 </div>
 
                     <div class="mb-4">
