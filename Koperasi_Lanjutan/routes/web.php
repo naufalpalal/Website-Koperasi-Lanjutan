@@ -9,6 +9,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\SimpananSukarelaController;
 use App\Http\Controllers\Admin\SimpananController;
+use App\Http\Controllers\User\SimpananWajibController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -87,6 +88,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('user.simpanan.sukarela.index');
     Route::put('/simpanan/sukarela/{id}', [SimpananSukarelaController::class, 'update'])
         ->name('simpanan.sukarela.update');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('user.simpanan.wajib.index');
 });
 
 // Simpanan Wajib - Pengurus

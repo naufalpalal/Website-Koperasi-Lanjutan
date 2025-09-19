@@ -21,7 +21,6 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key ke tabel anggota
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
         });
     }
 

@@ -51,7 +51,7 @@
                         </svg>
                     </button>
                     <div x-show="open" @click.away="open = false" class="mt-1">
-                        <a href="#wajib" class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan
+                        <a href="{{ route('user.simpanan.wajib.index') }}" class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan
                             Wajib</a>
                         <a href="{{ route('user.simpanan.sukarela.index') }}"
                             class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan Sukarela</a>
