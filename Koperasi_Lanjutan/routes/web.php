@@ -112,6 +112,8 @@ Route::prefix('simpanan-sukarela')->group(function () {
     Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
     Route::post('/ajukan/{id}', [SimpananSukarelaController::class, 'ajukan'])->name('pengurus.simpanan.sukarela.ajukan');
     Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'acc'])->name('pengurus.simpanan.sukarela.acc');
+    Route::get('/pengajuan', [SimpananSukarelaController::class, 'pengajuanIndex'])->name('pengurus.simpanan.sukarela.pengajuan');
+    Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'accPerubahan'])->name('accPerubahan');
 });
 
 
@@ -120,4 +122,8 @@ Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
     Route::post('/ajukan-libur', [SimpananSukarelaAnggotaController::class, 'ajukanLibur'])->name('user.simpanan.sukarela.ajukanLibur');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
+    Route::get('/user/simpanan/sukarela/pengajuan', [SimpananSukarelaAnggotaController::class, 'pengajuanUserIndex'])
+        ->name('user.simpanan.sukarela.pengajuan');
+    Route::post('/ajukan-perubahan', [SimpananSukarelaAnggotaController::class, 'ajukanPerubahan'])->name('ajukanPerubahan'); // ⚡ ini penting
+
 });

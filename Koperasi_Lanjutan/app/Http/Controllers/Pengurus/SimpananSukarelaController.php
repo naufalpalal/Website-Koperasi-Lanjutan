@@ -62,4 +62,30 @@ class SimpananSukarelaController extends Controller
 
         return redirect()->back()->with('success', 'Pengajuan libur telah disetujui.');
     }
+
+     public function pengajuanIndex()
+    {
+        $pengajuan = SimpananSukarela::with('user')
+            ->where('status', 'Diajukan')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pengurus.simpanan.sukarela.pengajuan', compact('pengajuan'));
+    }
+
+    // ACC atau Tolak pengajuan
+    public function accPerubahan($id, $status)
+    {
+        $simpanan = SimpananSukarela::findOrFail($id);
+
+        if (!in_array($status, ['Dibayar', 'Ditolak'])) {
+            return redirect()->back()->with('error', 'Status tidak valid.');
+        }
+
+        $simpanan->update([
+            'status' => $status,
+        ]);
+
+        return redirect()->back()->with('success', "Pengajuan simpanan berhasil diperbarui menjadi $status.");
+    }
 }

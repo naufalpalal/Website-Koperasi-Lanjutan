@@ -58,4 +58,38 @@ class SimpananSukarelaAnggotaController extends Controller
 
         return view('user.simpanan.sukarela.riwayat', compact('riwayat'));
     }
+
+    public function pengajuanUserIndex()
+    {
+        $user = auth()->user();
+
+        // Ambil pengajuan yang pernah diajukan
+        $pengajuan = SimpananSukarela::where('users_id', $user->id)
+            ->where('status', 'Diajukan')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('user.simpanan.sukarela.pengajuan', compact('pengajuan'));
+    }
+
+    public function ajukanPerubahan(Request $request)
+    {
+        $request->validate([
+            'nilai_baru' => 'required|integer|min:1000',
+        ]);
+
+        $user = auth()->user();
+
+        SimpananSukarela::create([
+            'user_id' => $user->id,
+            'nilai' => $request->nilai_baru,
+            'tahun' => now()->year,
+            'bulan' => now()->month,
+            'status' => 'Diajukan',
+        ]);
+
+        return redirect()->back()->with('success', 'Pengajuan perubahan nominal berhasil dikirim.');
+    }
+
+
 }
