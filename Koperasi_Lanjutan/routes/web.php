@@ -10,6 +10,7 @@ use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\pengurus\SimpananController;
 use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
+use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -83,12 +84,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dasboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/simpanan/sukarela', [SimpananSukarelaController::class, 'index'])
-        ->name('user.simpanan.sukarela.index');
-    Route::put('/simpanan/sukarela/{id}', [SimpananSukarelaController::class, 'update'])
-        ->name('simpanan.sukarela.update');
-});
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/simpanan/sukarela', [SimpananSukarelaController::class, 'index'])
+//         ->name('user.simpanan.sukarela.index');
+//     Route::put('/simpanan/sukarela/{id}', [SimpananSukarelaController::class, 'update'])
+//         ->name('simpanan.sukarela.update');
+// });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('user.simpanan.wajib.index');
@@ -111,4 +112,12 @@ Route::prefix('simpanan-sukarela')->group(function () {
     Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
     Route::post('/ajukan/{id}', [SimpananSukarelaController::class, 'ajukan'])->name('pengurus.simpanan.sukarela.ajukan');
     Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'acc'])->name('pengurus.simpanan.sukarela.acc');
+});
+
+
+// Simpanan Sukarela - Anggota
+Route::prefix('simpanan-sukarela-anggota')->group(function () {
+    Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
+    Route::post('/ajukan-libur', [SimpananSukarelaAnggotaController::class, 'ajukanLibur'])->name('user.simpanan.sukarela.ajukanLibur');
+    Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
 });
