@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\user\SimpananWajib;
-//use App\Models\MasterSimpananWajib;
+// use App\Models\MasterSimpananWajib;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class SimpananWajibController extends Controller
         $userId = Auth::id();
 
         // Ambil kewajiban simpanan bulan/tahun ini
-        $master = MasterSimpananWajib::where('tahun', $tahun)
+        $master = SimpananWajib::where('tahun', $tahun)
                     ->where('bulan', $bulan)
                     ->where('users_id', $userId)
                     ->first();
@@ -56,10 +56,10 @@ class SimpananWajibController extends Controller
             ]);
 
             // Kirim notifikasi
-            $user = Auth::user();
-            Notification::send($user, new SimpananNotification(
-                "Pemotongan simpanan wajib bulan $bulan/$tahun gagal karena gaji tidak mencukupi."
-            ));
+            // $user = Auth::user();
+            // Notification::send($user, new SimpananNotification(
+            //     "Pemotongan simpanan wajib bulan $bulan/$tahun gagal karena gaji tidak mencukupi."
+            // ));
         }
     }
 }

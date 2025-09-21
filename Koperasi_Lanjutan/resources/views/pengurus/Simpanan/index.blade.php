@@ -1,8 +1,8 @@
-@extends('admin.index')
+@extends('pengurus.index')
 
 @section('title', 'Transaksi Simpanan Bulanan')
 
-@extends('admin.layouts.navbar')
+@extends('pengurus.layouts.navbar')
 
 @section('content')
     <div class="container mx-auto pt-12 px-10">
@@ -10,7 +10,7 @@
             <h1 class="text-2xl font-semibold text-gray-700 mb-6">Transaksi Simpanan Bulanan</h1>
 
             {{-- Filter Bulan --}}
-            <form method="GET" action="{{ route('admin.simpanan.index') }}" class="mb-6 flex items-center gap-3">
+            <form method="GET" action="{{ route('pengurus.simpanan.index') }}" class="mb-6 flex items-center gap-3">
                 <label for="bulan" class="text-gray-700 font-medium">Pilih Bulan:</label>
                 <div class="relative">
                     <select name="bulan" id="bulan"
@@ -76,7 +76,7 @@
                                     Rp {{ number_format($total, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-2">
-                                    <a href="{{ route('admin.simpanan.edit', $wajib->id ?? $sukarela->id) }}"
+                                    <a href="{{ route('pengurus.simpanan.edit', $wajib->id ?? $sukarela->id) }}"
                                         class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm shadow">
                                         Update
                                     </a>
@@ -95,7 +95,7 @@
 
             {{-- Tombol Generate hanya untuk bulan sekarang --}}
             @if ($bulan === now()->format('Y-m-01'))
-                <form action="{{ route('admin.simpanan.generate') }}" method="POST" class="mt-6">
+                <form action="{{ route('pengurus.simpanan.generate') }}" method="POST" class="mt-6">
                     @csrf
                     <button
                         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow transition font-medium">

@@ -4,6 +4,7 @@ namespace App\Models\user;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 
 class SimpananWajib extends Model
 {

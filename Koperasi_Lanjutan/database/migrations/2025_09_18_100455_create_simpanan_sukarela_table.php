@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,7 +15,7 @@ return new class extends Migration
             $table->integer('nilai');
             $table->integer('tahun');
             $table->integer('bulan');
-            $table->enum('status', ['Diajukan', 'Dibayar'])->default('Diajukan');
+            $table->enum('status', ['Diajukan', 'Dibayar', 'Ditarik', 'Libur'])->default('Diajukan');
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

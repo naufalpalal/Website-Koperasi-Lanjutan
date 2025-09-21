@@ -21,7 +21,7 @@
     </main>
 
     <!-- Footer Navigation -->
-    @include('admin.layouts.sidebar')
+    @include('pengurus.layouts.sidebar')
 </body>
 
 </html>

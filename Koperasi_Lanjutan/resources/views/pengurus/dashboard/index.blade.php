@@ -1,6 +1,6 @@
-@extends ('admin.index')
-@extends ('admin.layouts.navbar')
-@extends ('admin.layouts.sidebar')
+@extends ('pengurus.index')
+@extends ('pengurus.layouts.navbar')
+@extends ('pengurus.layouts.sidebar')
 @section('content')
 
 <div class="container mx-auto px-4 pt-12">

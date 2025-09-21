@@ -31,7 +31,7 @@ class UserController extends Controller
             // Redirect sesuai role
             switch ($user->role) {
                 case 'pengurus':
-                    return redirect()->route('admin.dashboard.index'); // kalau ada dashboard khusus pengurus bisa diarahkan ke sana
+                    return redirect()->route('pengurus.dashboard.index'); // kalau ada dashboard khusus pengurus bisa diarahkan ke sana
                    
                 case 'anggota':
                     return redirect()->route('user.dashboard.index');
@@ -39,7 +39,7 @@ class UserController extends Controller
                 default:
                     Auth::logout();
                     return redirect()->route('login')->withErrors([
-                        'role' => 'Role tidak dikenali. Hubungi admin.',
+                        'role' => 'Role tidak dikenali. Hubungi pengurus.',
                     ]);
             }
         }
@@ -53,11 +53,11 @@ class UserController extends Controller
 
     public function dashboard()
     {
-        return view('admin.index');
+        return view('pengurus.index');
     }
     public function dashboardView()
     {
-        return view('admin.dashboard.index');
+        return view('pengurus.dashboard.index');
     }
 
     public function dashboardUserView()

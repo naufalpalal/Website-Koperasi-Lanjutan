@@ -24,24 +24,55 @@
             </div>
             <!-- Menu Items -->
             <nav class="mt-6">
-                <a href="{{ route('admin.dashboard.index') }}"
+                <a href="{{ route('pengurus.dashboard.index') }}"
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                     Dashboard
                 </a>
-                <a href="{{ route('admin.anggota.index') }}"
+                <a href="{{ route('pengurus.anggota.index') }}"
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                     Kelola Anggota
                 </a>
-                <a href="{{ route('admin.simpanan.index') }}"
-                    class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
-                    Kelola Simpanan
-                </a>
+                <!-- Wrapper -->
+                <div x-data="{ openSimpanan: false }" class="space-y-2">
 
-                <a href="{{ route('admin.simpanan.kelola.pending') }}"
+                    <!-- Trigger Dropdown -->
+                    <button @click="openSimpanan = !openSimpanan"
+                        class="flex items-center justify-between w-full px-6 py-3 mb-2 text-left rounded-lg transition hover:bg-gray-800">
+                        <span class="flex items-center">
+                            <!-- Icon Folder -->
+                            <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 7h4l2-2h10a2 2 0 012 2v12a2 2 0 01-2 2H3a2 2 0 01-2-2V9a2 2 0 012-2z" />
+                            </svg>
+                            Kelola Simpanan
+                        </span>
+                        <!-- Icon Arrow -->
+                        <svg :class="{ 'rotate-180': openSimpanan }"
+                            class="w-4 h-4 transform transition-transform text-gray-400" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Items -->
+                    <div x-show="openSimpanan" x-collapse class="ml-8 space-y-1">
+                        <a href="{{ route('pengurus.simpanan.sukarela.index') }}"
+                            class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">
+                            Simpanan Sukarela
+                        </a>
+                        {{-- Tambahkan nanti untuk Wajib & Pokok --}}
+                        {{-- <a href="{{ route('simpanan_wajib.index') }}" class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">Simpanan Wajib</a> --}}
+                        {{-- <a href="{{ route('simpanan_pokok.index') }}" class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">Simpanan Pokok</a> --}}
+                    </div>
+                </div>
+
+
+                <a href="{{ route('pengurus.simpanan.kelola.pending') }}"
                     class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pengajuan Simpanan Sukarela
                 </a>
-                <a href="{{ route('admin.pinjaman.index') }}"
+                <a href="{{ route('pengurus.pinjaman.index') }}"
                     class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Kelola Pinjaman
                 </a>
@@ -51,10 +82,10 @@
                 <a href="#" class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pembayaran Pinjaman
                 </a>
-                <!-- <a href="{{ route('admin.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
+                <!-- <a href="{{ route('pengurus.pinjaman.index') }}" class="flex items-center px-6 py-3 mx-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Pinjaman
                 </a> -->
-                <a href="{{ route('admin.laporan.index') }}"
+                <a href="{{ route('pengurus.laporan.index') }}"
                     class="flex items-center px-6 py-3 px-4 mb-2 rounded-lg transition hover:bg-gray-800">
                     Laporan
                 </a>
