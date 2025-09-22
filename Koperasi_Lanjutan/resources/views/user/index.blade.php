@@ -11,11 +11,10 @@
 
 <body class="bg-blue-100 min-h-screen flex flex-col">
     <!-- Main Content -->
-    <main class="flex-1 px-8 py-6 md:ml-64">
-        <div class="flex-1 p-6">
-            @yield('content')
-        </div>
+    <main class="flex-1 md:ml-64 p-2 sm:p-4">
+        @yield('content')
     </main>
+
 
     <!-- Sidebar khusus user -->
     @include('user.layouts.sidebar')

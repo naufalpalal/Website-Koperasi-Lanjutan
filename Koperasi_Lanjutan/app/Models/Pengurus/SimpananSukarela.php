@@ -8,7 +8,7 @@ use App\Models\User;
 
 class SimpananSukarela extends Model
 {
-   use HasFactory;
+    use HasFactory;
 
     protected $table = 'simpanan_sukarela';
 
@@ -20,8 +20,8 @@ class SimpananSukarela extends Model
         'periode',
     ];
 
-    public function member()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'member_id');
+        return $this->belongsTo(User::class, 'users_id');
     }
 }
