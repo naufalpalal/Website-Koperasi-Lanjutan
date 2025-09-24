@@ -84,7 +84,7 @@ class PengurusSimpananWajibController extends Controller
                     'nilai' => $nominal,
                     'tahun' => $tahun,
                     'bulan' => $bulan,
-                    'status' => null,
+                    'status'  => 'Diajukan',
                     'users_id' => $a->id,
                 ]);
             }
@@ -107,6 +107,7 @@ class PengurusSimpananWajibController extends Controller
             $simpanan = SimpananWajib::where('users_id', $a->id)
                 ->where('tahun', $tahunFilter)
                 ->where('bulan', $bulanFilter)
+                ->where('is_locked', false)
                 ->first();
 
             if ($simpanan) {
@@ -144,5 +145,21 @@ class PengurusSimpananWajibController extends Controller
             $fileName = 'Simpanan_Wajib_' . now()->format('Y_m_d') . '.xlsx';
             return Excel::download(new SimpananExport, $fileName);
         }
+
+        public function lockPeriode(Request $request)
+{
+    $request->validate([
+        'bulan' => 'required|date_format:Y-m',
+    ]);
+
+    [$tahun, $bulan] = explode('-', $request->bulan);
+
+    // Update semua simpanan bulan tersebut jadi terkunci
+    SimpananWajib::where('tahun', $tahun)
+        ->where('bulan', $bulan)
+        ->update(['is_locked' => true]);
+
+    return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
+}
 
 }

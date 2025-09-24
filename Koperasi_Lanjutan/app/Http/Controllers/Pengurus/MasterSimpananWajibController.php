@@ -28,6 +28,7 @@ class MasterSimpananWajibController extends Controller
             'tahun' => now()->year,
             'bulan' => now()->month,
             'users_id' => auth()->id(),
+            'status'  => $master->status,
         ]);
     } else {
         // Buat baru jika belum ada
@@ -36,13 +37,14 @@ class MasterSimpananWajibController extends Controller
             'tahun' => now()->year,
             'bulan' => now()->month,
             'users_id' => auth()->id(),
+            'status'  => 'Diajukan',
         ]);
     }
 
     // Update semua SimpananWajib yang sudah digenerate tapi belum dibayar
     $simpananBulanIni = SimpananWajib::where('tahun', now()->year)
         ->where('bulan', now()->month)
-        ->whereNull('status') // hanya yang belum dibayar
+        ->whereIn('status', ['Diajukan', 'Gagal']) // hanya yang belum dibayar
         ->get();
 
     foreach ($simpananBulanIni as $simpanan) {
