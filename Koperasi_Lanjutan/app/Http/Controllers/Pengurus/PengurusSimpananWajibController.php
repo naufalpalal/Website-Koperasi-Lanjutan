@@ -140,9 +140,9 @@ class PengurusSimpananWajibController extends Controller
         }
 
         public function downloadExcel()
-{
-    $fileName = 'Simpanan_Wajib_' . now()->format('Y_m_d') . '.xlsx';
-    return Excel::download(new SimpananExport, $fileName);
-}
+        {
+            $fileName = 'Simpanan_Wajib_' . now()->format('Y_m_d') . '.xlsx';
+            return Excel::download(new SimpananExport, $fileName);
+        }
 
 }
