@@ -10,7 +10,11 @@ use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\pengurus\SimpananController;
 use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
+use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
+use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
+
+
 
 Route::get('/', function () {
     return view('auth.login');
@@ -114,6 +118,20 @@ Route::prefix('simpanan-sukarela')->group(function () {
     Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'acc'])->name('pengurus.simpanan.sukarela.acc');
     Route::get('/pengajuan', [SimpananSukarelaController::class, 'pengajuanIndex'])->name('pengurus.simpanan.sukarela.pengajuan');
     Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'accPerubahan'])->name('accPerubahan');
+});
+
+// Simpanan Wajib - Pengurus
+Route::prefix('pengurus/simpanan-wajib')->group(function () {
+    Route::get('/', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib_2.index');
+    Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib_2.generate');
+    Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib_2.updateStatus');
+    Route::get('/riwayat/{id}', [PengurusSimpananWajibController::class, 'riwayat'])->name('pengurus.simpanan.wajib_2.riwayat');
+    Route::get('pengurus/simpanan-wajib/download', [SimpananWajibController::class, 'downloadExcel'])->name('pengurus.simpanan.wajib_2.download');
+    Route::delete('/pengurus/simpanan-wajib/{id}', [PengurusSimpananWajibController::class, 'destroy'])->name('pengurus.simpanan.wajib_2.destroy');
+
+    // Pindah ke controller baru
+    Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('pengurus.simpanan.wajib_2.edit');
+    Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib_2.updateNominal');
 });
 
 

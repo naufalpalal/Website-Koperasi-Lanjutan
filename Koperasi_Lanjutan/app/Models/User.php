@@ -34,6 +34,11 @@ class User extends Authenticatable
         return $this->hasMany(Simpanan::class, 'member_id');
     }
 
+    public function simpananWajib()
+    {
+        return $this->hasMany(\App\Models\Pengurus\SimpananWajib::class, 'users_id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
