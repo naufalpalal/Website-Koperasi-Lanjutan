@@ -15,77 +15,83 @@ class SimpananSukarelaController extends Controller
         return view('pengurus.simpanan.sukarela.index', compact('simpanan'));
     }
 
-    public function create()
-    {
-        $users = User::all();
-        return view('pengurus.simpanan.sukarela.create', compact('users'));
-    }
+    // public function create()
+    // {
+    //     $users = User::all();
+    //     return view('pengurus.simpanan.sukarela.create', compact('users'));
+    // }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nilai' => 'required|numeric',
-            'tahun' => 'required|integer',
-            'bulan' => 'required|integer|min:1|max:12',
-            'status' => 'required|in:Diajukan,Dibayar,Ditarik,Libur',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'member_id' => 'required|exists:users,id',
+    //         'nilai' => 'required|numeric',
+    //         'tahun' => 'required|integer',
+    //         'bulan' => 'required|integer|min:1|max:12',
+    //         'status' => 'required|in:Diajukan,Dibayar,Ditarik,Libur',
+    //     ]);
 
-        SimpananSukarela::create($request->all());
+    //     SimpananSukarela::create($request->all());
 
-        return redirect()->route('pengurus.simpanan.sukarela.index')
-            ->with('success', 'Simpanan sukarela berhasil ditambahkan.');
-    }
+    //     return redirect()->route('pengurus.simpanan.sukarela.index')
+    //         ->with('success', 'Simpanan sukarela berhasil ditambahkan.');
+    // }
 
-    public function ajukanLibur(Request $request)
-    {
-        $request->validate([
-            'alasan' => 'required|string|max:255',
-        ]);
+    // public function ajukanLibur(Request $request)
+    // {
+    //     $request->validate([
+    //         'alasan' => 'required|string|max:255',
+    //     ]);
 
-        SimpananSukarela::create([
-            'user_id' => auth()->id(),
-            'nilai' => 0,
-            'tahun' => now()->year,
-            'bulan' => now()->month,
-            'status' => 'Diajukan',
-            'alasan' => $request->alasan,
-        ]);
+    //     SimpananSukarela::create([
+    //         'user_id' => auth()->id(),
+    //         'nilai' => 0,
+    //         'tahun' => now()->year,
+    //         'bulan' => now()->month,
+    //         'status' => 'Diajukan',
+    //         'alasan' => $request->alasan,
+    //     ]);
 
-        return redirect()->back()->with('success', 'Pengajuan libur berhasil, menunggu persetujuan.');
-    }
+    //     return redirect()->back()->with('success', 'Pengajuan libur berhasil, menunggu persetujuan.');
+    // }
 
-    public function setujuiLibur($id)
-    {
-        $simpanan = SimpananSukarela::findOrFail($id);
-        $simpanan->update(['status' => 'Libur']);
+    // public function setujuiLibur($id)
+    // {
+    //     $simpanan = SimpananSukarela::findOrFail($id);
+    //     $simpanan->update(['status' => 'Libur']);
 
-        return redirect()->back()->with('success', 'Pengajuan libur telah disetujui.');
-    }
+    //     return redirect()->back()->with('success', 'Pengajuan libur telah disetujui.');
+    // }
 
-     public function pengajuanIndex()
-    {
-        $pengajuan = SimpananSukarela::with('user')
-            ->where('status', 'Diajukan')
-            ->orderBy('created_at', 'desc')
-            ->get();
+    //  public function pengajuanIndex()
+    // {
+    //     $pengajuan = SimpananSukarela::with('user')
+    //         ->where('status', 'Diajukan')
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
 
-        return view('pengurus.simpanan.sukarela.pengajuan', compact('pengajuan'));
-    }
+    //     return view('pengurus.simpanan.sukarela.pengajuan', compact('pengajuan'));
+    // }
 
     // ACC atau Tolak pengajuan
-    public function accPerubahan($id, $status)
+    public function update(Request $request)
     {
-        $simpanan = SimpananSukarela::findOrFail($id);
+        $ids = $request->input('ids', []); // id yang dicentang
 
-        if (!in_array($status, ['Dibayar', 'Ditolak'])) {
-            return redirect()->back()->with('error', 'Status tidak valid.');
+        // Semua pengajuan yang masih diajukan bulan ini
+        $pengajuan = SimpananSukarela::where('status', 'Diajukan')->get();
+
+        foreach ($pengajuan as $item) {
+            if (in_array($item->id, $ids)) {
+                // Kalau dicentang → Dibayar
+                $item->update(['status' => 'Dibayar']);
+            } else {
+                // Kalau tidak dicentang → tetap Diajukan (atau bisa diberi status khusus "Gagal/Libur")
+                $item->update(['status' => 'Diajukan']);
+            }
         }
 
-        $simpanan->update([
-            'status' => $status,
-        ]);
-
-        return redirect()->back()->with('success', "Pengajuan simpanan berhasil diperbarui menjadi $status.");
+        return redirect()->back()->with('success', 'Proses persetujuan simpanan berhasil diperbarui.');
     }
+
 }
