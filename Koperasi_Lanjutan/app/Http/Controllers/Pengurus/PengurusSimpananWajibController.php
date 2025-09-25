@@ -84,7 +84,7 @@ class PengurusSimpananWajibController extends Controller
                     'nilai' => $nominal,
                     'tahun' => $tahun,
                     'bulan' => $bulan,
-                    'status'  => 'Diajukan',
+                    'status' => 'Diajukan',
                     'users_id' => $a->id,
                 ]);
             }
@@ -120,46 +120,46 @@ class PengurusSimpananWajibController extends Controller
     }
 
     public function riwayat($id)
-{
-    $anggota = User::findOrFail($id);
+    {
+        $anggota = User::findOrFail($id);
 
-    // Ambil semua simpanan anggota ini, urut dari terbaru
-    $riwayat = SimpananWajib::where('users_id', $anggota->id)
-        ->orderBy('tahun', 'desc')
-        ->orderBy('bulan', 'desc')
-        ->get();
+        // Ambil semua simpanan anggota ini, urut dari terbaru
+        $riwayat = SimpananWajib::where('users_id', $anggota->id)
+            ->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->get();
 
-    return view('pengurus.simpanan.wajib_2.riwayat', compact('anggota', 'riwayat'));
-}
+        return view('pengurus.simpanan.wajib_2.riwayat', compact('anggota', 'riwayat'));
+    }
 
-            public function destroy($id)
-        {
-            $simpanan = SimpananWajib::findOrFail($id);
-            $simpanan->delete();
+    public function destroy($id)
+    {
+        $simpanan = SimpananWajib::findOrFail($id);
+        $simpanan->delete();
 
-            return back()->with('success', 'Data simpanan wajib berhasil dihapus.');
-        }
+        return back()->with('success', 'Data simpanan wajib berhasil dihapus.');
+    }
 
-        public function downloadExcel()
-        {
-            $fileName = 'Simpanan_Wajib_' . now()->format('Y_m_d') . '.xlsx';
-            return Excel::download(new SimpananExport, $fileName);
-        }
+    public function downloadExcel()
+    {
+        $fileName = 'Simpanan_Wajib_' . now()->format('Y_m_d') . '.xlsx';
+        return Excel::download(new SimpananExport, $fileName);
+    }
 
-        public function lockPeriode(Request $request)
-{
-    $request->validate([
-        'bulan' => 'required|date_format:Y-m',
-    ]);
+    public function lockPeriode(Request $request)
+    { 
+        $request->validate([
+            'bulan' => 'required|date_format:Y-m',
+        ]);
 
-    [$tahun, $bulan] = explode('-', $request->bulan);
+        [$tahun, $bulan] = explode('-', $request->bulan);
 
-    // Update semua simpanan bulan tersebut jadi terkunci
-    SimpananWajib::where('tahun', $tahun)
-        ->where('bulan', $bulan)
-        ->update(['is_locked' => true]);
+        // Update semua simpanan bulan tersebut jadi terkunci
+        SimpananWajib::where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->update(['is_locked' => true]);
 
-    return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
-}
+        return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
+    }
 
 }

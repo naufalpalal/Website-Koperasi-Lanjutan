@@ -13,6 +13,7 @@ use App\Http\Controllers\Pengurus\SimpananSukarelaController;
 use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
 use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
+use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
 
 
 
@@ -112,9 +113,12 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('simpanan-sukarela')->group(function () {
     Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
-    Route::get('/create', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.create');
+    Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
+    Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
     Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
     Route::post('/edit', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
+    Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
+    Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
 });
 
 // Simpanan Wajib - Pengurus
@@ -136,5 +140,8 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
 // Simpanan Sukarela - Anggota
 Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
+    Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
+    Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.create');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
 });
+
