@@ -120,7 +120,8 @@ Route::prefix('simpanan-sukarela')->group(function () {
 
 // Simpanan Wajib - Pengurus
 Route::prefix('pengurus/simpanan-wajib')->group(function () {
-    Route::get('/', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib_2.index');
+    Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('pengurus.simpanan.wajib_2.dashboard');
+    Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib_2.index');
     Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib_2.generate');
     Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib_2.updateStatus');
     Route::get('/riwayat/{id}', [PengurusSimpananWajibController::class, 'riwayat'])->name('pengurus.simpanan.wajib_2.riwayat');

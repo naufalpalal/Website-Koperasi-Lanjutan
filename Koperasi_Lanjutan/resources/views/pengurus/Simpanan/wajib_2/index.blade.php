@@ -24,18 +24,7 @@
         </form>
 
         {{-- Tombol Add & Edit Nominal --}}
-        <?php 
-        $isLocked=false; ?>
-        @if(!$isLocked)
         <div class="flex items-center gap-3">
-            <a href="{{ route('pengurus.simpanan.wajib_2.download') }}" 
-            class="text-green-600 hover:text-green-700 transition" 
-            title="Download Excel">
-                <!-- Icon download -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                <path fill-rule="evenodd" d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V10.5Z" clip-rule="evenodd" />
-                </svg>
-            </a>
             <a href="{{ route('pengurus.simpanan.wajib_2.edit') }}"
                class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">
                Edit Nominal
@@ -43,12 +32,38 @@
 
             <button id="btnGenerate" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                 @if(!$master) data-nominal-empty="true" @endif>
-                Add
+                generate periode
             </button>
         </div>
-        @endif
     </div>
+<div class="flex items-center justify-end ">
+            <span class="text-sm font-medium px-2">Select All</span>
+            <input type="checkbox" id="checkAll" class="accent-blue-600 mr-2">
+        </div>
+           <div id="modalNominal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+            <h4 class="text-lg font-bold mb-4">Generate Simpanan Wajib</h4>
+            <form id="formNominal" action="{{ route('pengurus.simpanan.wajib_2.generate') }}" method="POST">
+                @csrf
+                <label for="bulanGenerate" class="block font-medium mb-2">Pilih Bulan</label>
+                <select id="bulanGenerate" name="bulan"
+                        class="border rounded px-3 py-2 w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required>
+                    <option value="{{ now()->format('Y-m') }}">
+                        {{ \Carbon\Carbon::parse(now()->format('Y-m-01'))->translatedFormat('F Y') }}
+                    </option>
+                    <option value="{{ now()->addMonth()->format('Y-m') }}">
+                        {{ \Carbon\Carbon::parse(now()->addMonth()->format('Y-m-01'))->translatedFormat('F Y') }}
+                    </option>
+                </select>
 
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="closeModal" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Batal</button>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Generate</button>
+                </div>
+            </form>
+        </div>
+    </div>
     {{-- Daftar anggota dan simpanan --}}
     <form action="{{ route('pengurus.simpanan.wajib_2.updateStatus') }}" method="POST">
         @csrf
@@ -82,8 +97,7 @@
                             <td class="px-4 py-2 text-center">
                                 <input type="checkbox" name="anggota[]" value="{{ $a->id }}"
                                     class="accent-blue-600 w-5 h-5"
-                                    {{ $simpanan && $simpanan->status === 'Dibayar' ? 'checked' : '' }}
-                                    @if($isLocked) disabled @endif>
+                                    {{ $simpanan && $simpanan->status === 'Dibayar' ? 'checked' : '' }}>
                             </td>
                         </tr>
                     @empty
@@ -103,19 +117,18 @@
             </a>
 
             <div class="flex gap-3">
-                @if(!$isLocked)
-                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Simpan</button>
-                    <form action="{{ route('pengurus.simpanan.wajib_2.lock') }}" method="POST"
-                        onsubmit="return confirm('Apakah Anda yakin ingin mengunci periode ini? Data tidak bisa diubah lagi.')">
-                        @csrf
-                        <input type="hidden" name="bulan" value="{{ $periodeFilter }}">
-                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
-                            Kunci Periode
-                        </button>
-                    </form>
-                @else
-                    <span class="text-red-600 font-semibold">🔒 Periode ini sudah dikunci</span>
-                @endif
+            {{-- Tombol kembali ke index --}}
+            <a href="{{ route('pengurus.simpanan.wajib_2.dashboard') }}"
+            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                Kembali
+            </a>
+
+
+            <div class="flex gap-3">
+                <button type="submit"
+                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                    Simpan Perubahan
+                </button>
             </div>
         </div>
     </form>

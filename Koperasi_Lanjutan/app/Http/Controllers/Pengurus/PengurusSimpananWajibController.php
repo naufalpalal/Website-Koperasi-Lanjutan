@@ -14,6 +14,32 @@ use Maatwebsite\Excel\Facades\Excel;
 class PengurusSimpananWajibController extends Controller
 {
     // Halaman kelola simpanan wajib
+    public function dashboard(Request $request)
+    {
+        $anggota = User::where('role', 'anggota')->get();
+        $master = MasterSimpananWajib::latest()->first();
+
+        // Ambil bulan yang dipilih di filter, default bulan ini
+        $periodeFilter = $request->get('bulan', now()->format('Y-m'));
+        [$tahunFilter, $bulanFilter] = explode('-', $periodeFilter);
+
+        // Ambil simpanan untuk periode filter
+        $simpananBulanIni = SimpananWajib::where('tahun', $tahunFilter)
+            ->where('bulan', $bulanFilter)
+            ->get()
+            ->keyBy('users_id');
+
+        // Ambil semua periode unik untuk history dropdown
+        $bulan = SimpananWajib::selectRaw("CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode")
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->pluck('periode');
+
+            
+
+        return view('pengurus.simpanan.wajib_2.dashboard', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
+    }
     public function index(Request $request)
     {
         $anggota = User::where('role', 'anggota')->get();
@@ -109,7 +135,6 @@ class PengurusSimpananWajibController extends Controller
             $simpanan = SimpananWajib::where('users_id', $a->id)
                 ->where('tahun', $tahunFilter)
                 ->where('bulan', $bulanFilter)
-                ->where('is_locked', false)
                 ->first();
 
             if ($simpanan) {
@@ -125,11 +150,10 @@ class PengurusSimpananWajibController extends Controller
 {
     $anggota = User::findOrFail($id);
 
-    // Ambil semua simpanan anggota ini, urut dari terbaru
-    $riwayat = SimpananWajib::where('users_id', $anggota->id)
-        ->orderBy('tahun', 'desc')
-        ->orderBy('bulan', 'desc')
-        ->get();
+$riwayat = SimpananWajib::orderBy('tahun', 'desc')
+    ->orderBy('bulan', 'desc')
+    ->get();
+
 
     return view('pengurus.simpanan.wajib_2.riwayat', compact('anggota', 'riwayat'));
 }
@@ -148,20 +172,5 @@ class PengurusSimpananWajibController extends Controller
             return Excel::download(new SimpananExport, $fileName);
         }
 
-        public function lockPeriode(Request $request)
-{
-    $request->validate([
-        'bulan' => 'required|date_format:Y-m',
-    ]);
-
-    [$tahun, $bulan] = explode('-', $request->bulan);
-
-    // Update semua simpanan bulan tersebut jadi terkunci
-    SimpananWajib::where('tahun', $tahun)
-        ->where('bulan', $bulan)
-        ->update(['is_locked' => true]);
-
-    return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
-}
 
 }
