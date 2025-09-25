@@ -35,8 +35,7 @@
                     <span class="truncate">Dashboard</span>
                 </a>
                 <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open"
-                        class="flex items-center w-full px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0
+                    <button @click="open = !open" class="flex items-center w-full px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0
             transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 mr-3 flex-shrink-0"
                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -58,7 +57,7 @@
                             class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan Sukarela</a>
                     </div>
                 </div>
-
+            
                 <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}" class="mt-4">
                     @csrf
@@ -79,8 +78,7 @@
         <!-- User Info -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">
-                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User"
-                    class="h-10 w-10 rounded-full mr-3">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-10 w-10 rounded-full mr-3">
                 <div>
                     <span class="font-semibold">mdo</span>
                     <svg class="inline h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

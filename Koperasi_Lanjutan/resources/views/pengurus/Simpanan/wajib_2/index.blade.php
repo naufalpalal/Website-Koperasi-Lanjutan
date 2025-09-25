@@ -24,6 +24,8 @@
         </form>
 
         {{-- Tombol Add & Edit Nominal --}}
+        <?php 
+        $isLocked=false; ?>
         @if(!$isLocked)
         <div class="flex items-center gap-3">
             <a href="{{ route('pengurus.simpanan.wajib_2.download') }}" 
