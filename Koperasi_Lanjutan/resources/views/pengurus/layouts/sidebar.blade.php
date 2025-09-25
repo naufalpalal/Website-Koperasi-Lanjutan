@@ -28,7 +28,7 @@
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                     Dashboard
                 </a>
-                <a href="{{ route('pengurus.anggota.index') }}"
+                <a href="{{ route('pengurus.KelolaAnggota.index') }}"
                     class="flex items-center px-6 py-3 rounded-lg px-4 mb-2 transition hover:bg-blue-700">
                     Kelola Anggota
                 </a>

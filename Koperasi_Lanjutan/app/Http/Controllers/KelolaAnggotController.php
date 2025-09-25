@@ -15,13 +15,13 @@ class KelolaAnggotController extends Controller
     public function index()
     {
         $anggota = User::where('role', 'anggota')->get();
-        return view('admin.anggota.index', compact('anggota'));
+        return view('pengurus.KelolaAnggota.index', compact('anggota'));
     }
 
     // Tampilkan form tambah anggota
     public function create()
     {
-        return view('admin.anggota.create');
+        return view('Pengurus.KelolaAnggota.create');
     }
 
     // Simpan anggota baru
@@ -85,7 +85,7 @@ class KelolaAnggotController extends Controller
         'status'    => 'success',
     ]);
 
-    return redirect()->route('admin.anggota.index')
+    return redirect()->route('pengurus.KelolaAnggota.index')
                      ->with('success', 'Anggota berhasil ditambahkan beserta simpanannya');
 }
 
@@ -93,7 +93,7 @@ class KelolaAnggotController extends Controller
     public function edit($id)
     {
         $anggota = User::findOrFail($id);
-        return view('admin.anggota.edit', compact('anggota'));
+        return view('pengurus.KelolaAnggota.edit', compact('anggota'));
     }
 
     // Update data anggota
@@ -133,7 +133,7 @@ class KelolaAnggotController extends Controller
 
         $anggota->update($validated);
 
-        return redirect()->route('admin.anggota.index')
+        return redirect()->route('pengurus.KelolaAnggota.index')
                          ->with('success', 'Data anggota berhasil diperbarui');
     }
 
@@ -143,7 +143,7 @@ class KelolaAnggotController extends Controller
         $anggota = User::findOrFail($id);
         $anggota->delete();
 
-        return redirect()->route('admin.anggota.index')
+        return redirect()->route('pengurus.KelolaAnggota.index')
                          ->with('success', 'Anggota berhasil dihapus');
     }
 }

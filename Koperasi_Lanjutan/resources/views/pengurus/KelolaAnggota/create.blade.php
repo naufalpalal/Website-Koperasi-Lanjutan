@@ -8,7 +8,7 @@
         {{-- Header --}}
         <div class="flex justify-between items-center border-b pb-4 mb-6">
             <h5 class="text-xl font-semibold text-gray-700">Tambah Anggota</h5>
-            <a href="{{ route('admin.anggota.index') }}" 
+            <a href="{{ route('pengurus.KelolaAnggota.index') }}" 
                class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow text-sm transition">
                 Kembali
             </a>
@@ -24,7 +24,7 @@
         @endif
 
         {{-- Form --}}
-        <form action="{{ route('admin.anggota.store') }}" method="POST" novalidate>
+        <form action="{{ route('pengurus.KelolaAnggota.store') }}" method="POST" novalidate>
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Kolom Kiri --}}
@@ -115,7 +115,7 @@
                         class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg shadow transition">
                     Simpan
                 </button>
-                <a href="{{ route('admin.anggota.index') }}" 
+                <a href="{{ route('pengurus.KelolaAnggota.index') }}" 
                    class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg shadow transition">
                     Batal
                 </a>
