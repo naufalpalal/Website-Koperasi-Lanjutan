@@ -36,6 +36,8 @@ class PengurusSimpananWajibController extends Controller
             ->orderBy('bulan', 'desc')
             ->pluck('periode');
 
+            
+
         return view('pengurus.simpanan.wajib_2.index', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
 

@@ -13,6 +13,7 @@ use App\Http\Controllers\Pengurus\SimpananSukarelaController;
 use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
 use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
+use App\Http\Controllers\User\MasterSimpananSukarela;
 
 
 
@@ -136,5 +137,6 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
 // Simpanan Sukarela - Anggota
 Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
+    Route::get('/pengajuan', [MasterSimpananSukarela::class, 'index'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
 });
