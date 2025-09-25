@@ -8,9 +8,10 @@
             <p><strong>Total Saldo Dibayar:</strong> Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
         </div>
 
+
         <div class="mb-4">
             <h3 class="font-semibold">Status Bulan Ini ({{ now()->month }}/{{ now()->year }})</h3>
-            @if($bulanIni)
+            @if ($bulanIni)
                 <p>Status: {{ $bulanIni->status }}</p>
                 <p>Nominal: Rp {{ number_format($bulanIni->nilai, 0, ',', '.') }}</p>
             @else
@@ -24,8 +25,8 @@
         </a>
 
         <a href="{{ route('user.simpanan.sukarela.pengajuan') }}"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Ajukan Simpanan Sukarela
+            class="ml-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Ajukan Perubahan Nominal
         </a>
     </div>
 @endsection
