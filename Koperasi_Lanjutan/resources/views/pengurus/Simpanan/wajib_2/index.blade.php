@@ -49,14 +49,6 @@
         @endif
     </div>
 
-    {{-- Checkbox Select All --}}
-    @if(!$isLocked)
-    <div class="mb-4 flex items-center gap-2">
-        <input type="checkbox" id="checkAll" class="accent-blue-600">
-        <label for="checkAll" class="text-sm font-medium">Select All</label>
-    </div>
-    @endif
-
     {{-- Daftar anggota dan simpanan --}}
     <form action="{{ route('pengurus.simpanan.wajib_2.updateStatus') }}" method="POST">
         @csrf
