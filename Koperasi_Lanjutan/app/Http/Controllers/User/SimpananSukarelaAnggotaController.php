@@ -61,7 +61,7 @@ class SimpananSukarelaAnggotaController extends Controller
 
     public function pengajuanUserIndex()
     {
-        $user = auth()->user();
+    $user = Auth::user();
 
         // Ambil pengajuan yang pernah diajukan
         $pengajuan = SimpananSukarela::where('users_id', $user->id)
@@ -78,7 +78,7 @@ class SimpananSukarelaAnggotaController extends Controller
             'nilai_baru' => 'required|integer|min:1000',
         ]);
 
-        $user = auth()->user();
+    $user = Auth::user();
 
         SimpananSukarela::create([
             'user_id' => $user->id,
