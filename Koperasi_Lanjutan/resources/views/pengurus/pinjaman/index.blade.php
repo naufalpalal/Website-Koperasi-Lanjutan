@@ -1,6 +1,7 @@
-@extends('admin.index')
-
+@extends('Pengurus.index')
 @section('title', 'Transaksi Pinjaman Koperasi')
+
+@extends('pengurus.layouts.navbar')
 
 @section('content')
     <div class="container mx-auto pt-12 px-10">
@@ -29,7 +30,7 @@
                     <tbody>
                         @forelse ($pinjamans as $pinjaman)
                             <tr class="border-b hover:bg-gray-50">
-                                <td class="px-4 py-2">{{ $pinjaman->member->nama }}</td>
+                                <td class="px-4 py-2">{{ $pinjaman->member ? $pinjaman->member->nama : '-' }}</td>
                                 <td class="px-4 py-2">{{ $pinjaman->created_at->format('d-m-Y') }}</td>
                                 <td class="px-4 py-2 font-medium">
                                     Rp {{ number_format($pinjaman->jumlah, 0, ',', '.') }}
@@ -45,7 +46,7 @@
                                 </td>
                                 <td class="px-4 py-2 flex gap-2">
                                     {{-- Tombol Terima --}}
-                                    <form action="{{ route('admin.pinjaman.update', $pinjaman->id) }}" method="POST">
+                                    <form action="{{ route('pengurus.pinjaman.update', $pinjaman->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="status" value="diterima">
@@ -56,7 +57,7 @@
                                     </form>
 
                                     {{-- Tombol Tolak --}}
-                                    <form action="{{ route('admin.pinjaman.update', $pinjaman->id) }}" method="POST">
+                                    <form action="{{ route('pengurus.pinjaman.update', $pinjaman->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="status" value="ditolak">

@@ -64,6 +64,9 @@
                         {{-- Tambahkan nanti untuk Wajib & Pokok --}}
                          <a href="{{ route('pengurus.simpanan.wajib_2.index') }}" class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">Simpanan Wajib</a>
                         {{-- <a href="{{ route('simpanan_pokok.index') }}" class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">Simpanan Pokok</a> --}}
+                         <a href="{{ route('pengurus.tabungan.index') }}" class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">Tabungan</a>
+
+
                     </div>
                 </div>
 

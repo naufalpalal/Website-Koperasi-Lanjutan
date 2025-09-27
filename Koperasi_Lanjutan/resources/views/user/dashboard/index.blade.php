@@ -28,6 +28,15 @@
             <span class="text-gray-700 font-semibold">Simpanan Wajib</span>
         </a>
 
+        <!-- Pengajuan Pinjaman -->
+        <a href="#" 
+           class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition transform">
+            <div class="w-16 h-16 flex items-center justify-center bg-red-200 text-red-700 rounded-full mb-3">
+                <i class="fas fa-coins text-2xl"></i>
+            </div>
+            <span class="text-gray-700 font-semibold">Pengajuan Pinjaman</span>
+        </a>
+
         <!-- Bisa tambah menu lain -->
         <a href="#" 
            class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition transform">

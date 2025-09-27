@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('nilai');
             $table->integer('tanggal');
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
             $table->timestamps();
         });
     }
