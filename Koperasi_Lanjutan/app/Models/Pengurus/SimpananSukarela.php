@@ -13,11 +13,11 @@ class SimpananSukarela extends Model
     protected $table = 'simpanan_sukarela';
 
     protected $fillable = [
-        'member_id',
-        'amount',
+        'nilai',
+        'tahun',
+        'bulan',
         'status',
-        'alasan',
-        'periode',
+        'users_id',
     ];
 
     public function user()

@@ -8,10 +8,7 @@
 
     {{-- Tombol Kembali --}}
     <div class="mb-4">
-        <a href="{{ url()->previous() }}"
-           class="inline-block bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition text-sm sm:text-base">
-           &larr; Kembali
-        </a>
+      
     </div>
 
     {{-- Form update nominal --}}
@@ -36,10 +33,10 @@
 
         {{-- Berlaku Sampai Bulan --}}
         <div>
-            <label for="periode_selesai" class="font-medium block mb-1">Berlaku Sampai Bulan:</label>
-            <input type="month" name="periode_selesai" id="periode_selesai"
-            value="{{ isset($master->periode_selesai) ? $master->periode_selesai->format('Y-m') : now()->addMonth()->format('Y-m') }}"
-            class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <label for="periode_mulai" class="font-medium block mb-1">Berlaku Mulai Bulan:</label>
+            <input type="month" name="periode_mulai" id="periode_mulai"
+                value="{{ isset($master->periode_mulai) ? $master->periode_mulai->format('Y-m') : now()->format('Y-m') }}"
+                class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
 
         {{-- Tombol Aksi --}}

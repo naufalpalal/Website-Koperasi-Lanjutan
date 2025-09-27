@@ -35,8 +35,13 @@
                     <span class="truncate">Dashboard</span>
                 </a>
                 <div x-data="{ open: false }" class="relative">
+<<<<<<< HEAD
                     <button @click="open = !open"
                         class="flex items-center w-full px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0 transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
+=======
+                    <button @click="open = !open" class="flex items-center w-full px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0
+            transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
+>>>>>>> f164040d339f55501385ca60f5a74b7f0ac83c7e
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 mr-3 flex-shrink-0"
                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -60,7 +65,7 @@
                         Tabungan
                     </a>
                 </div>
-
+            
                 <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}" class="mt-4">
                     @csrf
@@ -79,6 +84,18 @@
         </div>
         <!-- Footer -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
+<<<<<<< HEAD
+=======
+            <a href="{{ route('profile.edit') }}" class="flex items-center">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-10 w-10 rounded-full mr-3">
+                <div>
+                    <span class="font-semibold">mdo</span>
+                    <svg class="inline h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 9l6 6 6-6" stroke-width="2" />
+                    </svg>
+                </div>
+            </a>
+>>>>>>> f164040d339f55501385ca60f5a74b7f0ac83c7e
         </div>
     </div>
 </aside>
