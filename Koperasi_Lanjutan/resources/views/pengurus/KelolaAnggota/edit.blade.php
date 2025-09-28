@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('pengurus.index')
 
 @section('title', 'Edit Anggota')
 
@@ -54,7 +54,7 @@
 
                 <div class="mb-3">
                     <label for="simpanan_sukarela">Simpanan Sukarela</label>
-                    <input type="number" name="simpanan_sukarela" class="form-control" value="{{ $anggota->simpanan()->where('type','sukarela')->latest()->value('amount') ?? 0 }}" required>
+                    <input type="number" name="simpanan_sukarela" class="form-control" value="{{ $anggota->simpananSukarela()->latest()->value('nilai') ?? 0 }}" required>
                 </div>
 
                     <div class="mb-4">

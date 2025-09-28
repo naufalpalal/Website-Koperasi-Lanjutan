@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('pengurus.index')
 
 @section('title', 'Tambah Anggota')
 

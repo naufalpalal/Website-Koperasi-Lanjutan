@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Tombol redirect ke route belajar.id
     if (masuk) {
         masuk.addEventListener('click', function () {
-            window.location.href = "edit"
+            window.location.href = "/pengurus/simpanan-wajib/edit"
         });
     }
 

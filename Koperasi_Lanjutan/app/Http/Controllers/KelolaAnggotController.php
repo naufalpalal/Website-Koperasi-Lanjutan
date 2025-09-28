@@ -98,44 +98,85 @@ class KelolaAnggotController extends Controller
 
     // Update data anggota
     public function update(Request $request, $id)
-    {
-        $anggota = User::findOrFail($id);
+{
+    $anggota = User::findOrFail($id);
 
-        $validated = $request->validate([
-            'nama'          => 'required|string|max:255',
-            'no_telepon'    => 'required|string|max:20',
-            'nip'           => 'nullable|string|max:20',
-            'tempat_lahir'  => 'nullable|string|max:255',
-            'tanggal_lahir' => 'nullable|date',
-            'alamat_rumah'  => 'nullable|string|max:255',
-        ]);
+    $validated = $request->validate([
+        'nama'          => 'required|string|max:255',
+        'no_telepon'    => 'required|string|max:20',
+        'nip'           => 'nullable|string|max:20',
+        'tempat_lahir'  => 'nullable|string|max:255',
+        'tanggal_lahir' => 'nullable|date',
+        'alamat_rumah'  => 'nullable|string|max:255',
 
-         // Update simpanan sukarela
-    if ($request->filled('simpanan_sukarela')) {
-        $simpanan = $anggota->simpanan()
-                            ->where('type', 'sukarela')
-                            ->latest('id') // ambil yang terbaru
-                            ->first();
+        'simpanan_pokok'    => 'nullable|numeric|min:0',
+        'simpanan_wajib'    => 'nullable|numeric|min:0',
+        'simpanan_sukarela' => 'nullable|numeric|min:0',
+    ]);
 
+    $anggota->update($validated);
+
+    // Update atau buat simpanan Pokok
+    // if ($request->filled('simpanan_pokok')) {
+    //     $simpanan = $anggota->simpananPokok()->latest('id')->first();
+    //     if ($simpanan) {
+    //         $simpanan->update([
+    //             'amount' => $request->simpanan_pokok,
+    //             'status' => 'Dibayar',
+    //             'month'  => now()->format('Y-m-01'),
+    //         ]);
+    //     } else {
+    //         $anggota->simpananPokok()->create([
+    //             'amount' => $request->simpanan_pokok,
+    //             'status' => 'Dibayar',
+    //             'month'  => now()->format('Y-m-01'),
+    //         ]);
+    //     }
+    // }
+
+    // Update atau buat simpanan Wajib
+    if ($request->filled('simpanan_wajib')) {
+        $simpanan = $anggota->simpananWajib()->latest('id')->first();
         if ($simpanan) {
-            // update data lama
             $simpanan->update([
-                'amount' => $request->simpanan_sukarela,
+            'nilai'  => $request->simpanan_wajib,
+            'status' => 'Dibayar',
+            'tahun'  => now()->year,
+            'bulan'  => now()->month,
             ]);
         } else {
-            // kalau belum ada → buat baru
-            $anggota->simpanan()->create([
-                'type'   => 'sukarela',
-                'amount' => $request->simpanan_sukarela,
+            $anggota->simpananWajib()->create([
+                'nilai' => $request->simpanan_wajib,
+                'status' => 'Dibayar',
+                'tahun'  => now()->year,
+            'bulan'  => now()->month,
             ]);
         }
     }
 
-        $anggota->update($validated);
-
-        return redirect()->route('pengurus.KelolaAnggota.index')
-                         ->with('success', 'Data anggota berhasil diperbarui');
+    // Update atau buat simpanan Sukarela
+    if ($request->filled('simpanan_sukarela')) {
+        $simpanan = $anggota->simpananSukarela()->latest('id')->first();
+        if ($simpanan) {
+            $simpanan->update([
+                'nilai' => $request->simpanan_sukarela,
+                'status' => 'Dibayar',
+                'tahun'  => now()->year,
+                'bulan'  => now()->month,
+            ]);
+        } else {
+            $anggota->simpananSukarela()->create([
+                'nilai' => $request->simpanan_sukarela,
+                'status' => 'Dibayar',
+                'tahun'  => now()->year,
+                'bulan'  => now()->month,
+            ]);
+        }
     }
+
+    return redirect()->route('pengurus.KelolaAnggota.index')
+                     ->with('success', 'Data anggota beserta simpanan berhasil diperbarui');
+}
 
     // Hapus anggota
     public function destroy($id)
