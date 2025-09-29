@@ -6,22 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
 
-class SimpananSukarela extends Model
+class MasterSimpananWajib extends Model
 {
-    use HasFactory;
+     use HasFactory;
 
-    protected $table = 'simpanan_sukarela';
+    protected $table = 'master_simpanan_wajib';
 
     protected $fillable = [
         'nilai',
         'tahun',
         'bulan',
-        'status',
         'users_id',
     ];
 
+    // relasi ke User (pengurus yang update nominal)
     public function user()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'member_id');
     }
+
 }

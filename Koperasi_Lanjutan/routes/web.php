@@ -10,7 +10,12 @@ use App\Http\Controllers\PinjamanController;
 use App\Http\Controllers\pengurus\SimpananController;
 use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
+use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
+use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
+use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
+
+
 
 Route::get('/', function () {
     return view('auth.login');
@@ -47,12 +52,12 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 });
 // Kelola Anggota (Pengurus)
 Route::middleware(['auth', 'role:pengurus'])->group(function () {
-    Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.anggota.index');
-    Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.anggota.create');
-    Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.anggota.store');
-    Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.anggota.edit');
-    Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.anggota.update');
-    Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.anggota.destroy');
+    Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.KelolaAnggota.index');
+    Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.KelolaAnggota.create');
+    Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.KelolaAnggota.store');
+    Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.KelolaAnggota.edit');
+    Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.KelolaAnggota.update');
+    Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.KelolaAnggota.destroy');
 });
 
 // Laporan (Pengurus)
@@ -108,22 +113,36 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('simpanan-sukarela')->group(function () {
     Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
-    Route::get('/create', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.create');
+    Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
+    Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
     Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
-    Route::post('/ajukan/{id}', [SimpananSukarelaController::class, 'ajukan'])->name('pengurus.simpanan.sukarela.ajukan');
-    Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'acc'])->name('pengurus.simpanan.sukarela.acc');
-    Route::get('/pengajuan', [SimpananSukarelaController::class, 'pengajuanIndex'])->name('pengurus.simpanan.sukarela.pengajuan');
-    Route::post('/acc/{id}/{status}', [SimpananSukarelaController::class, 'accPerubahan'])->name('accPerubahan');
+    Route::post('/edit', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
+    Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
+    Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
+});
+
+// Simpanan Wajib - Pengurus
+Route::prefix('pengurus/simpanan-wajib')->group(function () {
+    Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('pengurus.simpanan.wajib_2.dashboard');
+    Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib_2.index');
+    Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib_2.generate');
+    Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib_2.updateStatus');
+    Route::get('/riwayat/{id}', [PengurusSimpananWajibController::class, 'riwayat'])->name('pengurus.simpanan.wajib_2.riwayat');
+    Route::get('/download', [PengurusSimpananWajibController::class, 'downloadExcel'])->name('pengurus.simpanan.wajib_2.download');
+    Route::post('/pengurus/simpanan-wajib/kunci', [PengurusSimpananWajibController::class, 'lockPeriode'])->name('pengurus.simpanan.wajib_2.lock');
+    //Route::delete('/pengurus/simpanan-wajib/{id}', [PengurusSimpananWajibController::class, 'destroy'])->name('pengurus.simpanan.wajib_2.destroy');
+
+    // Pindah ke controller baru
+    Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('pengurus.simpanan.wajib_2.edit');
+    Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib_2.updateNominal');
 });
 
 
 // Simpanan Sukarela - Anggota
 Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
-    Route::post('/ajukan-libur', [SimpananSukarelaAnggotaController::class, 'ajukanLibur'])->name('user.simpanan.sukarela.ajukanLibur');
+    Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
+    Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
-    Route::get('/user/simpanan/sukarela/pengajuan', [SimpananSukarelaAnggotaController::class, 'pengajuanUserIndex'])
-        ->name('user.simpanan.sukarela.pengajuan');
-    Route::post('/ajukan-perubahan', [SimpananSukarelaAnggotaController::class, 'ajukanPerubahan'])->name('ajukanPerubahan'); // ⚡ ini penting
-
 });
+

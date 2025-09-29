@@ -1,14 +1,14 @@
-@extends('admin.index')
+@extends('pengurus.index')
 
 @section('title', 'Kelola Anggota')
-@extends('admin.layouts.navbar')
+@extends('pengurus.layouts.navbar')
 
 @section('content')
 <div class="container mx-auto pt-12 px-10">
     <div class="bg-white rounded-xl shadow p-6">
         <div class="flex justify-between items-center border-b pb-4 mb-4">
             <h5 class="text-xl font-semibold text-gray-700">Kelola Anggota</h5>
-            <a href="{{ route('admin.anggota.create') }}" 
+            <a href="{{ route('pengurus.KelolaAnggota.create') }}" 
                class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow transition">
                 <i class="bi bi-plus-circle"></i> Tambah
             </a>
@@ -51,15 +51,15 @@
                             @endif
                         </td>
                         <td class="border p-2 text-gray-600 text-center">
-                            Rp{{ number_format($a->simpanan()->where('type','sukarela')->sum('amount'), 0, ',', '.') }}
+                           Rp{{ number_format($a->simpananSukarela()->sum('nilai'), 0, ',', '.') }}
                         </td>
                         <td class="border p-2 text-center align-middle">
                             <div class="flex flex-row justify-center items-center gap-2">
-                                <a href="{{ route('admin.anggota.edit', $a->id) }}" 
+                                <a href="{{ route('pengurus.KelolaAnggota.edit', $a->id) }}" 
                                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center justify-center min-w-[70px] min-h-[40px]">
                                     <i class="bi bi-pencil-square mr-1"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.anggota.destroy', $a->id) }}" method="POST" class="m-0 p-0">
+                                <form action="{{ route('pengurus.KelolaAnggota.destroy', $a->id) }}" method="POST" class="m-0 p-0">
                                     @csrf
                                     @method('DELETE')
                                     <button onclick="return confirm('Yakin ingin menghapus?')" 

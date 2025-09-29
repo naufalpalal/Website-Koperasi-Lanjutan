@@ -2,15 +2,15 @@
 
 namespace App\Models\Pengurus;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
-class SimpananSukarela extends Model
+class SimpananWajib extends Model
 {
     use HasFactory;
 
-    protected $table = 'simpanan_sukarela';
+    protected $table = 'simpanan_wajib';
 
     protected $fillable = [
         'nilai',
@@ -20,6 +20,7 @@ class SimpananSukarela extends Model
         'users_id',
     ];
 
+    // relasi ke User (anggota yang dipotong gajinya)
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');

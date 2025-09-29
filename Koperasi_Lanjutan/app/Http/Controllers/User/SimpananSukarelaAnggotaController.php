@@ -9,48 +9,30 @@ use Illuminate\Support\Facades\Auth;
 
 class SimpananSukarelaAnggotaController extends Controller
 {
+    // Halaman utama: total saldo + status bulan ini
     public function index()
     {
         $user = Auth::user();
 
+        // Total saldo hanya dari status "Dibayar"
         $totalSaldo = SimpananSukarela::where('users_id', $user->id)
             ->where('status', 'Dibayar')
             ->sum('nilai');
 
+        // Status bulan ini (sudah setor / belum / diajukan / libur)
         $bulanIni = SimpananSukarela::where('users_id', $user->id)
             ->where('tahun', now()->year)
             ->where('bulan', now()->month)
             ->first();
 
-
         return view('user.simpanan.sukarela.index', compact('totalSaldo', 'bulanIni'));
     }
 
-    // Ajukan libur potongan
-    public function ajukanLibur(Request $request)
-    {
-        $request->validate([
-            'alasan' => 'required|string|max:255',
-        ]);
-
-        $user = Auth::user();
-
-        SimpananSukarela::create([
-            'users_id' => $user->id,
-            'nilai' => 0,
-            'tahun' => now()->year,
-            'bulan' => now()->month,
-            'status' => 'Diajukan',
-        ]);
-
-        return redirect()->route('user.simpanan.sukarela.index')
-            ->with('success', 'Pengajuan libur potongan berhasil dikirim ke pengurus.');
-    }
-
-    // Riwayat setoran & penarikan
+    // Riwayat simpanan sukarela user
     public function riwayat()
     {
         $user = Auth::user();
+
         $riwayat = SimpananSukarela::where('users_id', $user->id)
             ->orderBy('tahun', 'desc')
             ->orderBy('bulan', 'desc')
@@ -58,6 +40,7 @@ class SimpananSukarelaAnggotaController extends Controller
 
         return view('user.simpanan.sukarela.riwayat', compact('riwayat'));
     }
+<<<<<<< HEAD
 
     public function pengajuanUserIndex()
     {
@@ -92,4 +75,6 @@ class SimpananSukarelaAnggotaController extends Controller
     }
 
 
+=======
+>>>>>>> f164040d339f55501385ca60f5a74b7f0ac83c7e
 }

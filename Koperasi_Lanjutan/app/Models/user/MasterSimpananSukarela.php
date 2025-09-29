@@ -1,25 +1,20 @@
 <?php
 
-namespace App\Models\Pengurus;
+namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
 
-class SimpananSukarela extends Model
+class MasterSimpananSukarela extends Model
 {
-    use HasFactory;
-
-    protected $table = 'simpanan_sukarela';
-
+    protected $table = 'master_simpanan_sukarela';
     protected $fillable = [
+        'users_id',
         'nilai',
         'tahun',
         'bulan',
-        'status',
-        'users_id',
+        'status'
     ];
-
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');
