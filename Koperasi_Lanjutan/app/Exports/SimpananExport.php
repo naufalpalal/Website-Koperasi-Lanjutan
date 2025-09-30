@@ -33,8 +33,4 @@ class SimpananExport implements FromCollection, WithHeadings
         return ['Nama', 'Nominal', 'Bulan', 'Tahun', 'Status'];
     }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7

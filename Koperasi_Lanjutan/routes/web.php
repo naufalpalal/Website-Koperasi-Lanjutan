@@ -12,12 +12,10 @@ use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
 use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
 use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\Pengurus\Tabungan2Controller;
->>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
+use App\Http\Controllers\TabunganController;
 
 
 

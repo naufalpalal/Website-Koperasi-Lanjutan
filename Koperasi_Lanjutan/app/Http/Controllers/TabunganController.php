@@ -12,8 +12,8 @@ class TabunganController extends Controller
      */
     public function index()
     {
-        $tabungans = Tabungan::where('users_id', auth()->id())->latest()->paginate(5);
-        return view('user.simpanan.tabungan.index', compact('tabungans'));
+        $tabungan = Tabungan::all();
+        return view('user.simpanan.tabungan.index', compact('tabungan'));
     }
 
     /**
@@ -37,7 +37,7 @@ class TabunganController extends Controller
         Tabungan::create([
             'nilai' => $request->nilai,
             'tanggal' => $request->tanggal,
-            'users_id' => auth()->id(),
+            'users_id' => auth(),
         ]);
 
         return redirect()->route('user.simpanan.tabungan.index')

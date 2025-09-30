@@ -71,9 +71,9 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($tabungans as $tabungan)
+                @forelse ($tabungan as $tabungan)
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $loop->iteration + ($tabungans->currentPage()-1) * $tabungans->perPage() }}</td>
+                        <td class="px-4 py-2">{{ $loop->iteration + ($tabungan->currentPage()-1) * $tabungan->perPage() }}</td>
                         <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d-m-Y') }}</td>
                         <td class="px-4 py-2">Rp {{ number_format($tabungan->nilai, 0, ',', '.') }}</td>
                         <td class="px-4 py-2">
@@ -97,7 +97,7 @@
 
         {{-- PAGINATION --}}
         <div class="mt-4">
-            {{ $tabungans->links() }}
+            {{ $tabungan->links() }}
         </div>
     </div>
 </div>

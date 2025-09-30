@@ -154,12 +154,6 @@ class KelolaAnggotController extends Controller
         }
     }
 
-<<<<<<< HEAD
-        $anggota->update($validated);
-
-        return redirect()->route('pengurus.KelolaAnggota.index')
-                         ->with('success', 'Data anggota berhasil diperbarui');
-=======
     // Update atau buat simpanan Sukarela
     if ($request->filled('simpanan_sukarela')) {
         $simpanan = $anggota->simpananSukarela()->latest('id')->first();
@@ -178,7 +172,6 @@ class KelolaAnggotController extends Controller
                 'bulan'  => now()->month,
             ]);
         }
->>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
     }
 
     return redirect()->route('pengurus.KelolaAnggota.index')
