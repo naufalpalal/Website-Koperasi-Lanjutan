@@ -74,7 +74,6 @@ Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.lapo
     });
 
 // Tabungan Pengurus
-    // Tabungan Pengurus
     Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('pengurus.tabungan.')->group(function () {
         Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
         Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');

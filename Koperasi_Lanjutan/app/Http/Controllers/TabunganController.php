@@ -12,7 +12,7 @@ class TabunganController extends Controller
      */
     public function index()
     {
-        $tabungan = Tabungan::all();
+        $tabungan = Tabungan::where('users_id', auth()->id())->paginate(10);
         return view('user.simpanan.tabungan.index', compact('tabungan'));
     }
 

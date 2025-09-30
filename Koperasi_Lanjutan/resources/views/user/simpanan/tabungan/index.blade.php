@@ -71,27 +71,27 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($tabungan as $tabungan)
+                @forelse ($tabungan as $item)
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $loop->iteration + ($tabungan->currentPage()-1) * $tabungan->perPage() }}</td>
-                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d-m-Y') }}</td>
-                        <td class="px-4 py-2">Rp {{ number_format($tabungan->nilai, 0, ',', '.') }}</td>
-                        <td class="px-4 py-2">
-                            <form action="{{ route('user.simpanan.tabungan.destroy', $tabungan->id) }}" method="POST" 
-                                  onsubmit="return confirm('Yakin hapus tabungan ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                                    Hapus
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                    <td class="px-4 py-2">{{ $loop->iteration + ($tabungan->currentPage()-1) * $tabungan->perPage() }}</td>
+                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
+                    <td class="px-4 py-2">Rp {{ number_format($item->nilai, 0, ',', '.') }}</td>
+                    <td class="px-4 py-2">
+                        <form action="{{ route('user.simpanan.tabungan.destroy', $item->id) }}" method="POST" 
+                            onsubmit="return confirm('Yakin hapus tabungan ini?')">
+                            @csrf
+                            @method('DELETE')
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                            Hapus
+                        </button>
+                        </form>
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-4 text-gray-500">Belum ada tabungan</td>
-                    </tr>
-                @endforelse
+                <tr>
+            <td colspan="4" class="text-center py-4 text-gray-500">Belum ada tabungan</td>
+            </tr>
+            @endforelse
             </tbody>
         </table>
 

@@ -14,7 +14,7 @@ class Tabungan2Controller extends Controller
     public function index()
     {
         // Ambil semua tabungan dengan relasi user
-        $tabungans = Tabungan::with('user')->latest()->get();
+        $tabungans = Tabungan::with(['user' => function($q) {$q->where('role', 'anggota');}])->latest()->get();
 
         // Sesuaikan dengan path view kamu
         return view('pengurus.simpanan.tabungan.index', compact('tabungans'));
