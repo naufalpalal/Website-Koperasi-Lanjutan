@@ -41,6 +41,7 @@ class SimpananSukarelaAnggotaController extends Controller
         return view('user.simpanan.sukarela.riwayat', compact('riwayat'));
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     public function pengajuanUserIndex()
     {
@@ -77,4 +78,6 @@ class SimpananSukarelaAnggotaController extends Controller
 
 =======
 >>>>>>> f164040d339f55501385ca60f5a74b7f0ac83c7e
+=======
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
 }

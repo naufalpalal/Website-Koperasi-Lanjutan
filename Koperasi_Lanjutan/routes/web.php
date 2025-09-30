@@ -12,8 +12,14 @@ use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
 use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
 use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
+<<<<<<< HEAD
+=======
+use App\Http\Controllers\Pengurus\Tabungan2Controller;
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
+
+
 
 
 
@@ -64,10 +70,28 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.laporan.index');
 
 // Pinjaman (Pengurus)
-Route::prefix('pengurus/pinjaman')->middleware(['auth', 'role:pengurus'])->name('pengurus.pinjaman.')->group(function () {
-    Route::get('/', [PinjamanController::class, 'index'])->name('index');
-    Route::put('/{id}', [PinjamanController::class, 'update'])->name('update');
-});
+    Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/pinjaman')->name('pengurus.pinjaman.')->group(function () {
+        Route::get('/', [PinjamanController::class, 'index'])->name('index');
+        Route::put('/{id}', [PinjamanController::class, 'update'])->name('update');
+    });
+
+// Tabungan Pengurus
+    // Tabungan Pengurus
+    Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('pengurus.tabungan.')->group(function () {
+        Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
+        Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
+    });
+
+
+
+
+// Tabungan (anggota)
+    Route::middleware(['auth'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () { 
+        Route::resource('tabungan', TabunganController::class);
+
+    });
+
 
 // Simpanan (pengurus)
 // Route::prefix('pengurus/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {

@@ -56,6 +56,9 @@
                         <a href="{{ route('user.simpanan.sukarela.index') }}"
                             class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan Sukarela</a>
                     </div>
+                    <a href="{{ route('user.simpanan.tabungan.index') }}" class="flex items-center px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
+                        Tabungan
+                    </a>
                 </div>
             
                 <!-- Logout -->
@@ -74,8 +77,7 @@
                 </form>
             </nav>
         </div>
-
-        <!-- User Info -->
+        <!-- Footer -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">
                 <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-10 w-10 rounded-full mr-3">

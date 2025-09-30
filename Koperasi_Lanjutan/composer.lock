@@ -2999,6 +2999,7 @@
         },
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
             "name": "phiki/phiki",
             "version": "v2.0.4",
             "source": {
@@ -3039,6 +3040,8 @@
                 "psr-4": {
                     "Phiki\\": "src/"
 =======
+=======
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
             "name": "phpoffice/phpspreadsheet",
             "version": "1.30.0",
             "source": {
@@ -3100,7 +3103,10 @@
             "autoload": {
                 "psr-4": {
                     "PhpOffice\\PhpSpreadsheet\\": "src/PhpSpreadsheet"
+<<<<<<< HEAD
 >>>>>>> f164040d339f55501385ca60f5a74b7f0ac83c7e
+=======
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3109,6 +3115,7 @@
             ],
             "authors": [
                 {
+<<<<<<< HEAD
 <<<<<<< HEAD
                     "name": "Ryan Chandler",
                     "email": "support@ryangjchandler.co.uk",
@@ -3133,6 +3140,8 @@
             ],
             "time": "2025-09-20T17:21:02+00:00"
 =======
+=======
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
                     "name": "Maarten Balliauw",
                     "homepage": "https://blog.maartenballiauw.be"
                 },
@@ -3168,7 +3177,10 @@
                 "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.30.0"
             },
             "time": "2025-08-10T06:28:02+00:00"
+<<<<<<< HEAD
 >>>>>>> f164040d339f55501385ca60f5a74b7f0ac83c7e
+=======
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
         },
         {
             "name": "phpoption/phpoption",
