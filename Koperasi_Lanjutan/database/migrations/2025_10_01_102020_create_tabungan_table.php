@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('tabungan', function (Blueprint $table) {
             $table->id();
             $table->integer('nilai');
-            $table->date('tanggal');
+            $table->date('tanggal')->change();
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
+            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->timestamps();
         });
     }
