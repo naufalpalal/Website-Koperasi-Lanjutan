@@ -38,7 +38,7 @@ class PengurusSimpananWajibController extends Controller
 
             
 
-        return view('pengurus.simpanan.wajib_2.dashboard', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
+        return view('pengurus.simpanan.wajib.dashboard', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
     public function index(Request $request)
     {
@@ -169,7 +169,7 @@ class PengurusSimpananWajibController extends Controller
 
     public function downloadExcel()
     {
-        $fileName = 'Simpanan_Wajib_' . now()->format('Y_m_d') . '.xlsx';
+        $fileName = 'Simpanan_Wajib' . now()->format('Y_m_d') . '.xlsx';
         return Excel::download(new SimpananExport, $fileName);
     }
 

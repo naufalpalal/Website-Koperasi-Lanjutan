@@ -8,7 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Tombol redirect ke route belajar.id
     if (masuk) {
         masuk.addEventListener('click', function () {
+<<<<<<< HEAD
+            window.location.href = "edit"
+=======
             window.location.href = "/pengurus/simpanan-wajib/edit"
+>>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
         });
     }
 
