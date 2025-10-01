@@ -80,7 +80,13 @@
                 </button>
             </div>
         </form>
+        <div class="mt-4">
+            <a href="{{ route('pengurus.simpanan.sukarela.riwayat') }}"
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                Lihat Riwayat Simpanan Sukarela
+            </a>
 
+        </div>
 
 
     </div>

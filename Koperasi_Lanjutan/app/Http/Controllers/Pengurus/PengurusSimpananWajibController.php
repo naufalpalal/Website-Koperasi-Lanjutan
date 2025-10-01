@@ -36,7 +36,7 @@ class PengurusSimpananWajibController extends Controller
             ->orderBy('bulan', 'desc')
             ->pluck('periode');
 
-            
+
 
         return view('pengurus.simpanan.wajib_2.dashboard', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
@@ -62,7 +62,7 @@ class PengurusSimpananWajibController extends Controller
             ->orderBy('bulan', 'desc')
             ->pluck('periode');
 
-            
+
 
         return view('pengurus.simpanan.wajib_2.index', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
@@ -150,13 +150,13 @@ class PengurusSimpananWajibController extends Controller
     {
         $anggota = User::findOrFail($id);
 
-    $riwayat = SimpananWajib::where('users_id', $anggota->id)
-        ->orderBy('tahun', 'desc')
-        ->orderBy('bulan', 'desc')
-        ->get();
+        $riwayat = SimpananWajib::where('users_id', $anggota->id)
+            ->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->get();
 
-    return view('pengurus.simpanan.wajib_2.riwayat', compact('anggota', 'riwayat'));
-}
+        return view('pengurus.simpanan.wajib_2.riwayat', compact('anggota', 'riwayat'));
+    }
 
     public function destroy($id)
     {
@@ -172,20 +172,20 @@ class PengurusSimpananWajibController extends Controller
         return Excel::download(new SimpananExport, $fileName);
     }
 
-        public function lockPeriode(Request $request)
-{
-    $request->validate([
-        'bulan' => 'required|date_format:Y-m',
-    ]);
+    public function lockPeriode(Request $request)
+    {
+        $request->validate([
+            'bulan' => 'required|date_format:Y-m',
+        ]);
 
-    [$tahun, $bulan] = explode('-', $request->bulan);
+        [$tahun, $bulan] = explode('-', $request->bulan);
 
-    // Update semua simpanan bulan tersebut jadi terkunci
-    SimpananWajib::where('tahun', $tahun)
-        ->where('bulan', $bulan)
-        ->update(['is_locked' => true]);
+        // Update semua simpanan bulan tersebut jadi terkunci
+        SimpananWajib::where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->update(['is_locked' => true]);
 
-    return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
-}
+        return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
+    }
 
 }

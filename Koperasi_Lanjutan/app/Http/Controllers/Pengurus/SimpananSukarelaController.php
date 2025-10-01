@@ -106,5 +106,42 @@ class SimpananSukarelaController extends Controller
         return back()->with('success', 'Simpanan sukarela berhasil digenerate.');
     }
 
+    public function riwayat(Request $request)
+{
+    // Ambil parameter dari request (jika ada)
+    $id     = $request->input('id');    // ID anggota (optional)
+    $bulan  = $request->input('bulan'); // Bulan filter (optional)
+    $tahun  = $request->input('tahun'); // Tahun filter (optional)
+
+    // Buat query dasar
+    $query = SimpananSukarela::with('user');
+
+    // Filter per anggota jika ID ada
+    $anggota = null;
+    if ($id) {
+        $anggota = \App\Models\User::findOrFail($id);
+        $query->where('users_id', $anggota->id);
+    }
+
+    // Filter bulan
+    if ($bulan) {
+        $query->where('bulan', $bulan);
+    }
+
+    // Filter tahun
+    if ($tahun) {
+        $query->where('tahun', $tahun);
+    }
+
+    // Ambil data riwayat dengan urutan terbaru
+    $riwayat = $query->orderBy('tahun', 'desc')
+                     ->orderBy('bulan', 'desc')
+                     ->paginate(10);
+
+    // Kirim ke view
+    return view('pengurus.simpanan.sukarela.riwayat', compact('riwayat', 'anggota', 'bulan', 'tahun', 'id'));
+}
+
+
 
 }
