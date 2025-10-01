@@ -7,13 +7,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelolaAnggotController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PinjamanController;
-use App\Http\Controllers\pengurus\SimpananController;
 use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
 use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
 use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
 use App\Http\Controllers\Pengurus\Tabungan2Controller;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
+use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
+use App\Http\Controllers\TabunganController;
 
 
 
