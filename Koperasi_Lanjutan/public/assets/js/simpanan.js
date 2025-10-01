@@ -3,16 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnGenerate = document.getElementById('btnGenerate');
     const modalNominal = document.getElementById('modalNominal');
     const closeModal = document.getElementById('closeModal');
-    const masuk = document.getElementById('masuk'); // ✅ diperbaiki, deklarasi dulu
+    const masuk = document.getElementById('masuk'); // ✅ deklarasi dulu
 
     // Tombol redirect ke route belajar.id
     if (masuk) {
         masuk.addEventListener('click', function () {
-<<<<<<< HEAD
-            window.location.href = "edit"
-=======
-            window.location.href = "/pengurus/simpanan-wajib/edit"
->>>>>>> c2de613c57e45cc7df8f4cac8169dbf6d0e9b2d7
+            window.location.href = "/pengurus/simpanan-wajib/edit";
         });
     }
 
@@ -45,4 +41,23 @@ document.addEventListener('DOMContentLoaded', function () {
     if (select && form) {
         form.appendChild(select);
     }
+
+    // === Bagian toggle periode (radio button) ===
+    const radioHariIni = document.getElementById("mulai_hari_ini");
+    const radioCustom = document.getElementById("mulai_bulan");
+    const customPeriode = document.getElementById("custom_periode");
+
+    function togglePeriode() {
+        if (radioCustom && radioCustom.checked) {
+            customPeriode.classList.remove("hidden");
+        } else if (customPeriode) {
+            customPeriode.classList.add("hidden");
+        }
+    }
+
+    if (radioHariIni) radioHariIni.addEventListener("change", togglePeriode);
+    if (radioCustom) radioCustom.addEventListener("change", togglePeriode);
+
+    // panggil sekali biar sesuai default
+    togglePeriode();
 });

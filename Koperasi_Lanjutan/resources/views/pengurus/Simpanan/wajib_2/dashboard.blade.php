@@ -24,9 +24,6 @@
         </form>
 
         {{-- Tombol Add & Edit Nominal --}}
-        <?php 
-        $isLocked=false; ?>
-        @if(!$isLocked)
         <div class="flex items-center gap-3">
             <a href="{{ route('pengurus.simpanan.wajib_2.download') }}" 
             class="text-green-600 hover:text-green-700 transition" 
@@ -42,12 +39,11 @@
                 setting/add
             </button>
         </div>
-        @endif
+  
     </div>
 
     {{-- Checkbox Select All --}}
-    @if(!$isLocked)
-    @endif
+  
 
     {{-- Daftar anggota dan simpanan --}}
     <form action="{{ route('pengurus.simpanan.wajib_2.updateStatus') }}" method="POST">

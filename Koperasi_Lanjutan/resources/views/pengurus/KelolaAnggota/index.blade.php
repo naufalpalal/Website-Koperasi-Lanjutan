@@ -1,7 +1,7 @@
 @extends('pengurus.index')
 
 @section('title', 'Kelola Anggota')
-@extends('pengurus.layouts.navbar')
+<!-- @extends('pengurus.layouts.navbar') -->
 
 @section('content')
 <div class="container mx-auto pt-12 px-10">

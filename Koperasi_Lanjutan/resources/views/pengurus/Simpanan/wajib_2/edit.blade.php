@@ -32,12 +32,34 @@
 </div>
 
         {{-- Berlaku Sampai Bulan --}}
+        {{-- Berlaku Mulai --}}
+<div>
+    <label class="font-medium block mb-2">Berlaku Mulai:</label>
+    
+    {{-- Opsi: Mulai Hari Ini --}}
+    <div class="flex items-center mb-2">
+        <input type="radio" id="mulai_hari_ini" name="periode_opsi" value="hari_ini" 
+               class="mr-2" checked>
+        <label for="mulai_hari_ini">Mulai bulan ini ({{ now()->format(' M Y') }})</label>
+    </div>
+
+    {{-- Opsi: Pilih Bulan --}}
+    <div class="flex items-center mb-2">
+        <input type="radio" id="mulai_bulan" name="periode_opsi" value="custom" class="mr-2">
+        <label for="mulai_bulan">Pilih Bulan</label>
+    </div>
+
+    {{-- Jika pilih "Pilih Bulan" tampilkan range bulan --}}
+    <div id="custom_periode" class="hidden mt-3 space-y-2">
         <div>
-            <label for="periode_mulai" class="font-medium block mb-1">Berlaku Mulai Bulan:</label>
+            <label for="periode_mulai" class="block text-sm font-medium">Mulai Bulan:</label>
             <input type="month" name="periode_mulai" id="periode_mulai"
-                value="{{ isset($master->periode_mulai) ? $master->periode_mulai->format('Y-m') : now()->format('Y-m') }}"
-                class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400">
+                   value="{{ now()->format('Y-m') }}"
+                   class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
+    </div>
+</div>
+
 
         {{-- Tombol Aksi --}}
         <div class="flex flex-col sm:flex-row justify-end gap-2 mt-4">

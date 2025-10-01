@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+// use App\Models\Pinjaman;
 use Illuminate\Support\Facades\Hash;
+// use App\Http\Controllers\PinjamanController;
 
 class UserController extends Controller
 {
@@ -55,10 +57,17 @@ class UserController extends Controller
     {
         return view('pengurus.index');
     }
-    public function dashboardView()
-    {
-        return view('pengurus.dashboard.index');
-    }
+   public function dashboardView()
+{
+    // Hitung total anggota
+    $totalAnggota = User::where('role', 'anggota')->count();
+
+    // (opsional) kalau ada tabel Pinjaman / Simpanan bisa ditambah di sini:
+    // $totalPinjaman =  Pinjaman::where('status', 'aktif')->count();
+    // $totalSimpanan = Simpanan::sum('jumlah');
+
+    return view('pengurus.dashboard.index', compact('totalAnggota'));
+}
 
     public function dashboardUserView()
     {

@@ -38,7 +38,7 @@ class PengurusSimpananWajibController extends Controller
 
             
 
-        return view('pengurus.simpanan.wajib.dashboard', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
+        return view('pengurus.simpanan.wajib_2.dashboard', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
     public function index(Request $request)
     {
@@ -150,7 +150,6 @@ class PengurusSimpananWajibController extends Controller
     {
         $anggota = User::findOrFail($id);
 
-    // Ambil semua simpanan anggota ini, urut dari terbaru
     $riwayat = SimpananWajib::where('users_id', $anggota->id)
         ->orderBy('tahun', 'desc')
         ->orderBy('bulan', 'desc')

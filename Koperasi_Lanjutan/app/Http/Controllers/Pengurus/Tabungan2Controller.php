@@ -14,7 +14,12 @@ class Tabungan2Controller extends Controller
     public function index()
     {
         // Ambil semua tabungan dengan relasi user
-        $tabungans = Tabungan::with(['user' => function($q) {$q->where('role', 'anggota');}])->latest()->get();
+            $tabungans = Tabungan::with('user')
+        ->whereHas('user', function ($query) {
+            $query->where('role', 'anggota'); // hanya user yang role anggota
+        })
+        ->latest()
+        ->get();
 
         // Sesuaikan dengan path view kamu
         return view('pengurus.simpanan.tabungan.index', compact('tabungans'));
@@ -24,26 +29,22 @@ class Tabungan2Controller extends Controller
      * Setujui tabungan
      */
     public function approve($id)
-    {
-        $tabungan = Tabungan::findOrFail($id);
-        $tabungan->status = 'disetujui';
-        $tabungan->save();
+{
+    $tabungan = Tabungan::findOrFail($id);
+    $tabungan->status = 'diterima'; // harus sesuai enum
+    $tabungan->save();
 
-        // pake nama route yg sudah dibuat: pengurus.tabungan.index
-        return redirect()->route('pengurus.tabungan.index')
-                         ->with('success', 'Tabungan berhasil disetujui.');
-    }
+    return redirect()->route('pengurus.tabungan.index')
+                     ->with('success', 'Tabungan berhasil disetujui.');
+}
 
-    /**
-     * Tolak tabungan
-     */
-    public function reject($id)
-    {
-        $tabungan = Tabungan::findOrFail($id);
-        $tabungan->status = 'ditolak';
-        $tabungan->save();
+public function reject($id)
+{
+    $tabungan = Tabungan::findOrFail($id);
+    $tabungan->status = 'ditolak';
+    $tabungan->save();
 
-        return redirect()->route('pengurus.tabungan.index')
-                         ->with('error', 'Tabungan ditolak.');
-    }
+    return redirect()->route('pengurus.tabungan.index')
+                     ->with('error', 'Tabungan ditolak.');
+}
 }

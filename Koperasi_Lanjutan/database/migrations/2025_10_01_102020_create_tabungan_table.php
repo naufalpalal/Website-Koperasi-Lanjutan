@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_simpanan_sukarela', function (Blueprint $table) {
+        Schema::create('tabungan', function (Blueprint $table) {
             $table->id();
-             $table->integer('nilai');
-            $table->integer('tahun');
-            $table->integer('bulan');
+            $table->integer('nilai');
+            $table->date('tanggal');
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_simpanan_sukarela');
+        Schema::dropIfExists('tabungan');
     }
 };

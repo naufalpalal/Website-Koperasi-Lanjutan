@@ -13,49 +13,57 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if(session('error'))
+            <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
 
-        <table class="w-full border border-gray-300 rounded-lg">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="px-4 py-2 text-left">No</th>
-                    <th class="px-4 py-2 text-left">Nama Anggota</th>
-                    <th class="px-4 py-2 text-left">Tanggal</th>
-                    <th class="px-4 py-2 text-left">Nominal</th>
-                    <th class="px-4 py-2 text-left">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($tabungans as $tabungan)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                        <td class="px-4 py-2">{{ $tabungan->user->name ?? 'Tidak diketahui' }}</td>
-                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d-m-Y') }}</td>
-                        <td class="px-4 py-2">Rp {{ number_format($tabungan->nilai, 0, ',', '.') }}</td>
-                        <td class="px-4 py-2 flex gap-2">
-                            {{-- Tombol Setujui --}}
-                            <form action="{{ route('pengurus.tabungan.approve', $tabungan->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                                    Setujui
-                                </button>
-                            </form>
-                            
-                            {{-- Tombol Tolak --}}
-                            <form action="{{ route('pengurus.tabungan.reject', $tabungan->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                                    Tolak
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
+        <div class="overflow-x-auto">
+            <table class="w-full border border-gray-300 rounded-lg">
+                <thead class="bg-gray-200">
                     <tr>
-                        <td colspan="5" class="text-center py-4 text-gray-500">Belum ada pengajuan tabungan</td>
+                        <th class="px-4 py-2 text-left">No</th>
+                        <th class="px-4 py-2 text-left">Nama Anggota</th>
+                        <th class="px-4 py-2 text-left">Tanggal</th>
+                        <th class="px-4 py-2 text-left">Nominal</th>
+                        <th class="px-4 py-2 text-left">Status / Aksi</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse ($tabungans as $tabungan)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-2">{{ $loop->iteration }}</td>
+                            <td class="px-4 py-2">{{ $tabungan->user?->nama ?? 'Tidak diketahui' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d-m-Y') }}</td>
+                            <td class="px-4 py-2">Rp {{ number_format($tabungan->nilai, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2 flex gap-2">
+                                @if($tabungan->status === 'pending')
+    <form action="{{ route('pengurus.tabungan.approve', $tabungan->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+            Setujui
+        </button>
+    </form>
+    <form action="{{ route('pengurus.tabungan.reject', $tabungan->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+            Tolak
+        </button>
+    </form>
+@else
+    <span class="font-semibold text-gray-700">{{ ucfirst($tabungan->status) }}</span>
+@endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-gray-500">Belum ada pengajuan tabungan</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection

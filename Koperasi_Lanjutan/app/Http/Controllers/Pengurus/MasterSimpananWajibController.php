@@ -10,51 +10,67 @@ use Illuminate\Http\Request;
 class MasterSimpananWajibController extends Controller
 {
     // Update nominal simpanan wajib (Master)
-    public function updateNominal(Request $request)
+   public function updateNominal(Request $request)
 {
+    // Validasi input
     $request->validate([
         'nilai' => 'required|integer|min:0',
+        'periode_opsi' => 'required|in:hari_ini,custom',
+        'periode_mulai' => 'nullable|date_format:Y-m', // hanya dipakai kalau custom
     ]);
 
     $nilaiBaru = $request->nilai;
 
-    // Ambil record master terakhir (jika ada)
-    $master = MasterSimpananWajib::latest()->first();
+    // Tentukan bulan target
+    if ($request->periode_opsi === 'hari_ini') {
+        $bulan = now(); // bulan berjalan
+    } else {
+        // Custom bulan
+        if (!$request->periode_mulai) {
+            return back()->withErrors(['periode_mulai' => 'Bulan harus dipilih jika opsi custom dipilih']);
+        }
+        $bulan = \Carbon\Carbon::createFromFormat('Y-m', $request->periode_mulai)->startOfMonth();
+    }
+
+    // Update atau buat MasterSimpananWajib untuk bulan itu
+    $master = MasterSimpananWajib::where('tahun', $bulan->year)
+        ->where('bulan', $bulan->month)
+        ->latest()
+        ->first();
 
     if ($master) {
-        // Update master
         $master->update([
             'nilai' => $nilaiBaru,
-            'tahun' => now()->year,
-            'bulan' => now()->month,
+            'tahun' => $bulan->year,
+            'bulan' => $bulan->month,
             'users_id' => auth()->id(),
             'status'  => $master->status,
         ]);
     } else {
-        // Buat baru jika belum ada
         MasterSimpananWajib::create([
             'nilai' => $nilaiBaru,
-            'tahun' => now()->year,
-            'bulan' => now()->month,
+            'tahun' => $bulan->year,
+            'bulan' => $bulan->month,
             'users_id' => auth()->id(),
             'status'  => 'Diajukan',
         ]);
     }
 
     // Update semua SimpananWajib yang sudah digenerate tapi belum dibayar
-    $simpananBulanIni = SimpananWajib::where('tahun', now()->year)
-        ->where('bulan', now()->month)
-        ->whereIn('status', ['Diajukan', 'Gagal']) // hanya yang belum dibayar
+    $simpananBelumBayar = SimpananWajib::where('tahun', $bulan->year)
+        ->where('bulan', $bulan->month)
+        ->whereIn('status', ['Diajukan', 'Gagal'])
         ->get();
 
-    foreach ($simpananBulanIni as $simpanan) {
+    foreach ($simpananBelumBayar as $simpanan) {
         $simpanan->nilai = $nilaiBaru;
         $simpanan->save();
     }
 
     return redirect()->route('pengurus.simpanan.wajib_2.index')
-                     ->with('success', 'Nominal simpanan wajib berhasil diperbarui dan diperbarui pada data anggota yang belum dibayar.');
+        ->with('success', 'Nominal simpanan wajib berhasil diperbarui untuk bulan ' . $bulan->translatedFormat('F Y') . '.');
 }
+
 
     public function editNominal()
     {

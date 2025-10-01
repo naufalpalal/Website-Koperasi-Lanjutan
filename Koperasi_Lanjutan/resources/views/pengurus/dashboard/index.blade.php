@@ -1,5 +1,5 @@
 @extends ('pengurus.index')
-@extends ('pengurus.layouts.navbar')
+<!-- @extends ('pengurus.layouts.navbar') -->
 @extends ('pengurus.layouts.sidebar')
 @section('content')
 
@@ -16,7 +16,7 @@
                     </svg>
                 </span>
                 <div class="mt-6 text-sm text-gray-500">Total Anggota</div>
-                <div class="font-bold text-2xl text-gray-700 mb-6">120</div>
+                <div class="font-bold text-2xl text-gray-700 mb-6">{{ $totalAnggota }}</div>
             </div>
             <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl shadow-lg flex flex-col items-center justify-center aspect-square w-56 hover:shadow-xl transition">
                 <span class="bg-yellow-500 text-white rounded-full p-3 mt-6">
@@ -26,7 +26,7 @@
                     </svg>
                 </span>
                 <div class="mt-6 text-sm text-gray-500">Pinjaman Aktif</div>
-                <div class="font-bold text-2xl text-gray-700 mb-6">35</div>
+                <div class="font-bold text-2xl text-gray-700 mb-6">90</div>
             </div>
             <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl shadow-lg flex flex-col items-center justify-center aspect-square w-56 hover:shadow-xl transition">
                 <span class="bg-green-500 text-white rounded-full p-3 mt-6">
