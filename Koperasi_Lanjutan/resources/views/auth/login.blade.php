@@ -31,7 +31,7 @@
         
         <!-- Forgot Password -->
         <div class="flex justify-end">
-            <a href="*" class="text-base text-blue-500 hover:underline">
+            <a href="{{ route('password.request') }}" class="text-base text-blue-500 hover:underline">
                 Forgot password?
             </a>
         </div>

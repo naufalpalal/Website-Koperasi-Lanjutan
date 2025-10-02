@@ -16,7 +16,7 @@ use App\Http\Controllers\Pengurus\Tabungan2Controller;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
 use App\Http\Controllers\TabunganController;
-
+use app\Http\Controllers\PasswordResetRequestController;
 
 
 
@@ -158,4 +158,14 @@ Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
 });
+
+// Form forgot password (untuk anggota)
+Route::get('/forgot-password', function () {
+    return view('user.auth.reset-password');
+})->middleware('guest')->name('password.request');
+
+// Proses permintaan reset password
+Route::post('/forgot-password', [PasswordResetRequestController::class, 'requestReset'])
+    ->middleware('guest')
+    ->name('password.email');
 

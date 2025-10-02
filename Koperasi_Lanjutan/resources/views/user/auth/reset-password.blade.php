@@ -12,7 +12,7 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
-        <form method="POST" action="{{ route('anggota.password.reset.request') }}">
+        <form method="POST" action="{{ route('password.email') }}">
             @csrf
 
             <div class="mb-3">
