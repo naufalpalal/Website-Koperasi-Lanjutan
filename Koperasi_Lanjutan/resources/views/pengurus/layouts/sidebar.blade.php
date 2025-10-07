@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <a href="{{ route('pengurus.simpanan.kelola.pending') }}"
+            <!-- <a href="{{ route('pengurus.simpanan.kelola.pending') }}"
                 class="flex items-center px-4 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
                 Pengajuan Simpanan Sukarela
             </a>
@@ -77,7 +77,7 @@
             <a href="{{ route('pengurus.laporan.index') }}"
                 class="flex items-center px-4 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
                 Laporan
-            </a>
+            </a> -->
         </nav>
 
         <!-- Logout -->
