@@ -125,7 +125,7 @@ Route::middleware(['auth', 'role:anggota'])->prefix('user')->name('user.')->grou
 
     // Simpanan wajib anggota (view)
     Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('simpanan.wajib.index');
-}
+});
 
 // Form forgot password (untuk anggota)
 Route::get('/forgot-password', function () {
@@ -136,4 +136,3 @@ Route::get('/forgot-password', function () {
 Route::post('/forgot-password', [PasswordResetRequestController::class, 'requestReset'])
     ->middleware('guest')
     ->name('password.email');
-
