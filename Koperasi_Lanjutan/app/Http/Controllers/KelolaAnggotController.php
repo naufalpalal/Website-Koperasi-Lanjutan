@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Models\Pengurus\SimpananSukarela;
 use App\Models\Simpanan;
+use App\Models\User\MasterSimpananSukarela;
 use App\Models\SimpananPokok;
 use App\Models\User;
 use App\Models\user\SimpananWajib;
@@ -66,32 +67,32 @@ class KelolaAnggotController extends Controller
     ]);
 
     // Simpanan Pokok
-  SimpananPokok::create([
-    'users_id'  => $user->id,
-    'nilai'     => $validated['simpanan_pokok'],
-    'tahun'     => now()->format('Y'),
-    'bulan'     => now()->format('m'),
-    'status'    => 'Belum Dibayar',
-]);
+//   SimpananPokok::create([
+//     'users_id'  => $user->id,
+//     'nilai'     => $validated['simpanan_pokok'],
+//     'tahun'     => now()->format('Y'),
+//     'bulan'     => now()->format('m'),
+//     'status'    => 'Belum Dibayar',
+// ]);
 
 
     // Simpanan Wajib
-   SimpananWajib::create([
-    'users_id'  => $user->id,
-    'nilai'     => $validated['simpanan_wajib'],
-    'tahun'     => now()->format('Y'),
-    'bulan'     => now()->format('m'),
-    'status'    => 'Diajukan',
-]);
+//    SimpananWajib::create([
+//     'users_id'  => $user->id,
+//     'nilai'     => $validated['simpanan_wajib'],
+//     'tahun'     => now()->format('Y'),
+//     'bulan'     => now()->format('m'),
+//     'status'    => 'Diajukan',
+// ]);
 
 
     // Simpanan Sukarela
-  SimpananSukarela::create([
+  MasterSimpananSukarela::create([
     'users_id'  => $user->id,
     'nilai'     => $validated['simpanan_sukarela_awal'],
     'tahun'     => now()->format('Y'),
     'bulan'     => now()->format('m'),
-    'status'    => 'Diajukan',
+    'status'    => 'Disetujui',
 ]);
 
 
@@ -146,43 +147,50 @@ class KelolaAnggotController extends Controller
     // }
 
     // Update atau buat simpanan Wajib
-    if ($request->filled('simpanan_wajib')) {
-        $simpanan = $anggota->simpananWajib()->latest('id')->first();
-        if ($simpanan) {
-            $simpanan->update([
-            'nilai'  => $request->simpanan_wajib,
-            'status' => 'Dibayar',
-            'tahun'  => now()->year,
-            'bulan'  => now()->month,
-            ]);
-        } else {
-            $anggota->simpananWajib()->create([
-                'nilai' => $request->simpanan_wajib,
-                'status' => 'Dibayar',
-                'tahun'  => now()->year,
-            'bulan'  => now()->month,
-            ]);
-        }
-    }
+    // if ($request->filled('simpanan_wajib')) {
+    //     $simpanan = $anggota->simpananWajib()->latest('id')->first();
+    //     if ($simpanan) {
+    //         $simpanan->update([
+    //         'nilai'  => $request->simpanan_wajib,
+    //         'status' => 'Dibayar',
+    //         'tahun'  => now()->year,
+    //         'bulan'  => now()->month,
+    //         ]);
+    //     } else {
+    //         $anggota->simpananWajib()->create([
+    //             'nilai' => $request->simpanan_wajib,
+    //             'status' => 'Dibayar',
+    //             'tahun'  => now()->year,
+    //         'bulan'  => now()->month,
+    //         ]);
+    //     }
+    // }
 
     // Update atau buat simpanan Sukarela
-    if ($request->filled('simpanan_sukarela')) {
-        $simpanan = $anggota->simpananSukarela()->latest('id')->first();
-        if ($simpanan) {
-            $simpanan->update([
-                'nilai' => $request->simpanan_sukarela,
-                'status' => 'Dibayar',
-                'tahun'  => now()->year,
-                'bulan'  => now()->month,
-            ]);
-        } else {
-            $anggota->simpananSukarela()->create([
-                'nilai' => $request->simpanan_sukarela,
-                'status' => 'Dibayar',
-                'tahun'  => now()->year,
-                'bulan'  => now()->month,
-            ]);
-        }
+   if ($request->filled('simpanan_sukarela')) {
+
+    // Cek apakah data untuk user, bulan, dan tahun ini sudah ada di tabel master
+    $existing = MasterSimpananSukarela::where('users_id', $anggota->id)
+        ->where('tahun', now()->year)
+        ->where('bulan', now()->month)
+        ->first();
+
+    if ($existing) {
+        // Jika sudah ada, maka update nilai dan statusnya
+        $existing->update([
+            'nilai'  => $request->simpanan_sukarela,
+            'status' => 'Pending', // atau 'Dibayar' tergantung proses verifikasi kamu
+        ]);
+    } else {
+        // Jika belum ada, buat data baru
+        MasterSimpananSukarela::create([
+            'users_id' => $anggota->id,
+            'nilai'    => $request->simpanan_sukarela,
+            'tahun'    => now()->year,
+            'bulan'    => now()->month,
+            'status'   => 'Pending', // bisa juga 'Dibayar' kalau langsung bayar
+        ]);
+    }
     }
 
     return redirect()->route('pengurus.KelolaAnggota.index')
