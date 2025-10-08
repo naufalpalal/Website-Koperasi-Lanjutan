@@ -19,7 +19,7 @@ class PasswordResetRequestController extends Controller
         ]);
 
         // Cari user berdasarkan nama & nip
-        $user = User::where('name', $request->nama)
+        $user = User::where('nama', $request->nama)
             ->where('nip', $request->nip)
             ->firstOrFail();
 
