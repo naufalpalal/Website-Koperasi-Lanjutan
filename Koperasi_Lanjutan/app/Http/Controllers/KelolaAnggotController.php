@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Pengurus\MasterSimpananWajib;
 use App\Models\Pengurus\SimpananSukarela;
 use App\Models\Simpanan;
 use App\Models\User\MasterSimpananSukarela;
@@ -77,13 +78,13 @@ class KelolaAnggotController extends Controller
 
 
     // Simpanan Wajib
-//    SimpananWajib::create([
-//     'users_id'  => $user->id,
-//     'nilai'     => $validated['simpanan_wajib'],
-//     'tahun'     => now()->format('Y'),
-//     'bulan'     => now()->format('m'),
-//     'status'    => 'Diajukan',
-// ]);
+    MasterSimpananWajib::create([
+    'users_id'  => $user->id,
+    'nilai'     => $validated['simpanan_wajib'],
+    'tahun'     => now()->format('Y'),
+    'bulan'     => now()->format('m'),
+    'status'    => 'Diajukan',
+]);
 
 
     // Simpanan Sukarela
@@ -179,7 +180,7 @@ class KelolaAnggotController extends Controller
         // Jika sudah ada, maka update nilai dan statusnya
         $existing->update([
             'nilai'  => $request->simpanan_sukarela,
-            'status' => 'Pending', // atau 'Dibayar' tergantung proses verifikasi kamu
+            'status' => 'Disetujui', // atau 'Dibayar' tergantung proses verifikasi kamu
         ]);
     } else {
         // Jika belum ada, buat data baru
@@ -188,7 +189,7 @@ class KelolaAnggotController extends Controller
             'nilai'    => $request->simpanan_sukarela,
             'tahun'    => now()->year,
             'bulan'    => now()->month,
-            'status'   => 'Pending', // bisa juga 'Dibayar' kalau langsung bayar
+            'status'   => 'Disetujui', // bisa juga 'Dibayar' kalau langsung bayar
         ]);
     }
     }

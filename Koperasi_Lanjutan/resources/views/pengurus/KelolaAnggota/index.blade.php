@@ -31,7 +31,7 @@
                         <th class="border p-2">No Telepon</th>
                         <th class="border p-2">Alamat</th>
                         <th class="border p-2">Tempat, Tanggal Lahir</th>
-                        <th class="border p-2">Simpanan Sukarela</th>
+                        <!-- <th class="border p-2">Simpanan Sukarela</th> -->
                         <th class="border p-2">Unit Kerja</th>
                         <th class="border p-2 text-center">Aksi</th>
                     </tr>
@@ -50,9 +50,9 @@
                                 {{ $a->tempat_lahir ?? '-' }}
                             @endif
                         </td>
-                        <td class="border p-2 text-gray-600 text-center">
+                        <!-- <td class="border p-2 text-gray-600 text-center">
                             Rp{{ number_format($a->simpananSukarela()->sum('nilai'), 0, ',', '.') }}
-                        </td>
+                        </td> -->
                         <td class="border p-2 text-gray-600">{{ $a->unit_kerja ?? '-' }}</td> {{-- ✅ Tambahan kolom Unit Kerja --}}
                         <td class="border p-2 text-center align-middle">
                             <div class="flex flex-row justify-center items-center gap-2">

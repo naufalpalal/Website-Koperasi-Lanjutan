@@ -23,6 +23,7 @@
 
     <!-- JS eksternal -->
     <script src="{{ asset('assets/js/simpanan.js') }}"></script>
+    <script src="{{ asset('assets/js/checklist.js') }}"></script>
 </body>
 
 </html>
