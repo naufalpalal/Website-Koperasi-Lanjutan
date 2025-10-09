@@ -19,14 +19,33 @@
             @endif
         </div>
 
-        <a href="{{ route('user.simpanan.sukarela.riwayat') }}"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Lihat Riwayat
-        </a>
+        {{-- Tombol Aksi (dalam satu baris) --}}
+        <div class="flex items-center gap-3 mt-4">
+            <a href="{{ route('user.simpanan.sukarela.riwayat') }}"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Lihat Riwayat
+            </a>
 
-        <a href="{{ route('user.simpanan.sukarela.pengajuan') }}"
-            class="ml-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-            Ajukan Perubahan Nominal
-        </a>
+            <a href="{{ route('user.simpanan.sukarela.pengajuan') }}"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                Ajukan Perubahan Nominal
+            </a>
+
+            @if(Auth::user()->is_simpanan_aktif)
+            <a href="{{ route('simpanan.sukarela.nonaktifkan.form') }}"
+                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
+                Nonaktifkan Simpanan
+            </a>
+        @else
+            <form action="{{ route('simpanan.sukarela.toggle') }}" method="POST">
+                @csrf
+                <button type="submit"
+                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-200">
+                    Aktifkan Simpanan
+                </button>
+            </form>
+        @endif
+
+
     </div>
 @endsection

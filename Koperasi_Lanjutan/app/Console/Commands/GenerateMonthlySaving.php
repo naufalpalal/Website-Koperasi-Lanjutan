@@ -17,9 +17,20 @@ class GenerateMonthlySaving extends Command
    public function handle()
 {
     $month = Carbon::now()->startOfMonth()->toDateString();
-    $members = user::where('status', 'aktif')->get();
 
-    $this->info("Total anggota aktif: " . $members->count());
+    User::where('is_simpanan_aktif', false)
+        ->whereNotNull('nonaktif_hingga')
+        ->whereDate('nonaktif_hingga', '<', now())
+        ->update([
+            'is_simpanan_aktif' => true,
+            'nonaktif_hingga' => null,
+        ]);
+
+    $members = User::where('status', 'aktif')
+        ->where('is_simpanan_aktif', true)
+        ->get();
+
+    $this->info("Total anggota dengan simpanan aktif: " . $members->count());
     $this->info("Proses simpanan bulan: " . $month);
 
     foreach ($members as $member) {
@@ -30,7 +41,7 @@ class GenerateMonthlySaving extends Command
             ->exists();
 
         if ($exists) {
-            $this->warn("Sudah ada transaksi untuk {$member->nama} bulan {$month}");
+            $this->warn("⚠️ Sudah ada transaksi untuk {$member->nama} bulan {$month}");
             continue;
         }
 
@@ -44,6 +55,8 @@ class GenerateMonthlySaving extends Command
 
         $this->info("✅ Transaksi dibuat untuk {$member->nama}");
     }
+
+    $this->info('Selesai membuat simpanan bulanan.');
 }
 
 }

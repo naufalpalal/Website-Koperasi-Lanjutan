@@ -158,6 +158,16 @@ Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
+
+Route::post('/simpanan-sukarela/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])
+    ->name('simpanan.sukarela.toggle');
+
+Route::get('/simpanan-sukarela/nonaktifkan', [SimpananSukarelaAnggotaController::class, 'showNonaktifkanForm'])
+    ->name('simpanan.sukarela.nonaktifkan.form');
+
+Route::post('/simpanan-sukarela/nonaktifkan', [SimpananSukarelaAnggotaController::class, 'nonaktifkan'])
+    ->name('simpanan.sukarela.nonaktifkan.submit');
+
 });
 
 // Form forgot password (untuk anggota)
@@ -169,3 +179,5 @@ Route::get('/forgot-password', function () {
 Route::post('/forgot-password', [PasswordResetRequestController::class, 'requestReset'])
     ->middleware('guest')
     ->name('password.email');
+
+

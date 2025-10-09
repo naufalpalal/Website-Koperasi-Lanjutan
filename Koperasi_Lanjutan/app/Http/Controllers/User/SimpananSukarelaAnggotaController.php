@@ -40,4 +40,48 @@ class SimpananSukarelaAnggotaController extends Controller
 
         return view('user.simpanan.sukarela.riwayat', compact('riwayat'));
     }
+
+    public function toggle(Request $request)
+    {
+    $user = Auth::user();
+
+    if ($user->is_simpanan_aktif) {
+        // Menonaktifkan
+        $user->is_simpanan_aktif = false;
+        $user->nonaktif_hingga = $request->nonaktif_hingga
+            ? date('Y-m-t', strtotime($request->nonaktif_hingga)) // akhir bulan yang dipilih
+            : null;
+    } else {
+        // Mengaktifkan kembali
+        $user->is_simpanan_aktif = true;
+        $user->nonaktif_hingga = null;
+    }
+
+    $user->save();
+
+    return back()->with('success', 'Status simpanan berhasil diperbarui.');
+    }
+
+    public function showNonaktifkanForm()
+    {
+    return view('user.simpanan.sukarela.nonaktifkan');
+    }
+
+    public function nonaktifkan(Request $request)
+    {
+    $request->validate([
+        'nonaktif_hingga' => 'required|date|after:today',
+    ]);
+
+    $user = Auth::user();
+
+    $user->is_simpanan_aktif = false;
+    $user->nonaktif_hingga = date('Y-m-t', strtotime($request->nonaktif_hingga));
+    $user->save();
+
+    return redirect()->route('user.simpanan.sukarela.index')
+    ->with('success', 'Simpanan dinonaktifkan hingga ' . date('F Y', strtotime($user->nonaktif_hingga)));
+    }
+
+
 }
