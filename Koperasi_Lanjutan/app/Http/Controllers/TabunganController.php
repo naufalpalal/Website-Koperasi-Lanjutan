@@ -42,12 +42,25 @@ class TabunganController extends Controller
                      ->with('success', 'Tabungan berhasil ditambahkan.');
 }
 
-    public function destroy(string $id)
+    public function updateStatus(Request $request, $id)
     {
-        $tabungan = Tabungan::where('users_id', auth()->id())->findOrFail($id);
-        $tabungan->delete();
+        $request->validate([
+            'status' => 'required|in:pending,diterima,ditolak',
+        ]);
 
-        return redirect()->route('user.simpanan.tabungan.index')
-                         ->with('success', 'Tabungan berhasil dihapus.');
+        $tabungan = Tabungan::findOrFail($id);
+        $tabungan->status = strtolower($request->status);
+        //$tabungan->status = $request->status;
+        $tabungan->save();
+
+        return redirect()->back()->with('success', 'Status pengajuan tabungan berhasil diperbarui.');
     }
+    // public function destroy(string $id)
+    // {
+    //     $tabungan = Tabungan::where('users_id', auth()->id())->findOrFail($id);
+    //     $tabungan->delete();
+
+    //     return redirect()->route('user.simpanan.tabungan.index')
+    //                      ->with('success', 'Tabungan berhasil dihapus.');
+    // }
 }

@@ -60,7 +60,7 @@
                     <th class="px-4 py-2 text-left">No</th>
                     <th class="px-4 py-2 text-left">Tanggal</th>
                     <th class="px-4 py-2 text-left">Jumlah</th>
-                    <th class="px-4 py-2 text-left">Aksi</th>
+                    <th class="px-4 py-2 text-left">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,14 +70,29 @@
                         <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
                         <td class="px-4 py-2">Rp {{ number_format($item->nilai, 0, ',', '.') }}</td>
                         <td class="px-4 py-2">
-                            <form action="{{ route('user.simpanan.tabungan.destroy', $item->id) }}" method="POST" 
+                            @if ($item->status == 'pending')
+                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                    Pending
+                                </span>
+                            @elseif ($item->status == 'diterima')
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                    diterima
+                                </span>
+                            @elseif ($item->status == 'ditolak')
+                                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                    ditolak
+                                </span>
+                            @endif
+                        </td>
+
+                            <!-- <form action="{{ route('user.simpanan.tabungan.destroy', $item->id) }}" method="POST" 
                                 onsubmit="return confirm('Yakin hapus tabungan ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
                                     Hapus
                                 </button>
-                            </form>
+                            </form> -->
                         </td>
                     </tr>
                 @empty
@@ -87,6 +102,11 @@
                 @endforelse
             </tbody>
         </table>
+        <div>
+                <button type="submit" class="px-4 py-2 my-4 bg-green-600 text-white rounded hover:bg-green-700">
+                    Penarikan Tabungan
+                </button>
+        </div>
 
         <div class="mt-4">
             {{ $tabungan->links() }}
