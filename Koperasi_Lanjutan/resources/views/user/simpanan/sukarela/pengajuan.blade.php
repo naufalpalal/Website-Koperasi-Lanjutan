@@ -5,14 +5,20 @@
         <h2 class="text-2xl font-bold mb-6 text-gray-700">Ajukan Perubahan Simpanan Sukarela</h2>
 
         {{-- Notifikasi --}}
-        @if (session('success'))
-            <div class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
-                {{ session('success') }}
-            </div>
-        @endif (session('error'))
-            <div class="mb-4 px-4 py-3 rounded bg-red-100 text-red-800 border border-red-300">
-                {{ session('error') }}
-            </div>
+        <div class="mb-6">
+            @if (session('success'))
+                <div class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 px-4 py-3 rounded bg-red-100 text-red-800 border border-red-300">
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
+
 
         {{-- Form --}}
         <form action="{{ route('user.simpanan.sukarela.store') }}" method="POST" class="space-y-5">

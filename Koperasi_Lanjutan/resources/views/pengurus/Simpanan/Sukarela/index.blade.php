@@ -10,29 +10,89 @@
             </div>
         @endif
 
-        @php
-            // Fallback periode: old() -> variabel dari controller -> bulan ini
-            $selectedPeriod = old('bulan', $bulan ?? now()->format('Y-m'));
-        @endphp
+        {{-- Tombol untuk buka modal --}}
+        <div class="mb-4">
+            <button command="show-modal" commandfor="dialog"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                Pilih Periode
+            </button>
 
-        <div class="bg-white shadow rounded-lg p-6 mb-6">
-            <form action="{{ route('pengurus.simpanan.sukarela.generate') }}" method="POST"
-                class="flex items-center space-x-3">
-                @csrf
+            <el-dialog>
+                <dialog id="dialog" aria-labelledby="dialog-title"
+                    class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
 
-                <div>
-                    <label for="bulan" class="block text-sm font-medium text-gray-700">Pilih Periode</label>
-                    <input type="month" name="bulan" id="bulan" value="{{ $selectedPeriod }}"
-                        class="mt-1 border rounded px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none">
-                </div>
+                    <el-dialog-backdrop
+                        class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 
+                   data-enter:duration-300 data-enter:ease-out data-leave:duration-200 
+                   data-leave:ease-in dark:bg-gray-900/50">
+                    </el-dialog-backdrop>
 
-                <div class="pt-5">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-                        Generate Simpanan Sukarela
-                    </button>
-                </div>
-            </form>
+                    <div tabindex="0"
+                        class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none 
+                   sm:items-center sm:p-0">
+
+                        <el-dialog-panel
+                            class="bg-white rounded-lg shadow-lg p-6 w-96 text-center transform transition-all">
+                            <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                                Pilih Periode Generate
+                            </h2>
+
+                            <form id="periodeForm" action="{{ route('pengurus.simpanan.sukarela.generate') }}"
+                                method="POST">
+                                @csrf
+
+                                <!-- Pilih Bulan -->
+                                <div class="mb-4">
+                                    <label for="bulan" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Bulan
+                                    </label>
+
+                                    <select name="bulan" id="bulan" class="w-full border rounded px-3 py-2">
+                                        @for ($i = 1; $i <= 12; $i++)
+                                            <option value="{{ $i }}">
+                                                {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </div>
+
+                                <!-- Pilih Tahun -->
+                                <div class="mb-4">
+                                    <label for="tahun" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Tahun
+                                    </label>
+
+                                    <input type="number" name="tahun" id="tahun" value="{{ now()->year }}"
+                                        class="w-full border rounded px-3 py-2">
+                                </div>
+
+                                <!-- Tombol Aksi -->
+                                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-gray-700/25">
+
+                                    <button type="submit"
+                                        class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 
+    text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto 
+    dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400">
+                                        Generate
+                                    </button>
+
+
+                                    <button type="button" command="close" commandfor="dialog"
+                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 
+                               text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 
+                               hover:bg-gray-50 sm:mt-0 sm:w-auto dark:bg-white/10 dark:text-white 
+                               dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                                        Batal
+                                    </button>
+                                </div>
+                            </form>
+                        </el-dialog-panel>
+                    </div>
+                </dialog>
+            </el-dialog>
         </div>
+
+        {{-- Tabel data seperti semula --}}
         <form action="{{ route('pengurus.simpanan.sukarela.update') }}" method="POST">
             @csrf
             <table class="min-w-full border-collapse">
@@ -72,6 +132,7 @@
                 </button>
             </div>
         </form>
+
         <form action="{{ route('pengurus.simpanan.sukarela.pengajuan') }}" method="GET" class="mt-4">
             @csrf
             <div>
@@ -80,14 +141,12 @@
                 </button>
             </div>
         </form>
+
         <div class="mt-4">
             <a href="{{ route('pengurus.simpanan.sukarela.riwayat') }}"
                 class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
                 Lihat Riwayat Simpanan Sukarela
             </a>
-
         </div>
-
-
     </div>
 @endsection

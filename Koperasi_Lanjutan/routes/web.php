@@ -67,22 +67,22 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.laporan.index');
 
 // Pinjaman (Pengurus)
-    Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/pinjaman')->name('pengurus.pinjaman.')->group(function () {
-        Route::get('/', [PinjamanController::class, 'index'])->name('index');
-        Route::put('/{id}', [PinjamanController::class, 'update'])->name('update');
-    });
+Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/pinjaman')->name('pengurus.pinjaman.')->group(function () {
+    Route::get('/', [PinjamanController::class, 'index'])->name('index');
+    Route::put('/{id}', [PinjamanController::class, 'update'])->name('update');
+});
 
 // Tabungan Pengurus
-    Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('pengurus.tabungan.')->group(function () {
-        Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
-        Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
-        Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
-    });
+Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('pengurus.tabungan.')->group(function () {
+    Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
+    Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
+    Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
+});
 
 // Tabungan (anggota)
-    Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () { 
-        Route::resource('tabungan', TabunganController::class);
-    });
+Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
+    Route::resource('tabungan', TabunganController::class);
+});
 // Simpanan (pengurus)
 // Route::prefix('pengurus/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
 //     Route::get('transactions', [SimpananController::class, 'index'])->name('pengurus.simpanan.index');
@@ -124,7 +124,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Simpanan Sukarela - Pengurus;;
 
-Route::prefix('simpanan-sukarela')->group(function () {
+Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/simpanan-sukarela')->group(function () {
     Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
     Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
     Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
@@ -136,7 +136,7 @@ Route::prefix('simpanan-sukarela')->group(function () {
 });
 
 // Simpanan Wajib - Pengurus
-Route::prefix('pengurus/simpanan-wajib')->group(function () {
+Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/simpanan-wajib')->group(function () {
     Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('pengurus.simpanan.wajib_2.dashboard');
     Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib_2.index');
     Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib_2.generate');
@@ -153,21 +153,18 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
 
 
 // Simpanan Sukarela - Anggota
-Route::prefix('simpanan-sukarela-anggota')->group(function () {
+Route::middleware(['auth', 'role:anggota'])->prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
     Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
-
-Route::post('/simpanan-sukarela/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])
-    ->name('simpanan.sukarela.toggle');
-
-Route::get('/simpanan-sukarela/nonaktifkan', [SimpananSukarelaAnggotaController::class, 'showNonaktifkanForm'])
-    ->name('simpanan.sukarela.nonaktifkan.form');
-
-Route::post('/simpanan-sukarela/nonaktifkan', [SimpananSukarelaAnggotaController::class, 'nonaktifkan'])
-    ->name('simpanan.sukarela.nonaktifkan.submit');
-
+    Route::post('/simpanan-sukarela/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])
+        ->name('simpanan.sukarela.toggle');
+    Route::get('/user/simpanan-sukarela/libur', [PengajuanSukarelaAnggotaController::class, 'formLibur'])
+        ->name('user.simpanan.sukarela.libur');
+    // Proses pengajuan libur
+    Route::post('/user/simpanan-sukarela/libur', [PengajuanSukarelaAnggotaController::class, 'libur'])
+        ->name('user.simpanan.sukarela.libur.submit');
 });
 
 // Form forgot password (untuk anggota)

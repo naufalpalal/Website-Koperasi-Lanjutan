@@ -32,7 +32,7 @@
             </a>
 
             @if(Auth::user()->is_simpanan_aktif)
-            <a href="{{ route('simpanan.sukarela.nonaktifkan.form') }}"
+            <a href="{{ route('user.simpanan.sukarela.libur') }}"
                 class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
                 Nonaktifkan Simpanan
             </a>
