@@ -25,6 +25,8 @@
     <!-- JS eksternal -->
     <script src="{{ asset('assets/js/simpanan.js') }}"></script>
     <script src="{{ asset('assets/js/checklist.js') }}"></script>
+    <script src="{{ asset('assets/js/register.js') }}"></script>
+    <script src="{{ asset('assets/js/reviewdoc.js') }}"></script>
 </body>
 
 </html>

@@ -23,7 +23,7 @@
                 </div>
             </div>
             <nav class="mt-4 sm:mt-6">
-                <a href="{{ route('user.dashboard.index') }}"
+                <a href="{{ route('guest.dashboard') }}"
                     class="flex items-center px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0 transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
@@ -34,38 +34,8 @@
                     </svg>
                     <span class="truncate">Dashboard</span>
                 </a>
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" class="flex items-center w-full px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0
-            transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 mr-3 flex-shrink-0"
-                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                        </svg>
-                        <span class="truncate">Simpanan</span>
-
-                        <svg class="w-4 h-4 ml-2 transition-transform duration-200" :class="{ 'rotate-180': open }"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div x-show="open" @click.away="open = false" class="mt-1">
-                        <a href="{{ route('user.simpanan.wajib.index') }}"
-                            class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan
-                            Wajib</a>
-                        <a href="{{ route('user.simpanan.sukarela.index') }}"
-                            class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan Sukarela</a>
-                    </div>
-                    <a href="{{ route('user.simpanan.tabungan.index') }}" class="flex items-center px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Tabungan
-                    </a>
-                </div>
-                <div>
-                    <a href="{{ route('user.pinjaman.create') }}"
-                        class="flex items-center px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0 transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
-                        <span class="truncate">Pinjaman</span>
-                    </a>
-                </div>
+        
+            
                 <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}" class="mt-4">
                     @csrf

@@ -15,15 +15,16 @@
         <!-- Logo di luar card -->
         <img src="{{ asset('assets/favicon.png') }}" alt="Logo" class="w-20 h-20 mb-6">
         <div class="relative z-10 w-full">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto overflow-hidden">
-                <!-- Form -->
-                <div
-                    class="w-full sm:max-w-md px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                    {{ $slot }}
-                </div>
-            </div>
+            @props(['isRegister' => false])
+
+           <div class="bg-white rounded-2xl shadow-xl w-full {{ $isRegister ? 'max-w-4xl' : 'max-w-md' }} mx-auto overflow-hidden">
+    <div class="w-full px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+        {{ $slot }}
+    </div>
+</div>
+
         </div>
     </div>
 </body>
-
+<script src="{{ asset('assets/js/register.js') }}"></script>
 </html>

@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-// use App\Models\Pinjaman;
 use Illuminate\Support\Facades\Hash;
-// use App\Http\Controllers\PinjamanController;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -30,14 +28,19 @@ class UserController extends Controller
         if ($user && Hash::check($request->password, $user->password)) {
             Auth::login($user);
 
-            // Redirect sesuai role
+            // 🔹 Cek status akun
+            if ($user->status !== 'aktif') {
+                // Tetap login agar bisa upload dokumen
+                return view('guest.dashboard')
+                       ->with('warning', 'Akun Anda belum aktif. Silakan lengkapi verifikasi.');
+            }
+
+            // 🔹 Redirect sesuai role
             switch ($user->role) {
                 case 'pengurus':
-                    return redirect()->route('pengurus.dashboard.index'); // kalau ada dashboard khusus pengurus bisa diarahkan ke sana
-                   
+                    return redirect()->route('pengurus.dashboard.index');
                 case 'anggota':
                     return redirect()->route('user.dashboard.index');
-
                 default:
                     Auth::logout();
                     return redirect()->route('login')->withErrors([
@@ -52,26 +55,27 @@ class UserController extends Controller
         ])->withInput();
     }
 
-
+    // 🔹 Dashboard pengurus
     public function dashboard()
     {
         return view('pengurus.index');
     }
-   public function dashboardView()
-{
-    // Hitung total anggota
-    $totalAnggota = User::where('role', 'anggota')->count();
 
-    // (opsional) kalau ada tabel Pinjaman / Simpanan bisa ditambah di sini:
-    // $totalPinjaman =  Pinjaman::where('status', 'aktif')->count();
-    // $totalSimpanan = Simpanan::sum('jumlah');
+    public function dashboardView()
+    {
+        // Hitung total anggota
+        $totalAnggota = User::where('role', 'anggota')->count();
+        return view('pengurus.dashboard.index', compact('totalAnggota'));
+    }
 
-    return view('pengurus.dashboard.index', compact('totalAnggota'));
-}
-
+    // 🔹 Dashboard user (anggota)
     public function dashboardUserView()
     {
         return view('user.dashboard.index');
+    }
+    public function dashboardnotverifikasi()
+    {
+        return view('guest.dashboard');
     }
     
 }

@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+class RegisteredUserController extends Controller
+{
+    public function create()
+    {
+        return view('auth.register');
+    }
+
+    public function store(Request $request)
+    {
+        // Validasi
+        $request->validate([
+            'jenis_anggota'    => 'required|in:pegawai,non_pegawai',
+            'name'             => 'required|string|max:255',
+            'nip_username'     => 'required|string|max:255',
+            'no_telepon'       => 'required|string|max:20',
+            'tempat_lahir'     => 'nullable|string|max:255',
+            'tanggal_lahir'    => 'nullable|date',
+            'alamat_rumah'     => 'nullable|string|max:500',
+            'unit_kerja'       => 'nullable|string|max:255',
+            'password'         => 'required|string|min:6|confirmed',
+        ]);
+
+        $data = [
+            'nama'          => $request->name,
+            'no_telepon'    => $request->no_telepon,
+            'tempat_lahir'  => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'alamat_rumah'  => $request->alamat_rumah,
+            'unit_kerja'    => $request->unit_kerja,
+            'password'      => Hash::make($request->password),
+            'role'          => 'anggota',
+        ];
+
+        if($request->jenis_anggota === 'pegawai') {
+            $data['nip'] = $request->nip_username; // simpan di nip
+            $data['username'] = null;
+        } else {
+            $data['username'] = $request->nip_username; // simpan di username
+            $data['nip'] = null;
+        }
+
+        // Buat user
+        $user = User::create($data);
+
+        // Login otomatis
+        auth()->login($user);
+
+        return view('guest.dashboard')->with('success', 'Pendaftaran berhasil! Selamat datang di koperasi.');
+    }
+}

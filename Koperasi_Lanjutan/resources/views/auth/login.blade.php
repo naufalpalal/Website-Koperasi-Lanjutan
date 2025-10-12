@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout :isRegister="false">
     <h2 class="text-3xl sm:text-4xl font-normal text-center text-gray-800 mb-2">Login</h2>
     <p class="text-center text-gray-500 mb-6 text-base sm:text-lg">To Continue Your Account</p>
     <form method="POST" action="{{ route('login_submit') }}" class="space-y-6">
@@ -33,6 +33,11 @@
         <div class="flex justify-end">
             <a href="{{ route('password.request') }}" class="text-base text-blue-500 hover:underline">
                 Forgot password?
+            </a>
+        </div>
+        <div class="flex justify-end">
+            <a href="{{ route('register') }}" class="text-base text-blue-500 hover:underline">
+                Register
             </a>
         </div>
         <!-- Submit -->

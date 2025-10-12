@@ -30,9 +30,51 @@ class KelolaAnggotController extends Controller
     }
 
     public function verifikasi()
-    {
-        return view('Pengurus.KelolaAnggota.verifikasi');
-    }
+{
+    // Ambil semua anggota yang perlu diverifikasi
+    // misalnya yang status-nya 'pending' atau 'diajukan'
+    $anggota = User::where('role', 'anggota')
+                   ->where('status', 'pending')
+                   ->get();
+
+    // Kirim data anggota ke view
+    return view('pengurus.KelolaAnggota.verifikasi', compact('anggota'));
+}
+
+    // Setujui anggota
+public function approve($id)
+{
+    $anggota = User::findOrFail($id);
+
+    // Ubah status menjadi 'aktif'
+    $anggota->update([
+        'status' => 'aktif',
+    ]);
+
+    // (Opsional) Kirim notifikasi atau buat log
+    // Notification::send($anggota, new AnggotaApprovedNotification());
+
+    return redirect()->route('pengurus.KelolaAnggota.verifikasi')
+                     ->with('success', "Anggota {$anggota->nama} berhasil disetujui dan diaktifkan.");
+}
+
+// Tolak anggota
+public function reject($id)
+{
+    $anggota = User::findOrFail($id);
+
+    // Ubah status menjadi 'ditolak'
+    $anggota->update([
+        'status' => 'ditolak',
+    ]);
+
+    // (Opsional) Hapus dokumen pendaftaran jika perlu
+    // Storage::delete($anggota->dokumen_path);
+
+    return redirect()->route('pengurus.KelolaAnggota.verifikasi')
+                     ->with('error', "Pendaftaran anggota {$anggota->nama} telah ditolak.");
+}
+
 
     // Simpan anggota baru
     public function store(Request $request)

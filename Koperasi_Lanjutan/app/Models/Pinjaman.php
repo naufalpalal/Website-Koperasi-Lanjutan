@@ -4,22 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+
+
 
 class Pinjaman extends Model
 {
-    protected $table = 'pinjamans';
+    use HasFactory;
+
+    protected $table = 'pinjaman';
+
     protected $fillable = [
-        'member_id',
-        'jumlah',
-        'tenor',
-        'cicilan_per_bulan',
+        'user_id',
+        'nominal',
         'status',
+        'dokumen_pinjaman',
+        'bunga',
+        'tenor',
+        'angsuran',
     ];
 
-    // Relasi ke User
-    public function member()
+    // Relasi ke tabel user (anggota yang mengajukan pinjaman)
+    public function user()
     {
-        return $this->belongsTo(User::class, 'member_id');
+        return $this->belongsTo(User::class);
     }
+    
 }

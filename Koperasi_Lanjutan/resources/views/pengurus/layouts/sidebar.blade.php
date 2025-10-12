@@ -81,11 +81,11 @@
         </a>
     </div>
 </div>
-            <!-- <a href="{{ route('pengurus.simpanan.kelola.pending') }}"
+             <a href="{{ route('pengurus.pinjaman.index') }}"
                 class="flex items-center px-4 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
-                Pengajuan Simpanan Sukarela
+                Pinjaman
             </a>
-            <a href="{{ route('pengurus.pinjaman.index') }}"
+            <!-- <a href="{{ route('pengurus.pinjaman.index') }}"
                 class="flex items-center px-4 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
                 Kelola Pinjaman
             </a>
