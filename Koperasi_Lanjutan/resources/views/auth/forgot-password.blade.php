@@ -1,5 +1,4 @@
 <x-guest-layout>
-
         <!-- Card utama -->
         <div class="bg-gray-900 shadow-2xl rounded-3xl p-8 sm:p-10 max-w-md w-full text-center text-white">
             <h2 class="text-3xl font-semibold mb-2">Lupa Password</h2>
