@@ -14,14 +14,16 @@
     <div class="relative w-full max-w-xl flex flex-col items-center justify-center min-h-screen px-2">
         <!-- Logo di luar card -->
         <img src="{{ asset('assets/favicon.png') }}" alt="Logo" class="w-20 h-20 mb-6">
+
         <div class="relative z-10 w-full">
             @props(['isRegister' => false])
 
-           <div class="bg-white rounded-2xl shadow-xl w-full {{ $isRegister ? 'max-w-4xl' : 'max-w-md' }} mx-auto overflow-hidden">
-    <div class="w-full px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-        {{ $slot }}
-    </div>
-</div>
+            <!-- Card dengan tema gelap -->
+            <div class="rounded-2xl shadow-2xl w-full {{ $isRegister ? 'max-w-4xl' : 'max-w-md' }} mx-auto overflow-hidden bg-gray-900 text-white">
+                <div class="w-full px-6 py-6">
+                    {{ $slot }}
+                </div>
+            </div>
 
         </div>
     </div>
