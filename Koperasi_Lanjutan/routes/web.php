@@ -65,8 +65,7 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
     Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.KelolaAnggota.edit');
     Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.KelolaAnggota.update');
     Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.KelolaAnggota.destroy');
-    Route::get('/dokumen/lihat/{userId}/{jenis}', [App\Http\Controllers\filedokumen::class, 'lihatDokumen'])
-        ->name('dokumen.lihat');
+    Route::get('/dokumen/lihat/{userId}/{jenis}', [App\Http\Controllers\filedokumen::class, 'lihatDokumen'])->name('dokumen.lihat');
 });
 
 // Laporan (Pengurus)
@@ -95,11 +94,13 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('p
     Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
     Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
     Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
+    Route::post('/store', [Tabungan2Controller::class, 'store'])->name('store');
 });
 
 // Tabungan (anggota)
 Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
     Route::resource('tabungan', TabunganController::class);
+    Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
 });
 // Simpanan (pengurus)
 // Route::prefix('pengurus/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
@@ -117,7 +118,8 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dasboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+    Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+    Route::get('/dashboard', [TabunganController::class, 'dashboard'])->middleware('auth')->name('user.dashboard.index');
 });
 
 // Route::middleware(['auth'])->group(function () {
