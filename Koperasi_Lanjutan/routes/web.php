@@ -211,6 +211,7 @@ Route::middleware(['logout.if.authenticated'])->group(function () {
 });
 
 
+
 // Dashboard anggota
 Route::middleware(['auth', 'role:anggota'])->group(function () {
     Route::get('/anggota/dashboard', [UserController::class, 'dashboardnotverifikasi'])->name('guest.dashboard');
