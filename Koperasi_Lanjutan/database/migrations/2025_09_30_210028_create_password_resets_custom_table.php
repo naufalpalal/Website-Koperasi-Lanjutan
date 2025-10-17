@@ -6,25 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('password_resets_custom', function (Blueprint $table) {
+        Schema::create('password_reset_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // relasi ke user
-            $table->string('password'); // password baru yang sudah di-hash
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('otp_hash'); // hash OTP untuk verifikasi
+            $table->string('password')->nullable(); // password baru (setelah diapprove)
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamp('expires_at')->nullable(); // waktu kedaluwarsa OTP
+            $table->timestamp('used_at')->nullable(); // kapan digunakan
+            $table->string('ip')->nullable(); // IP yang mengajukan reset
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('password_resets_custom');
+        Schema::dropIfExists('password_reset_requests');
     }
 };

@@ -15,7 +15,7 @@ use App\Http\Controllers\Pengurus\Tabungan2Controller;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
 use App\Http\Controllers\TabunganController;
-use app\Http\Controllers\PasswordResetRequestController;
+use App\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\filedokumen;
 use App\Http\Controllers\PinjamanController;
@@ -67,7 +67,6 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
     Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.KelolaAnggota.destroy');
     Route::get('/dokumen/lihat/{userId}/{jenis}', [App\Http\Controllers\filedokumen::class, 'lihatDokumen'])
         ->name('dokumen.lihat');
-
 });
 
 // Laporan (Pengurus)
@@ -177,26 +176,40 @@ Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
 });
 
-// Form forgot password (untuk anggota)
-Route::get('/forgot-password', function () {
-    return view('user.auth.reset-password');
-})->middleware('guest')->name('password.request');
+// Forgot password dengan OTP
+Route::middleware('guest')->group(function () {
+    // 1️⃣ Tampilkan form lupa password (input email/NIP)
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
 
-// Proses permintaan reset password
-Route::post('/forgot-password', [PasswordResetRequestController::class, 'requestReset'])
-    ->middleware('guest')
-    ->name('password.email');
+    // 2️⃣ Kirim OTP ke email
+    Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])
+        ->name('password.sendOtp');
+
+    // 3️⃣ Tampilkan form input OTP (opsional jika ingin halaman terpisah)
+    Route::get('/verify-otp', function () {
+        return view('auth.verify-otp');
+    })->name('password.verifyOtp.form');
+
+    // 4️⃣ Verifikasi OTP dan reset password
+    Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])
+        ->name('password.verifyOtp');
+
+    // 5️⃣ Form reset password (jika mau pisah halaman)
+    Route::get('/reset-password', function () {
+        return view('auth.reset-password');
+    })->name('password.reset.form');
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
+
 Route::middleware(['auth', 'role:anggota'])->group(function () {
     Route::get('/anggota/dashboard', [UserController::class, 'dashboardnotverifikasi'])->name('guest.dashboard');
     Route::get('/download', [filedokumen::class, 'dokumenverifikasi'])->name('dokumen.download');
     Route::get('/upload', [filedokumen::class, 'dashboardUpload'])->name('dokumen.upload');
     Route::post('/upload', [filedokumen::class, 'uploadDokumen'])->name('dokumen.upload.store');
 });
-
-
-
