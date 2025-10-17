@@ -141,7 +141,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Simpanan Sukarela - Pengurus;;
 
-Route::prefix('simpanan-sukarela')->group(function () {
+Route::middleware(['auth', 'role:pengurus'])->prefix('simpanan-sukarela')->group(function () {
     Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
     Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
     Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
@@ -170,11 +170,12 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
 
 
 // Simpanan Sukarela - Anggota
-Route::prefix('simpanan-sukarela-anggota')->group(function () {
+Route::middleware(['auth'])->prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
     Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
+    Route::post('/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])->name('simpanan.sukarela.toggle');
 });
 
 // Form forgot password (untuk anggota)
