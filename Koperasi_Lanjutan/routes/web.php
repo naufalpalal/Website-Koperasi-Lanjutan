@@ -59,8 +59,8 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
     Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.KelolaAnggota.index');
     Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.KelolaAnggota.create');
     Route::get('/anggota/verifikasi', [KelolaAnggotController::class, 'verifikasi'])->name('pengurus.KelolaAnggota.verifikasi');
-    Route::get('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.KelolaAnggota.approve');
-    Route::get('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.KelolaAnggota.reject');
+    Route::post('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.KelolaAnggota.approve');
+    Route::post('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.KelolaAnggota.reject');
     Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.KelolaAnggota.store');
     Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.KelolaAnggota.edit');
     Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.KelolaAnggota.update');
@@ -84,8 +84,10 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->group(function (
     Route::post('/pinjaman/store', [PinjamanController::class, 'store'])->name('user.pinjaman.store');
     Route::get('/pinjaman/download/{id}', [PinjamanController::class, 'download'])->name('user.pinjaman.download');
     Route::get('/pinjaman/upload/{id}', [PinjamanController::class, 'uploadForm'])->name('user.pinjaman.uploadForm');
+
     Route::post('/pinjaman/upload/{id}', [PinjamanController::class, 'upload'])->name('user.pinjaman.upload');
-    Route::delete('/user/pinjaman/dokumen/{id}', [PinjamanController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
+
+    Route::delete('/pinjaman/dokumen/{id}', [PinjamanController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
 });
 
 // Tabungan Pengurus
@@ -174,6 +176,8 @@ Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
+
+
 });
 
 // Forgot password dengan OTP
