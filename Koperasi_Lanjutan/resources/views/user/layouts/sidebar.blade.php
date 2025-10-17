@@ -55,10 +55,9 @@
                             Wajib</a>
                         <a href="{{ route('user.simpanan.sukarela.index') }}"
                             class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan Sukarela</a>
+                        <a href="{{ route('user.simpanan.tabungan.index') }}" 
+                            class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Tabungan</a>
                     </div>
-                    <a href="{{ route('user.simpanan.tabungan.index') }}" class="flex items-center px-6 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
-                        Tabungan
-                    </a>
                 </div>
                 <div>
                     <a href="{{ route('user.pinjaman.create') }}"

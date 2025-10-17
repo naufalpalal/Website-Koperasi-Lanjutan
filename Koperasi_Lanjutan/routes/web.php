@@ -94,11 +94,13 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('p
     Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
     Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
     Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
+    Route::post('/store', [Tabungan2Controller::class, 'store'])->name('store');
 });
 
 // Tabungan (anggota)
 Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
     Route::resource('tabungan', TabunganController::class);
+    Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
 });
 // Simpanan (pengurus)
 // Route::prefix('pengurus/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
@@ -116,7 +118,8 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dasboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+    Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+    Route::get('/dashboard', [TabunganController::class, 'dashboard'])->middleware('auth')->name('user.dashboard.index');
 });
 
 // Route::middleware(['auth'])->group(function () {
@@ -175,6 +178,7 @@ Route::prefix('simpanan-sukarela-anggota')->group(function () {
     Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
+    Route::post('/simpanan-sukarela/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])->name('simpanan.sukarela.toggle');
 });
 
 // Form forgot password (untuk anggota)
@@ -197,6 +201,3 @@ Route::middleware(['auth', 'role:anggota'])->group(function () {
     Route::get('/upload', [filedokumen::class, 'dashboardUpload'])->name('dokumen.upload');
     Route::post('/upload', [filedokumen::class, 'uploadDokumen'])->name('dokumen.upload.store');
 });
-
-
-

@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tabungan', function (Blueprint $table) {
+        Schema::create('tabungans', function (Blueprint $table) {
             $table->id();
             $table->integer('nilai');
-            $table->date('tanggal')->change();
+            $table->date('tanggal');
+            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
+            $table->string('bukti_transfer')->nullable();
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tabungan');
+        Schema::dropIfExists('tabungans');
     }
 };

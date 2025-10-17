@@ -45,19 +45,19 @@ class SimpananSukarelaAnggotaController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->is_simpanan_aktif) {
-            // Menonaktifkan
-            $user->is_simpanan_aktif = false;
-            $user->nonaktif_hingga = $request->nonaktif_hingga
-                ? date('Y-m-t', strtotime($request->nonaktif_hingga)) // akhir bulan yang dipilih
-                : null;
-        } else {
-            // Mengaktifkan kembali
-            $user->is_simpanan_aktif = true;
-            $user->nonaktif_hingga = null;
-        }
+        // if ($user->is_simpanan_aktif) {
+        //     // Menonaktifkan
+        //     $user->is_simpanan_aktif = false;
+        //     $user->nonaktif_hingga = $request->nonaktif_hingga
+        //         ? date('Y-m-t', strtotime($request->nonaktif_hingga)) // akhir bulan yang dipilih
+        //         : null;
+        // } else {
+        //     // Mengaktifkan kembali
+        //     $user->is_simpanan_aktif = true;
+        //     $user->nonaktif_hingga = null;
+        // }
 
-        $user->save();
+        // $user->save();
 
         return back()->with('success', 'Status simpanan berhasil diperbarui.');
     }
