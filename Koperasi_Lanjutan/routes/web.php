@@ -15,7 +15,7 @@ use App\Http\Controllers\Pengurus\Tabungan2Controller;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
 use App\Http\Controllers\TabunganController;
-use app\Http\Controllers\PasswordResetRequestController;
+use App\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\filedokumen;
 use App\Http\Controllers\PinjamanController;
@@ -59,15 +59,14 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
     Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.KelolaAnggota.index');
     Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.KelolaAnggota.create');
     Route::get('/anggota/verifikasi', [KelolaAnggotController::class, 'verifikasi'])->name('pengurus.KelolaAnggota.verifikasi');
-    Route::get('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.KelolaAnggota.approve');
-    Route::get('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.KelolaAnggota.reject');
+    Route::post('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.KelolaAnggota.approve');
+    Route::post('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.KelolaAnggota.reject');
     Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.KelolaAnggota.store');
     Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.KelolaAnggota.edit');
     Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.KelolaAnggota.update');
     Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.KelolaAnggota.destroy');
     Route::get('/dokumen/lihat/{userId}/{jenis}', [App\Http\Controllers\filedokumen::class, 'lihatDokumen'])
         ->name('dokumen.lihat');
-
 });
 
 // Laporan (Pengurus)
@@ -85,8 +84,10 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->group(function (
     Route::post('/pinjaman/store', [PinjamanController::class, 'store'])->name('user.pinjaman.store');
     Route::get('/pinjaman/download/{id}', [PinjamanController::class, 'download'])->name('user.pinjaman.download');
     Route::get('/pinjaman/upload/{id}', [PinjamanController::class, 'uploadForm'])->name('user.pinjaman.uploadForm');
+
     Route::post('/pinjaman/upload/{id}', [PinjamanController::class, 'upload'])->name('user.pinjaman.upload');
-    Route::delete('/user/pinjaman/dokumen/{id}', [PinjamanController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
+
+    Route::delete('/pinjaman/dokumen/{id}', [PinjamanController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
 });
 
 // Tabungan Pengurus
@@ -94,13 +95,11 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('p
     Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
     Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
     Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
-    Route::post('/store', [Tabungan2Controller::class, 'store'])->name('store');
 });
 
 // Tabungan (anggota)
 Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
     Route::resource('tabungan', TabunganController::class);
-    Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
 });
 // Simpanan (pengurus)
 // Route::prefix('pengurus/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
@@ -118,8 +117,7 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
-    Route::get('/dashboard', [TabunganController::class, 'dashboard'])->middleware('auth')->name('user.dashboard.index');
+    Route::get('/dasboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
 });
 
 // Route::middleware(['auth'])->group(function () {
@@ -144,7 +142,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Simpanan Sukarela - Pengurus;;
 
-Route::prefix('simpanan-sukarela')->group(function () {
+Route::middleware(['auth', 'role:pengurus'])->prefix('simpanan-sukarela')->group(function () {
     Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
     Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
     Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
@@ -173,28 +171,48 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
 
 
 // Simpanan Sukarela - Anggota
-Route::prefix('simpanan-sukarela-anggota')->group(function () {
+Route::middleware(['auth'])->prefix('simpanan-sukarela-anggota')->group(function () {
     Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('user.simpanan.sukarela.index');
     Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('user.simpanan.sukarela.store');
     Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('user.simpanan.sukarela.pengajuan');
     Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('user.simpanan.sukarela.riwayat');
-    Route::post('/simpanan-sukarela/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])->name('simpanan.sukarela.toggle');
+    Route::post('/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])->name('simpanan.sukarela.toggle');
 });
 
-// Form forgot password (untuk anggota)
-Route::get('/forgot-password', function () {
-    return view('user.auth.reset-password');
-})->middleware('guest')->name('password.request');
+// LOGIN + REGISTER + FORGOT PASSWORD (Guest Area)
+Route::middleware(['logout.if.authenticated'])->group(function () {
 
-// Proses permintaan reset password
-Route::post('/forgot-password', [PasswordResetRequestController::class, 'requestReset'])
-    ->middleware('guest')
-    ->name('password.email');
+    // Login
+    Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [UserController::class, 'login'])->name('login_submit');
 
-Route::middleware('guest')->group(function () {
+    // Register
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
+
+    // Forgot password + OTP (bisa diakses walau login)
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])
+        ->name('password.sendOtp');
+
+    Route::get('/verify-otp', function () {
+        return view('auth.verify-otp');
+    })->name('password.verifyOtp.form');
+
+    Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])
+        ->name('password.verifyOtp');
+
+    Route::get('/reset-password', function () {
+        return view('auth.reset-password');
+    })->name('password.reset.form');
 });
+
+
+
+// Dashboard anggota
 Route::middleware(['auth', 'role:anggota'])->group(function () {
     Route::get('/anggota/dashboard', [UserController::class, 'dashboardnotverifikasi'])->name('guest.dashboard');
     Route::get('/download', [filedokumen::class, 'dokumenverifikasi'])->name('dokumen.download');

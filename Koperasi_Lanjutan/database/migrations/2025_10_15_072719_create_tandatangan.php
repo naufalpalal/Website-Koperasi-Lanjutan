@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('simpanan_wajib', function (Blueprint $table) {
+        Schema::create('tandatangan', function (Blueprint $table) {
             $table->id();
-            $table->integer('nilai');
-            $table->integer('tahun');
-            $table->integer('bulan');
-            $table->enum('status', ['Diajukan', 'Dibayar','Gagal'])->default('Diajukan');
-            $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
+            $table->string('nama');
+            $table->string('jabatan');
+            $table->string('nip')->nullable();
+            $table->string('file_ttd');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('simpanan_wajib');
+        Schema::dropIfExists('tandatangan');
     }
 };
