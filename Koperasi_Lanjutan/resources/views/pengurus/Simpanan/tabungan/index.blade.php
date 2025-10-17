@@ -34,20 +34,6 @@
                     @endforeach
                 </select>
             </div>
-            {{-- PILIH ANGGOTA --}}
-<div>
-    <label for="users_id" class="block text-sm font-medium text-gray-700">Nama Anggota</label>
-    <input list="users_list" name="users_id" id="users_id"
-        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm px-3 py-2"
-        placeholder="Ketik atau pilih nama anggota..." required>
-
-    <datalist id="users_list">
-        @foreach ($users as $user)
-            <option value="{{ $user->nama }}" data-id="{{ $user->id }}"></option>
-        @endforeach
-    </datalist>
-</div>
-
             {{-- TANGGAL --}}
             <div>
                 <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
