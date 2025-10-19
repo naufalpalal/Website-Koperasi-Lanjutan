@@ -19,7 +19,7 @@
             @props(['isRegister' => false])
 
             <!-- Card dengan tema gelap -->
-            <div class="rounded-2xl shadow-2xl w-full {{ $isRegister ? 'max-w-4xl' : 'max-w-md' }} mx-auto overflow-hidden bg-gray-900 text-white">
+            <div class="rounded-2xl shadow-2xl w-full {{ $isRegister ? 'max-w-4xl' : 'max-w-md' }} mx-auto overflow-hidden bg-white text-gray-900">
                 <div class="w-full px-6 py-6">
                     {{ $slot }}
                 </div>

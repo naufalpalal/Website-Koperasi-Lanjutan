@@ -80,6 +80,7 @@ Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus')->group(function
     Route::post('/pinjaman/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
     Route::post('/pinjaman/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
     Route::get('/angsuran/{pinjaman_id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
+    Route::put('/angsuran/{pinjaman_id}/update-status', [AngsuranController::class, 'updateStatus'])->name('pengurus.angsuran.updateStatus');
 });
 
 
