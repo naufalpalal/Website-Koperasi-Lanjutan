@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\Pinjaman;
 use App\Models\DokumenPinjaman;
 use Illuminate\Http\Request;
@@ -9,64 +10,64 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class PinjamanController extends Controller
+class PinjamanAnggotaController extends Controller
 {
-    // === BAGIAN PENGURUS ===
-    public function index()
-    {
-        $pinjamans = Pinjaman::with('user')
-                        ->where('status', 'pending')
-                        ->get();
+    // // === BAGIAN PENGURUS ===
+    // public function index()
+    // {
+    //     $pinjamans = Pinjaman::with('user')
+    //                     ->where('status', 'pending')
+    //                     ->get();
 
-        return view('pengurus.pinjaman.index', compact('pinjamans'));
-    }
+    //     return view('pengurus.pinjaman.index', compact('pinjamans'));
+    // }
 
-    public function show($id)
-    {
-        $pinjaman = Pinjaman::with('user')->findOrFail($id);
-        return view('pengurus.pinjaman.show', compact('pinjaman'));
-    }
+    // public function show($id)
+    // {
+    //     $pinjaman = Pinjaman::with('user')->findOrFail($id);
+    //     return view('pengurus.pinjaman.show', compact('pinjaman'));
+    // }
 
-    public function verify(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:disetujui,ditolak',
-            'bunga' => 'required_if:status,disetujui|numeric|min:0',
-            'tenor' => 'required_if:status,disetujui|integer|min:1',
-        ]);
+    // public function verify(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'status' => 'required|in:disetujui,ditolak',
+    //         'bunga' => 'required_if:status,disetujui|numeric|min:0',
+    //         'tenor' => 'required_if:status,disetujui|integer|min:1',
+    //     ]);
 
-        $pinjaman = Pinjaman::findOrFail($id);
+    //     $pinjaman = Pinjaman::findOrFail($id);
 
-        if ($request->status === 'disetujui') {
-            $pinjaman->update([
-                'status' => 'disetujui',
-                'bunga' => $request->bunga,
-                'tenor' => $request->tenor,
-                'angsuran' => ($pinjaman->nominal + ($pinjaman->nominal * $request->bunga / 100)) / $request->tenor,
-            ]);
-        } else {
-            $pinjaman->update(['status' => 'ditolak']);
-        }
+    //     if ($request->status === 'disetujui') {
+    //         $pinjaman->update([
+    //             'status' => 'disetujui',
+    //             'bunga' => $request->bunga,
+    //             'tenor' => $request->tenor,
+    //             'angsuran' => ($pinjaman->nominal + ($pinjaman->nominal * $request->bunga / 100)) / $request->tenor,
+    //         ]);
+    //     } else {
+    //         $pinjaman->update(['status' => 'ditolak']);
+    //     }
 
-        return redirect()->route('pengurus.pinjaman.index')
-            ->with('success', 'Pinjaman telah diverifikasi.');
-    }
+    //     return redirect()->route('pengurus.pinjaman.index')
+    //         ->with('success', 'Pinjaman telah diverifikasi.');
+    // }
 
-    public function downloadFinal($id)
-    {
-        $pinjaman = Pinjaman::with('user')->findOrFail($id);
+    // public function downloadFinal($id)
+    // {
+    //     $pinjaman = Pinjaman::with('user')->findOrFail($id);
 
-        if ($pinjaman->status !== 'disetujui') {
-            abort(403, "Pinjaman belum disetujui");
-        }
+    //     if ($pinjaman->status !== 'disetujui') {
+    //         abort(403, "Pinjaman belum disetujui");
+    //     }
 
-        $pdf = Pdf::loadView('dokumen.SuratPinjamanFinal', [
-            'pinjaman' => $pinjaman,
-            'tanggal' => now()->translatedFormat('d F Y'),
-        ])->setPaper('a4', 'portrait');
+    //     $pdf = Pdf::loadView('dokumen.SuratPinjamanFinal', [
+    //         'pinjaman' => $pinjaman,
+    //         'tanggal' => now()->translatedFormat('d F Y'),
+    //     ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('Surat_Pinjaman_Final_'.$pinjaman->user->nama.'.pdf');
-    }
+    //     return $pdf->download('Surat_Pinjaman_Final_'.$pinjaman->user->nama.'.pdf');
+    // }
 
     // === BAGIAN ANGGOTA ===
 

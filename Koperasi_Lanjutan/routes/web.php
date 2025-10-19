@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelolaAnggotController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\pengurus\SimpananController;
 use App\Http\Controllers\User\SimpananWajibController;
 use App\Http\Controllers\Pengurus\SimpananSukarelaController;
 use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
@@ -18,7 +17,9 @@ use App\Http\Controllers\TabunganController;
 use App\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\filedokumen;
-use App\Http\Controllers\PinjamanController;
+use App\Http\Controllers\Pengurus\PinjamanController;
+use App\Http\Controllers\Pengurus\AngsuranController;
+use App\Http\Controllers\User\PinjamanAnggotaController;
 
 
 
@@ -72,21 +73,25 @@ Route::middleware(['auth', 'role:pengurus'])->group(function () {
 Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.laporan.index');
 
 // Pinjaman (Pengurus)
-Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/pinjaman')->name('pengurus.pinjaman.')->group(function () {
-    Route::get('/', [PinjamanController::class, 'index'])->name('index');
-    Route::put('/{id}', [PinjamanController::class, 'update'])->name('update');
+Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus')->group(function () {
+    Route::get('/pinjaman', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
+    Route::get('/pinjaman/pengajuan', [PinjamanController::class, 'pengajuan'])->name('pengurus.pinjaman.pengajuan');
+    Route::get('/pinjaman/{id}', [PinjamanController::class, 'show'])->name('pengurus.pinjaman.show');
+    Route::post('/pinjaman/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
+    Route::post('/pinjaman/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
+    Route::get('/angsuran/{pinjaman_id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
 });
+
+
 
 // Pinjaman (Anggota)
 Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->group(function () {
-    Route::get('/pinjaman/create', [PinjamanController::class, 'create'])->name('user.pinjaman.create');
-    Route::post('/pinjaman/store', [PinjamanController::class, 'store'])->name('user.pinjaman.store');
-    Route::get('/pinjaman/download/{id}', [PinjamanController::class, 'download'])->name('user.pinjaman.download');
-    Route::get('/pinjaman/upload/{id}', [PinjamanController::class, 'uploadForm'])->name('user.pinjaman.uploadForm');
-
-    Route::post('/pinjaman/upload/{id}', [PinjamanController::class, 'upload'])->name('user.pinjaman.upload');
-
-    Route::delete('/pinjaman/dokumen/{id}', [PinjamanController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
+    Route::get('/pinjaman/create', [PinjamanAnggotaController::class, 'create'])->name('user.pinjaman.create');
+    Route::post('/pinjaman/store', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
+    Route::get('/pinjaman/download/{id}', [PinjamanAnggotaController::class, 'download'])->name('user.pinjaman.download');
+    Route::get('/pinjaman/upload/{id}', [PinjamanAnggotaController::class, 'uploadForm'])->name('user.pinjaman.uploadForm');
+    Route::post('/pinjaman/upload/{id}', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
+    Route::delete('/pinjaman/dokumen/{id}', [PinjamanAnggotaController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
 });
 
 // Tabungan Pengurus
@@ -102,13 +107,7 @@ Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.s
     Route::resource('tabungan', TabunganController::class);
     Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
 });
-// Simpanan (pengurus)
-// Route::prefix('pengurus/simpanan')->middleware(['auth', 'role:pengurus'])->group(function () {
-//     Route::get('transactions', [SimpananController::class, 'index'])->name('pengurus.simpanan.index');
-//     Route::get('transactions/{transaction}/edit', [SimpananController::class, 'edit'])->name('pengurus.simpanan.edit');
-//     Route::put('transactions/{transaction}', [SimpananController::class, 'update'])->name('pengurus.simpanan.update');
-//     Route::post('generate', [SimpananController::class, 'generate'])->name('pengurus.simpanan.generate');
-// });
+
 // Simpanan Sukarela - Pengurus
 Route::middleware(['auth', 'role:pengurus'])->group(function () {
     Route::get('/pengurus/simpanan/sukarela/pending', [SimpananSukarelaController::class, 'indexPending'])->name('pengurus.simpanan.kelola.pending');
