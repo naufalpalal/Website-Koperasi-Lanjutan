@@ -73,20 +73,21 @@
                         class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">
                         Simpanan Wajib
                     </a>
-                    <a href="{{ route('pengurus.tabungan.index') }}"
-                        class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">
-                        Tabungan
-                    </a>
-                    <a href="{{ route('settings.edit') }}"
-                        class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">
-                        Setting
-                    </a>
                 </div>
             </div>
             <a href="{{ route('pengurus.pinjaman.index') }}"
                 class="flex items-center px-4 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
                 Pinjaman
             </a>
+            <a href="{{ route('settings.edit') }}"
+                        class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700">
+                        Setting
+                    </a>
+            <a href="{{ route('pengurus.tabungan.index') }}"
+                        class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700">
+                        Tabungan
+                    </a>
+
             <!-- <a href="{{ route('pengurus.pinjaman.index') }}"
                 class="flex items-center px-4 py-3 mb-2 rounded-lg transition hover:bg-gray-800">
                 Kelola Pinjaman

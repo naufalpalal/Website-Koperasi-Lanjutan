@@ -23,6 +23,7 @@
             </select>
         </form>
 
+
         {{-- Tombol Add & Edit Nominal --}}
         <div class="flex items-center gap-3">
             <a href="{{ route('pengurus.simpanan.wajib_2.edit') }}"
@@ -36,6 +37,18 @@
             </button>
         </div>
     </div>
+
+{{-- Search --}}
+    <div class="mb-4">
+        <div class="flex items-center gap-2 w-full md:w-96">
+            <input id="searchInput" type="text" placeholder="Cari nama anggota..." 
+                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <button id="btnSearch" type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                Cari
+            </button>
+        </div>
+    </div>
+
 <div class="flex items-center justify-end ">
             <span class="text-sm font-medium px-2">Select All</span>
             <input type="checkbox" id="checkAll" class="accent-blue-600 mr-2">
@@ -78,7 +91,7 @@
                         <th class="px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                    <tbody id="anggotaTableBody">
                     @forelse($anggota as $a)
                         @php
                             $simpanan = $simpananBulanIni->get($a->id);
@@ -108,6 +121,9 @@
                 </tbody>
             </table>
         </div>
+
+        {{-- Pagination controls (client-side) --}}
+        <div class="mt-4 flex justify-center" id="paginationContainer"></div>
 
         {{-- Aksi bawah --}}
         <div class="flex items-center justify-between mt-6">

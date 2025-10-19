@@ -21,6 +21,7 @@
     @include('user.layouts.sidebar')
     <!-- JS eksternal -->
      <script src="{{ asset('assets/js/reviewdoc.js') }}"></script>
+     <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
 </body>
 
 </html>

@@ -32,7 +32,7 @@ class UserController extends Controller
             if ($user->status !== 'aktif') {
                 // Tetap login agar bisa upload dokumen
                 return view('guest.dashboard')
-                       ->with('warning', 'Akun Anda belum aktif. Silakan lengkapi verifikasi.');
+                    ->with('warning', 'Akun Anda belum aktif. Silakan lengkapi verifikasi.');
             }
 
             // 🔹 Redirect sesuai role
@@ -77,5 +77,4 @@ class UserController extends Controller
     {
         return view('guest.dashboard');
     }
-    
 }

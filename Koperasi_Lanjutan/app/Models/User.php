@@ -13,7 +13,7 @@ use App\Models\Dokumen;
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,InteractsWithMedia;
+    use HasFactory, Notifiable, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -43,7 +43,7 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(\App\Models\Simpanan::class, 'users_id');
     }
 
-        public function simpananSukarela()
+    public function simpananSukarela()
     {
         return $this->hasMany(\App\Models\Pengurus\SimpananSukarela::class, 'users_id');
     }
@@ -54,9 +54,9 @@ class User extends Authenticatable implements HasMedia
     // }
 
     public function tabungans()
-{
-    return $this->hasMany(Tabungan::class, 'users_id');
-}
+    {
+        return $this->hasMany(Tabungan::class, 'users_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -80,13 +80,13 @@ class User extends Authenticatable implements HasMedia
     //         'password' => 'hashed',
     //     ];
     // }
-     public function registerMediaCollections(): void
+    public function registerMediaCollections(): void
     {
         $this->addMediaCollection('dokumen')->useDisk('private');
     }
-    
+
     // app/Models/User.php
-public function dokumen()
+    public function dokumen()
     {
         return $this->hasOne(Dokumen::class, 'user_id');
     }
@@ -94,5 +94,9 @@ public function dokumen()
     {
         return $this->hasOne(DokumenPinjaman::class, 'user_id');
     }
-
+    public function delete()
+    {
+        // panggil delete asli Laravel, bukan trait Media Library
+        return parent::delete();
+    }
 }

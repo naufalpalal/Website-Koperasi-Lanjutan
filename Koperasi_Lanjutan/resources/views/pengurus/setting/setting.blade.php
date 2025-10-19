@@ -81,7 +81,7 @@
 
         {{-- Tombol Aksi --}}
         <div class="mt-8 flex justify-between">
-            <a href="{{ route('dashboard') }}" class="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition">
+            <a href="{{ route('pengurus.dashboard.index') }}" class="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition">
                 Kembali
             </a>
 

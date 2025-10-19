@@ -18,7 +18,7 @@
                         <th class="px-2 sm:px-4 py-2 sm:py-3">Keterangan</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
+                <tbody id="anggotaTableBody" class="divide-y divide-gray-200 bg-white">
                     @foreach($simpanan as $row)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-2 sm:px-4 py-2 sm:py-3 font-medium text-gray-700">{{ $row->tahun }}</td>
@@ -39,6 +39,10 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination controls -->
+        <div id="paginationContainer" class="mt-4 flex justify-center"></div>
+
     </div>
 </div>
 @endsection

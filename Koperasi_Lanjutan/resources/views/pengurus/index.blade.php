@@ -27,6 +27,9 @@
     <script src="{{ asset('assets/js/checklist.js') }}"></script>
     <script src="{{ asset('assets/js/register.js') }}"></script>
     <script src="{{ asset('assets/js/reviewdoc.js') }}"></script>
+    <script src="{{ asset('assets/js/dataanggota.js') }}"></script>
+    <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
+    <script src="{{ asset('assets/js/simpananwajib_search.js') }}"></script>
 </body>
 
 </html>
