@@ -19,6 +19,7 @@ use app\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\filedokumen;
 use App\Http\Controllers\PinjamanController;
+use App\Http\Controllers\IdentitasKoperasiController;
 
 
 
@@ -43,8 +44,12 @@ Route::get('/dashboard', function () {
 // Profile user (auth wajib)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+    Route::put('/profile-combined', [ProfileController::class, 'updateCombined'])->name('profile.update-combined');
+   Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
+    Route::put('/identitas-koperasi', [IdentitasKoperasiController::class, 'update'])->name('settings.update');
 });
 // Login
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');

@@ -43,5 +43,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'pengurus',
             'status' => 'aktif',
         ]);
+
+        
     }
 }

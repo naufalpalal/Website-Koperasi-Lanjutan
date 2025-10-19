@@ -1,29 +1,57 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@php
+    $layout = auth()->user()->role === 'pengurus' ? 'Pengurus.index' : 'User.index';
+@endphp
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@extends($layout)
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+@section('title', 'Profil')
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-        </div>
+@section('content')
+<div class="max-w-4xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Profile</h1>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            Kelola informasi profil dan keamanan akun Anda
+        </p>
     </div>
-</x-app-layout>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+        <form action="{{ route('profile.update-combined') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+            @csrf
+            @method('PUT')
+
+            {{-- Informasi Profil Section --}}
+            <div class="pb-8 border-b border-gray-200 dark:border-gray-700">
+                @include('profile.partials.update-profile-information-form')
+            </div>
+
+            {{-- Update Password Section --}}
+            <div class="pb-8">
+                @include('profile.partials.update-password-form')
+            </div>
+
+            {{-- Submit Button & Success Message --}}
+            <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                @if (session('status') === 'profile-updated' || session('status') === 'password-updated')
+                    <p x-data="{ show: true }" 
+                       x-show="show" 
+                       x-transition
+                       x-init="setTimeout(() => show = false, 3000)"
+                       class="text-sm text-green-600 dark:text-green-400">
+                        ✓ Perubahan berhasil disimpan
+                    </p>
+                @else
+                    <div></div>
+                @endif
+
+                <button type="submit" 
+                    class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg 
+                           transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                           dark:focus:ring-offset-gray-800">
+                    Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection

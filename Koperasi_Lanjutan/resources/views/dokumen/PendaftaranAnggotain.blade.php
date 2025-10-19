@@ -166,7 +166,7 @@
                 @if($user->nip)
                     <br>Politeknik Negeri Banyuwangi
                     <br><br><br><br><br>
-                    <strong><u>Nova Victor Geral Dino, S.E.</u></strong>
+                    <strong><u>{{ $identitas->nama_bendahara_pengeluaran }}</u></strong>
                 @else
                     <br><br><br><br><br>
                     <strong><u>--------------------</u></strong>
