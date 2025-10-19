@@ -2,23 +2,32 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PasswordResetRequest extends Model
 {
-    // Nama tabelnya
-    protected $table = 'password_resets_custom';
+    use HasFactory;
 
-    // Kolom yang bisa diisi
+    protected $table = 'password_reset_requests';
+
     protected $fillable = [
         'user_id',
+        'otp_hash',
         'password',
         'status',
+        'expires_at',
+        'used_at',
+        'ip',
     ];
 
-    // Relasi ke User
+    protected $dates = [
+        'expires_at',
+        'used_at',
+    ];
+
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

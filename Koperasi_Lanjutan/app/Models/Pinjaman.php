@@ -24,9 +24,14 @@ class Pinjaman extends Model
     ];
 
     // Relasi ke tabel user (anggota yang mengajukan pinjaman)
+    public function dokumen()
+    {
+        return $this->hasMany(DokumenPinjaman::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
+
     }
-    
 }

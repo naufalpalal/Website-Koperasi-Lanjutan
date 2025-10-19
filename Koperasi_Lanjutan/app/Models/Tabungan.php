@@ -11,13 +11,14 @@ class Tabungan extends Model
 {
     use HasFactory;
 
-    protected $table = 'tabungan';
+    protected $table = 'tabungans';
 
     protected $fillable = [
         'nilai',
         'status',
         'tanggal',
         'users_id',
+        'bukti_transfer',
     ];
 
     public function user()

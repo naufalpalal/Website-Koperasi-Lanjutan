@@ -36,6 +36,21 @@
             </div>
             <span class="text-gray-700 font-semibold">Pengajuan Pinjaman</span>
         </a>
+        <div class="container mx-auto p-6">
+            <div class="flex justify-center">
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl shadow-lg flex flex-col items-center justify-center aspect-square w-56 hover:shadow-xl transition">
+                    <span class="bg-green-500 text-white rounded-full p-3 mt-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 0V4m0 16v-4" />
+                        </svg>
+                    </span>
+                    <div class="mt-6 text-sm text-gray-500">Total Tabungan</div>
+                    <div class="font-bold text-2xl text-gray-700 mb-6">
+                        Rp {{ number_format($totalTabungan, 0, ',', '.') }}
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Bisa tambah menu lain -->
         <a href="#" 
