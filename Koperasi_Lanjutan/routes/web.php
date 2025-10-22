@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     Route::put('/profile-combined', [ProfileController::class, 'updateCombined'])->name('profile.update-combined');
-   Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
+    Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
     Route::put('/identitas-koperasi', [IdentitasKoperasiController::class, 'update'])->name('settings.update');
 });
 // Login
@@ -81,11 +81,12 @@ Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.lapo
 Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus')->group(function () {
     Route::get('/pinjaman', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
     Route::get('/pinjaman/pengajuan', [PinjamanController::class, 'pengajuan'])->name('pengurus.pinjaman.pengajuan');
-    Route::get('/pinjaman/{id}', [PinjamanController::class, 'show'])->name('pengurus.pinjaman.show');
-    Route::post('/pinjaman/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
-    Route::post('/pinjaman/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
-    Route::get('/angsuran/{pinjaman_id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
-    Route::put('/angsuran/{pinjaman_id}/update-status', [AngsuranController::class, 'updateStatus'])->name('pengurus.angsuran.updateStatus');
+    Route::get('/pinjaman/pemotongan', [AngsuranController::class, 'periodePotongan'])->name('pengurus.pinjaman.pemotongan');
+    Route::get('/pinjaman/{id}', [PinjamanController::class, 'show'])->whereNumber('id')->name('pengurus.pinjaman.show');
+    Route::post('/pinjaman/{id}/approve', [PinjamanController::class, 'approve'])->whereNumber('id')->name('pengurus.pinjaman.approve');
+    Route::post('/pinjaman/{id}/reject', [PinjamanController::class, 'reject'])->whereNumber('id')->name('pengurus.pinjaman.reject');
+    Route::get('/angsuran/{pinjaman_id}', [AngsuranController::class, 'index'])->whereNumber('pinjaman_id')->name('pengurus.angsuran.index');
+    Route::put('/pinjaman/{id}/status', [AngsuranController::class, 'updateStatus'])->whereNumber('id')->name('pengurus.pinjaman.updateStatus');
 });
 
 

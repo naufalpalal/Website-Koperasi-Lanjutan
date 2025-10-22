@@ -4,31 +4,31 @@ namespace App\Http\Controllers\Pengurus;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pinjaman;
-use Illuminate\Http\Request;
 use App\Models\Pengurus\Angsuran;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 
 class PinjamanController extends Controller
 {
-
-
-    // ✅ Daftar pengajuan pinjaman yang statusnya pending
+    /**
+     * ✅ Tampilkan semua pinjaman (semua status)
+     */
     public function index()
     {
-
-        // Ambil semua data pinjaman dengan relasi user (anggota)
         $pinjaman = Pinjaman::with('user')
-            ->orderBy('created_at', 'desc')
+            ->where('status','disetujui')
+            ->latest()
             ->get();
 
         return view('pengurus.pinjaman.index', compact('pinjaman'));
     }
 
-
+    /**
+     * ✅ Daftar pengajuan pinjaman dengan status pending
+     */
     public function pengajuan()
     {
-        $pinjaman = Pinjaman::with(['user', 'dokumen'])
+        $pinjaman = Pinjaman::with('user')
             ->where('status', 'pending')
             ->latest()
             ->get();
@@ -36,15 +36,18 @@ class PinjamanController extends Controller
         return view('pengurus.pinjaman.pengajuan', compact('pinjaman'));
     }
 
-    // ✅ Form detail & persetujuan
+    /**
+     * ✅ Detail pengajuan pinjaman
+     */
     public function show($id)
     {
-        $pinjaman = Pinjaman::with(['user', 'dokumen'])->findOrFail($id);
+        $pinjaman = Pinjaman::with('user')->findOrFail($id);
         return view('pengurus.pinjaman.show', compact('pinjaman'));
     }
 
-    // ✅ Setujui pinjaman (dengan bunga & tenor)
-
+    /**
+     * ✅ Persetujuan pinjaman (hitung bunga, tenor, dan buat angsuran otomatis)
+     */
     public function approve(Request $request, $id)
     {
         $request->validate([
@@ -57,21 +60,21 @@ class PinjamanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Hitung bunga total dan cicilan
+            // Hitung bunga dan total pembayaran
             $bunga_per_bulan = $pinjaman->nominal * ($request->bunga / 100);
             $total_bunga = $bunga_per_bulan * $request->tenor;
             $total_pembayaran = $pinjaman->nominal + $total_bunga;
-            $angsuran_bulanan = round($total_pembayaran / $request->tenor,);
+            $angsuran_bulanan = round($total_pembayaran / $request->tenor, 2);
 
-            // Update status pinjaman
+            // Update status pinjaman & data perhitungan
             $pinjaman->update([
                 'bunga' => $request->bunga,
                 'tenor' => $request->tenor,
-                'total_pembayaran' => $total_pembayaran,
+                'angsuran' => $angsuran_bulanan,
                 'status' => 'disetujui',
             ]);
 
-            // Generate angsuran otomatis
+            // Generate data angsuran otomatis
             for ($i = 1; $i <= $request->tenor; $i++) {
                 Angsuran::create([
                     'pinjaman_id' => $pinjaman->id,
@@ -81,7 +84,6 @@ class PinjamanController extends Controller
                     'status' => 'belum_lunas',
                     'jenis_pembayaran' => 'angsuran',
                 ]);
-
             }
 
             DB::commit();
@@ -94,7 +96,7 @@ class PinjamanController extends Controller
             DB::rollBack();
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', '❌ Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }
