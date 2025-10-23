@@ -105,7 +105,7 @@ class PinjamanAnggotaController extends Controller
             'tanggal' => now()->translatedFormat('d F Y'),
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('Surat_Pinjaman_'.$pinjaman->user->nama.'.pdf');
+        return $pdf->download('Surat_Pinjaman_' . $pinjaman->user->nama . '.pdf');
     }
 
     public function uploadForm($id)
@@ -117,26 +117,28 @@ class PinjamanAnggotaController extends Controller
     public function upload(Request $request, $id)
     {
         $request->validate([
-            'dokumen_pinjaman.*' => 'required|mimes:pdf|max:2048',
+            'dokumen_pinjaman' => 'required|mimes:pdf|max:2048',
         ]);
 
         $pinjaman = Pinjaman::findOrFail($id);
 
+        // Proses upload file
         if ($request->hasFile('dokumen_pinjaman')) {
-            foreach ($request->file('dokumen_pinjaman') as $file) {
-                $path = $file->store('dokumen_pinjaman', 'public');
+            $file = $request->file('dokumen_pinjaman');
 
-                DokumenPinjaman::create([
-                    'pinjaman_id' => $pinjaman->id,
-                    'file_path' => $path,
-                ]);
-            }
+            // Simpan file ke storage/app/public/dokumen_pinjaman
+            $path = $file->store('dokumen_pinjaman', 'public');
+
+            // Update kolom di tabel pinjaman
+            $pinjaman->update([
+                'dokumen_pinjaman' => $path,
+                'status' => 'pending', // status langsung pending setelah upload
+            ]);
         }
-
-        $pinjaman->update(['status' => 'pending']);
 
         return back()->with('success', 'Surat pinjaman berhasil diupload.');
     }
+
 
     public function hapusDokumen($id)
     {

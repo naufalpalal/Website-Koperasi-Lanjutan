@@ -4,7 +4,7 @@
     <div class="p-6 bg-white rounded shadow">
         <h2 class="text-xl font-bold mb-4">Detail Angsuran - Pinjaman ID: {{ $pinjaman->id }}</h2>
 
-        <form action="{{ route('pengurus.angsuran.updateStatus', $pinjaman->id) }}" method="POST">
+        <form action="{{ route('pengurus.pinjaman.updateStatus', $pinjaman->id) }}" method="POST">
             @csrf
             @method('PUT')
 

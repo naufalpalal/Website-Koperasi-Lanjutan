@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pinjaman;
 use App\Models\Pengurus\Angsuran;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AngsuranController extends Controller
 {
@@ -20,30 +21,64 @@ class AngsuranController extends Controller
 
     public function updateStatus(Request $request, $pinjaman_id)
     {
+        // Pastikan user pengurus
+        if (auth()->user()->role !== 'pengurus') {
+            return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
+        }
+
+        // Ambil semua ID angsuran yang dicentang
         $angsuranIds = $request->input('angsuran_ids', []);
 
-        if (count($angsuranIds) > 0) {
-            foreach ($angsuranIds as $id) {
-                $angsuran = Angsuran::find($id);
-                if ($angsuran && $angsuran->status != 'lunas') {
-                    $angsuran->update([
-                        'status' => 'lunas',
-                        'tanggal_bayar' => now(),
-                        'petugas_id' => auth()->id(),
-                    ]);
-                }
-            }
-
+        if (empty($angsuranIds)) {
             return redirect()
                 ->back()
-                ->with('success', '✅ Status angsuran berhasil diperbarui.');
+                ->with('warning', 'Tidak ada angsuran yang dipilih untuk diperbarui.');
+        }
+
+        // Update semua angsuran yang dipilih menjadi lunas
+        Angsuran::whereIn('id', $angsuranIds)->update([
+            'status' => 'lunas',
+            'tanggal_bayar' => now(),
+            'petugas_id' => auth()->id(),
+        ]);
+
+        // Opsi tambahan (jika semua sudah lunas, update status pinjaman)
+        $pinjaman = Pinjaman::with('angsuran')->findOrFail($pinjaman_id);
+        $sisa = $pinjaman->angsuran->where('status', 'belum_lunas')->count();
+
+        if ($sisa === 0) {
+            $pinjaman->update(['status' => 'lunas']);
         }
 
         return redirect()
-            ->back()
-            ->with('warning', 'Tidak ada angsuran yang dicentang.');
+            ->route('pengurus.angsuran.index', ['pinjaman_id' => $pinjaman_id])
+            ->with('success', 'Status angsuran berhasil diperbarui.');
     }
 
+
+    public function periodePotongan(Request $request)
+    {
+        $periode = $request->query('periode', now()->format('Y-m'));
+
+        try {
+            $selectedPeriod = Carbon::createFromFormat('Y-m', $periode);
+        } catch (\Exception $e) {
+            $selectedPeriod = now();
+        }
+
+        // Ambil semua angsuran jatuh tempo (tanggal_bayar) bulan ini & belum lunas
+        $angsuran = Angsuran::with(['pinjaman.user'])
+            ->whereYear('tanggal_bayar', $selectedPeriod->year)
+            ->whereMonth('tanggal_bayar', $selectedPeriod->month)
+            ->where('status', 'belum_lunas')
+            ->orderBy('tanggal_bayar', 'asc')
+            ->get();
+
+        return view('pengurus.pinjaman.pemotongan', [
+            'angsuran' => $angsuran,
+            'selectedPeriod' => $selectedPeriod,
+        ]);
+    }
 
 }
 
