@@ -74,7 +74,7 @@
                         Simpanan Wajib
                     </a>
                     <a href="{{ route('pengurus.tabungan.index') }}"
-                        class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700">
+                        class="block px-4 py-2 text-sm rounded-lg transition hover:bg-gray-700 text-gray-300">
                         Tabungan
                     </a>
                 </div>
