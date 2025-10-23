@@ -19,29 +19,29 @@ class KelolaAnggotController extends Controller
     // Tampilkan semua anggota
     public function index(Request $request)
     {
-        $anggota = User::where('role', 'anggota')->get();
+        $search = $request->input('q');
 
-        // Ambil input pencarian dari form
-    $search = $request->input('q');
+        // Query dasar untuk user dengan role anggota
+        $query = User::where('role', 'anggota');
 
-    // Query dasar untuk user dengan role anggota
-    $query = User::where('role', 'anggota');
+        // Jika ada pencarian, tambahkan filter
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', "%{$search}%")
+                    ->orWhere('no_telepon', 'like', "%{$search}%")
+                    ->orWhere('unit_kerja', 'like', "%{$search}%")
+                    ->orWhere('alamat_rumah', 'like', "%{$search}%");
+            });
 
-    // Jika ada pencarian, tambahkan filter
-    if ($search) {
-        $query->where(function($q) use ($search) {
-            $q->where('nama', 'like', "%{$search}%")
-              ->orWhere('nip', 'like', "%{$search}%")
-              ->orWhere('no_telepon', 'like', "%{$search}%")
-              ->orWhere('unit_kerja', 'like', "%{$search}%")
-              ->orWhere('alamat_rumah', 'like', "%{$search}%");
-        });
-    }
+            // Jika sedang search, tampilkan SEMUA hasil tanpa pagination
+            $anggota = $query->orderBy('nama', 'asc')->get();
+        } else {
+            // Normal: pakai pagination
+            $anggota = $query->orderBy('nama', 'asc')->paginate(5)->withQueryString();
+        }
 
-    // Pagination 5 per halaman
-    $anggota = $query->orderBy('nama', 'asc')->paginate(5);
-
-        return view('pengurus.KelolaAnggota.index', compact('anggota'));
+        return view('pengurus.KelolaAnggota.index', compact('anggota', 'search'));
     }
 
     // Tampilkan form tambah anggota

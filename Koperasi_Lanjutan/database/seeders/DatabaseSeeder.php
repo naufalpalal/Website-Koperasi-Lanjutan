@@ -45,10 +45,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         
-        User::factory(10)->create(
-            [
-                'role'=>'anggota'
-            ]
-        );
+        // User::factory(10)->create(
+        //     [
+        //         'role'=>'anggota'
+        //     ]
+        // );
     }
 }
