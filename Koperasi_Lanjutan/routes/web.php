@@ -206,16 +206,8 @@ Route::middleware(['logout.if.authenticated'])->group(function () {
     Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])
         ->name('password.sendOtp');
 
-    Route::get('/verify-otp', function () {
-        return view('auth.verify-otp');
-    })->name('password.verifyOtp.form');
-
     Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])
         ->name('password.verifyOtp');
-
-    Route::get('/reset-password', function () {
-        return view('auth.reset-password');
-    })->name('password.reset.form');
 });
 
 

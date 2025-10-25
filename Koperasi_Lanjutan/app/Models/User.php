@@ -17,18 +17,19 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'nama',
-        'no_telepon',
-        'password',
-        'nip',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'alamat_rumah',
-        'unit_kerja',
-        'role',
-        'status', // aktif, non-aktif, pending
-    ];
+   protected $fillable = [
+    'nama',
+    'email',
+    'no_telepon',
+    'password',
+    'nip',
+    'tempat_lahir',
+    'tanggal_lahir',
+    'alamat_rumah',
+    'unit_kerja',
+    'role',
+    'status',// aktif, non-aktif, pending
+];
 
     /**
      * Hidden attributes for serialization
