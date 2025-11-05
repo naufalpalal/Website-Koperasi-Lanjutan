@@ -15,6 +15,7 @@ class Tabungan extends Model
 
     protected $fillable = [
         'nilai',
+        'debit',
         'status',
         'tanggal',
         'users_id',

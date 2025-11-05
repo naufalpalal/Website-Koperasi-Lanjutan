@@ -1,147 +1,75 @@
 @extends('pengurus.index')
 
-@section('title', 'Verifikasi Tabungan')
+@section('title', 'Kelola Tabungan')
 
 @section('content')
-<div class="container mx-auto px-6 py-10">
+<div class="container mx-auto px-4 sm:px-6 py-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h2 class="text-2xl font-bold text-gray-800">Kelola Tabungan Anggota</h2>
 
-    {{-- FORM TAMBAH TABUNGAN --}}
-    <div class="bg-white shadow-lg rounded-xl p-6 max-w-lg mx-auto mb-10">
-        <h2 class="text-2xl font-semibold text-gray-700 mb-6">Tambah Tabungan Anggota</h2>
-
-        {{-- TAMPILKAN ERROR --}}
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        {{-- FORM INPUT --}}
-        <form action="{{ route('pengurus.tabungan.store') }}" method="POST" class="space-y-4">
-            @csrf
-
-            {{-- PILIH ANGGOTA --}}
-            <div>
-                <label for="users_id" class="block text-sm font-medium text-gray-700">Nama Anggota</label>
-                <select name="users_id" id="users_id"class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm px-3 py-2" required>
-                    <option value="">-- Pilih Anggota --</option>
-                    @foreach ($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
-            {{-- TANGGAL --}}
-            <div>
-                <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="date" id="tanggal" name="tanggal"
-                       value="{{ old('tanggal', date('Y-m-d')) }}"
-                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm px-3 py-2" required>
-            </div>
-
-            {{-- NOMINAL --}}
-            <div>
-                <label for="nilai" class="block text-sm font-medium text-gray-700">Nominal Tabungan (Rp)</label>
-                <input type="number" id="nilai" name="nilai" 
-                    value="{{ old('nilai') }}" min="1000" step="1000"
-                    placeholder="Masukkan nominal (contoh: 100000)"
-                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm px-3 py-2" required>
-            </div>
-
-            {{-- TOMBOL SIMPAN --}}
-            <div class="flex justify-end">
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">
-                    Simpan
-                </button>
-            </div>
+        {{-- Form Pencarian --}}
+        <form method="GET" action="{{ route('pengurus.tabungan.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari nama anggota..."
+                   class="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-64 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto transition duration-200">
+                Cari
+            </button>
         </form>
     </div>
 
-    {{-- DAFTAR PENGAJUAN TABUNGAN --}}
-    <div class="bg-white shadow-lg rounded-xl p-6">
-        <h2 class="text-2xl font-semibold text-gray-700 mb-6">Daftar Pengajuan Tabungan</h2>
+    {{-- Pesan sukses --}}
+    @if (session('success'))
+        <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-sm sm:text-base">{{ session('success') }}</div>
+    @endif
 
-        @if(session('success'))
-            <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
-
+    <div class="bg-white shadow-lg rounded-xl overflow-hidden">
+        {{-- Scroll horizontal di layar kecil --}}
         <div class="overflow-x-auto">
-            <table class="w-full border border-gray-300 rounded-lg">
-                <thead class="bg-gray-200">
+            <table class="min-w-full text-left border border-gray-200 text-sm sm:text-base">
+                <thead class="bg-blue-600 text-white">
                     <tr>
-                        <th class="px-4 py-2">No</th>
-                        <th class="px-4 py-2">Nama Anggota</th>
-                        <th class="px-4 py-2">Tanggal</th>
-                        <th class="px-4 py-2">Nominal</th>
-                        <th class="px-4 py-2">Bukti Transfer</th>
-                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-3 whitespace-nowrap">No</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Nama Anggota</th>
+                        <th class="px-4 py-3 whitespace-nowrap">Total Tabungan</th>
+                        <th class="px-4 py-3 text-center whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($tabungans as $tabungan)
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-2">{{ $tabungan->user?->nama ?? 'Tidak diketahui' }}</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d-m-Y') }}</td>
-                            <td class="px-4 py-2">Rp {{ number_format($tabungan->nilai, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2 text-center">
-                                @if ($tabungan->bukti_transfer)
-                                    <div class="flex justify-center">
-                                        <a href="{{ asset('uploads/bukti_transfer/' . $tabungan->bukti_transfer) }}" target="_blank">
-                                            <img src="{{ asset('uploads/bukti_transfer/' . $tabungan->bukti_transfer) }}"
-                                                alt="Bukti Transfer"
-                                                class="w-16 h-16 object-cover rounded shadow hover:scale-105 transition-transform duration-200">
-                                        </a>
-                                    </div>
-                                @else
-                                    @if ($tabungan->status === 'diterima')
-                                        <span class="text-green-600 font-semibold italic">Dibayar langsung</span>
-                                    @else
-                                        <span class="text-gray-400 italic">Belum ada</span>
-                                    @endif
-                                @endif
+                    @forelse($tabungans as $index => $item)
+                        <tr class="border-b hover:bg-gray-50 transition duration-200">
+                            <td class="px-4 py-3">{{ $index + 1 }}</td>
+                            <td class="px-4 py-3">{{ $item->nama }}</td>
+                            <td class="px-4 py-3 font-semibold text-green-600">
+                                Rp {{ number_format($item->total_saldo ?? 0, 0, ',', '.') }}
                             </td>
-                            <td class="px-4 py-2 flex gap-2">
-                                @if ($tabungan->status === 'pending')
-                                    <form action="{{ route('pengurus.tabungan.approve', $tabungan->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                                class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                                            Setujui
-                                        </button>
-                                    </form>
-
-                                    <form action="{{ route('pengurus.tabungan.reject', $tabungan->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                                            Tolak
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="font-semibold text-gray-700">{{ ucfirst($tabungan->status) }}</span>
-                                @endif
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex flex-wrap justify-center gap-2">
+                                    <a href="{{ route('pengurus.tabungan.debit', $item->id) }}" 
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs sm:text-sm">
+                                        Debit
+                                    </a>
+                                    <a href="{{ route('pengurus.tabungan.kredit', $item->id) }}" 
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs sm:text-sm">
+                                        Kredit
+                                    </a>
+                                    <a href="{{ route('pengurus.tabungan.detail', $item->id) }}" 
+                                        class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs sm:text-sm">
+                                        Detail
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-gray-500">
-                                Belum ada pengajuan tabungan
-                            </td>
+                            <td colspan="4" class="text-center py-6 text-gray-500">Belum ada data anggota</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="p-4">
+            {{ $tabungans->links() }}
         </div>
     </div>
 </div>

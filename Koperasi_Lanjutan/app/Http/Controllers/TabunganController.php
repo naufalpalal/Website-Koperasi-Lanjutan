@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tabungan;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class TabunganController extends Controller
@@ -12,14 +13,35 @@ class TabunganController extends Controller
     public function index(Request $request)
     {
         $tabungans = Tabungan::where('users_id', auth()->id())
-                    ->orderBy('tanggal', 'desc')
-                    ->paginate(10);
+                    ->orderBy('id', 'desc')
+                    ->take(5)
+                    ->get();
 
         $showQr = $request->has('show_qr'); // jika ada parameter show_qr, tampilkan QR
         $tanggal = $request->input('tanggal');
         $nilai = $request->input('nilai');
 
         return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr', 'tanggal', 'nilai'));
+    }
+
+    public function historyFull(Request $request)
+    {
+        $user = Auth::user();
+
+        $tanggal = $request->input('tanggal');
+        $status  = $request->input('status');
+
+        $query = Tabungan::where('users_id', $user->id);
+
+        if (!empty($tanggal)) {
+            $query->whereDate('tanggal', $tanggal);
+        }
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        $tabungans = $query->orderBy('tanggal', 'desc')->paginate(10);
+        return view('user.simpanan.tabungan.history', compact('tabungans', 'tanggal', 'status'));
     }
 
     // Form tambah tabungan
@@ -36,7 +58,7 @@ class TabunganController extends Controller
     {
         $request->validate([
             'nilai' => 'required|numeric|min:1000',
-            'tanggal' => 'required|date',
+            'tanggal' => ['required', 'date', 'after_or_equal:today'],
             'bukti_transfer' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Maks 2MB
         ]);
 
@@ -78,9 +100,20 @@ class TabunganController extends Controller
     // Dashboard pengguna
     public function dashboard()
     {
-        $totalTabungan = Tabungan::where('users_id', auth()->id())
-                                  ->where('status', 'diterima')
-                                  ->sum('nilai');
+
+    $userId = auth()->id();
+    // Total tabungan yang diterima
+    $totalDiterima = Tabungan::where('users_id', $userId)
+                             ->where('status', 'diterima')
+                             ->sum('nilai');
+
+    // Total saldo yang sudah dipotong / diambil
+    $totalDipakai = Tabungan::where('users_id', $userId)
+                             ->where('status', 'dipotong')
+                             ->sum('debit');
+
+    // Hitung saldo akhir
+    $totalTabungan = $totalDiterima - $totalDipakai;
 
         return view('user.dashboard.index', compact('totalTabungan'));
     }

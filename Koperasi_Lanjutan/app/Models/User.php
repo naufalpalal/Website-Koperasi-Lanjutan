@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\HasMedia;
 use App\Models\Dokumen;
+use App\Models\tabungans;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -56,6 +57,18 @@ class User extends Authenticatable implements HasMedia
     public function tabungans()
     {
         return $this->hasMany(Tabungan::class, 'users_id');
+    }
+    public function totalSaldo()
+    {
+        $totalMasuk = $this->tabungans()
+            ->where('status', 'diterima')
+            ->sum('nilai');
+
+        $totalKeluar = $this->tabungans()
+            ->where('status', 'dipotong')
+            ->sum('debit');
+
+        return $totalMasuk - $totalKeluar;
     }
 
     /**

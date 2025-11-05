@@ -102,17 +102,32 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->group(function (
 });
 
 // Tabungan Pengurus
-Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('pengurus.tabungan.')->group(function () {
-    Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
-    Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
-    Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
-    Route::post('/store', [Tabungan2Controller::class, 'store'])->name('store');
+Route::middleware(['auth', 'role:pengurus'])->group(function () {
+    // Daftar tabungan
+    Route::get('/pengurus/tabungan', [Tabungan2Controller::class, 'index'])->name('pengurus.tabungan.index');
+    // Detail tabungan anggota
+    Route::get('/pengurus/tabungan/{id}', [Tabungan2Controller::class, 'detail'])->name('pengurus.tabungan.detail');
+    // Tambah saldo manual
+    // Halaman tambah kredit
+    Route::get('/pengurus/tabungan/kredit/{id}', [Tabungan2Controller::class, 'kredit'])->name('pengurus.tabungan.kredit');
+    Route::post('/pengurus/tabungan/kredit/store', [Tabungan2Controller::class, 'storeKredit'])->name('pengurus.tabungan.kredit.store');
+
+    Route::get('/pengurus/tabungan/{id}/tambah', [Tabungan2Controller::class, 'create'])->name('pengurus.tabungan.create');
+    Route::post('/pengurus/tabungan/store', [Tabungan2Controller::class, 'store'])->name('pengurus.tabungan.store');
+    // Debit (penarikan)
+    Route::get('/pengurus/tabungan/debit/{id}', [Tabungan2Controller::class, 'debit'])->name('pengurus.tabungan.debit');
+    Route::post('/pengurus/tabungan/debit/store', [Tabungan2Controller::class, 'storeDebit'])->name('pengurus.tabungan.debit.store');
+    // Approve & Reject Tabungan
+    Route::put('/pengurus/tabungan/{id}/terima', [Tabungan2Controller::class, 'approve'])->name('pengurus.tabungan.terima');
+    Route::put('/pengurus/tabungan/{id}/tolak', [Tabungan2Controller::class, 'reject'])->name('pengurus.tabungan.tolak');
 });
 
+
 // Tabungan (anggota)
-Route::middleware(['auth', 'role:anggota'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
-    Route::resource('tabungan', TabunganController::class);
-    Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
+Route::middleware(['auth', 'role:anggota'])->group(function () {
+    Route::get('/tabungan', [TabunganController::class, 'index'])->name('tabungan.index');
+    Route::post('/tabungan/store', [TabunganController::class, 'store'])->name('tabungan.store');
+    Route::get('/tabungan/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
 });
 
 // Simpanan Sukarela - Pengurus
