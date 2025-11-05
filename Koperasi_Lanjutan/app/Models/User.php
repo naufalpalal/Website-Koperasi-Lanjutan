@@ -6,11 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Dokumen;
-<<<<<<< HEAD
-use App\Models\tabungans;
-=======
 use App\Models\DokumenPinjaman;
->>>>>>> e3c6bd7312397e601a245f0c9071b96c70dcc81d
 
 class User extends Authenticatable
 {
