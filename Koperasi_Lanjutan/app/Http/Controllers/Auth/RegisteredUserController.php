@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class RegisteredUserController extends Controller
 {
@@ -29,6 +30,7 @@ class RegisteredUserController extends Controller
             'password'         => 'required|string|min:6|confirmed',
         ]);
 
+
         $data = [
             'nama'          => $request->name,
             'no_telepon'    => $request->no_telepon,
@@ -40,7 +42,8 @@ class RegisteredUserController extends Controller
             'role'          => 'anggota',
         ];
 
-        if($request->jenis_anggota === 'pegawai') {
+
+        if ($request->jenis_anggota === 'pegawai') {
             $data['nip'] = $request->nip_username; // simpan di nip
             $data['username'] = null;
         } else {
@@ -50,9 +53,8 @@ class RegisteredUserController extends Controller
 
         // Buat user
         $user = User::create($data);
-
         // Login otomatis
-        auth()->login($user);
+        Auth::login($user);
 
         return view('guest.dashboard')->with('success', 'Pendaftaran berhasil! Selamat datang di koperasi.');
     }
