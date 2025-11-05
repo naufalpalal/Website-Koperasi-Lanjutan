@@ -2,13 +2,13 @@
 
 namespace App\Models\Pengurus;
 
+use App\Models\Pengurus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\User;
 
 class MasterSimpananWajib extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $table = 'master_simpanan_wajib';
 
@@ -16,13 +16,13 @@ class MasterSimpananWajib extends Model
         'nilai',
         'tahun',
         'bulan',
-        'users_id',
+        'pengurus_id',
+      
     ];
 
-    // relasi ke User (pengurus yang update nominal)
-    public function user()
+    // relasi ke Pengurus
+    public function pengurus()
     {
-        return $this->belongsTo(User::class, 'member_id');
+        return $this->belongsTo(Pengurus::class, 'pengurus_id');
     }
-
 }

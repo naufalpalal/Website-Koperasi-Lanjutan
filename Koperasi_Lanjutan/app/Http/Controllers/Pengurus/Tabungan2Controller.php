@@ -16,13 +16,13 @@ class Tabungan2Controller extends Controller
     {
         // Ambil semua tabungan dengan relasi user
             $tabungans = Tabungan::with('user')->whereHas('user', function ($query) {
-            $query->where('role', 'anggota'); // hanya user yang role anggota
+            $query = User::query(); // hanya user yang role anggota
         })
         ->latest()
         ->get();
 
         // Ambil semua anggota untuk ditampilkan di form
-        $users = User::where('role', 'anggota')->get();
+        $users = User::get();
         // Sesuaikan dengan path view kamu
         return view('pengurus.simpanan.tabungan.index', compact('tabungans', 'users'));
     }

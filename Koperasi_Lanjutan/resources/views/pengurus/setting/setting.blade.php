@@ -37,7 +37,7 @@
             <div>
                 <label for="nama_ketua_koperasi" class="block text-gray-600 font-semibold">Nama Ketua Koperasi:</label>
                 <input type="text" name="nama_ketua_koperasi" id="nama_ketua_koperasi"
-                    value="{{ old('nama_ketua_koperasi', $identitas->nama_ketua_koperasi ?? '') }}"
+                    value="{{ old('nama_ketua_koperasi', $ketua->nama ?? '') }}"
                     class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 @error('nama_ketua_koperasi')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -48,7 +48,7 @@
             <div>
                 <label for="nama_bendahara_koperasi" class="block text-gray-600 font-semibold">Nama Bendahara Koperasi:</label>
                 <input type="text" name="nama_bendahara_koperasi" id="nama_bendahara_koperasi"
-                    value="{{ old('nama_bendahara_koperasi', $identitas->nama_bendahara_koperasi ?? '') }}"
+                    value="{{ old('nama_bendahara_koperasi', $bendahara->nama ?? '') }}"
                     class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 @error('nama_bendahara_koperasi')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

@@ -110,7 +110,7 @@
                                     <td class="border p-2 text-center">
                                         <div class="flex justify-center gap-2">
                                             {{-- Setujui --}}
-                                            <form action="{{ route('pengurus.KelolaAnggota.approve', $a->id) }}" method="POST"
+                                            <form action="{{ route('pengurus.anggota.approve', $a->id) }}" method="POST"
                                                 onsubmit="return confirm('Setujui anggota ini?')">
                                                 @csrf
                                                 <button type="submit"
@@ -120,7 +120,7 @@
                                             </form>
 
                                             {{-- Tolak --}}
-                                            <form action="{{ route('pengurus.KelolaAnggota.reject', $a->id) }}" method="POST"
+                                            <form action="{{ route('pengurus.anggota.reject', $a->id) }}" method="POST"
                                                 onsubmit="return confirm('Tolak anggota ini?')">
                                                 @csrf
                                                 <button type="submit"

@@ -22,7 +22,7 @@ class KelolaAnggotController extends Controller
         $search = $request->input('q');
 
         // Query dasar untuk user dengan role anggota
-        $query = User::where('role', 'anggota');
+        $query = User::query();
 
         // Jika ada pencarian, tambahkan filter
         if ($search) {
@@ -54,8 +54,7 @@ class KelolaAnggotController extends Controller
     {
         // Ambil semua anggota yang perlu diverifikasi
         // misalnya yang status-nya 'pending' atau 'diajukan'
-        $anggota = User::where('role', 'anggota')
-            ->where('status', 'pending')
+        $anggota = User::where('status', 'pending')
             ->get();
 
         // Kirim data anggota ke view
@@ -126,7 +125,6 @@ class KelolaAnggotController extends Controller
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             'alamat_rumah' => $validated['alamat_rumah'] ?? null,
             'unit_kerja' => $validated['unit_kerja'] ?? null,
-            'role' => 'anggota',
             'status' => 'aktif',
         ]);
 

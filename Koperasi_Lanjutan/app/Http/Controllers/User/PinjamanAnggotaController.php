@@ -117,22 +117,22 @@ class PinjamanAnggotaController extends Controller
     public function upload(Request $request, $id)
     {
         $request->validate([
-            'dokumen_pinjaman' => 'required|mimes:pdf|max:2048',
+            'dokumen_pinjaman.*' => 'required|mimes:pdf|max:2048',
         ]);
 
         $pinjaman = Pinjaman::findOrFail($id);
 
         // Proses upload file
         if ($request->hasFile('dokumen_pinjaman')) {
-            $file = $request->file('dokumen_pinjaman');
+            $files = [];
+            foreach ($request->file('dokumen_pinjaman') as $file) {
+                $path = $file->store('dokumen_pinjaman', 'public');
+                $files[] = $path;
+            }
 
-            // Simpan file ke storage/app/public/dokumen_pinjaman
-            $path = $file->store('dokumen_pinjaman', 'public');
-
-            // Update kolom di tabel pinjaman
             $pinjaman->update([
-                'dokumen_pinjaman' => $path,
-                'status' => 'pending', // status langsung pending setelah upload
+                'dokumen_pinjaman' => json_encode($files),
+                'status' => 'pending', // ✅ ubah status agar muncul di pengurus
             ]);
         }
 

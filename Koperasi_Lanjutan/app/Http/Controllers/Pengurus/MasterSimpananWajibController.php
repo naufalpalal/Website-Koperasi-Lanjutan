@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pengurus;
 use App\Http\Controllers\Controller;
 use App\Models\Pengurus\MasterSimpananWajib;
 use App\Models\Pengurus\SimpananWajib;
+use Auth;
 use Illuminate\Http\Request;
 
 class MasterSimpananWajibController extends Controller
@@ -43,7 +44,7 @@ class MasterSimpananWajibController extends Controller
             'nilai' => $nilaiBaru,
             'tahun' => $bulan->year,
             'bulan' => $bulan->month,
-            'users_id' => auth()->id(),
+            'pengurus_id' => Auth::guard('pengurus')->id(),
             'status'  => $master->status,
         ]);
     } else {
@@ -51,7 +52,7 @@ class MasterSimpananWajibController extends Controller
             'nilai' => $nilaiBaru,
             'tahun' => $bulan->year,
             'bulan' => $bulan->month,
-            'users_id' => auth()->id(),
+            'pengurus_id' => Auth::guard('pengurus')->id(),
             'status'  => 'Diajukan',
         ]);
     }

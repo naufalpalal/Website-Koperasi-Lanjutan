@@ -86,7 +86,7 @@ class SimpananSukarelaController extends Controller
     $bulan = $request->bulan;
     $tahun = $request->tahun;
 
-    $anggota = User::where('role', 'anggota')->get();
+    $anggota = User::get();
 
     foreach ($anggota as $a) {
         $master = MasterSimpananSukarela::where('users_id', $a->id)
