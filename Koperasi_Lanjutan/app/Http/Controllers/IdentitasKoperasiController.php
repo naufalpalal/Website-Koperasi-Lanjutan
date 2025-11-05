@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengurus;
 use Illuminate\Http\Request;
 use App\Models\IdentitasKoperasi;
 
 class IdentitasKoperasiController extends Controller
 {
     public function edit()
-    {
-        $identitas = IdentitasKoperasi::first(); // Ambil data pertama
-        return view('pengurus.setting.setting', compact('identitas'));
-    }
+{
+    // Mengambil data identitas koperasi
+    $identitas = IdentitasKoperasi::first();
+
+    // Mengambil data pengurus berdasarkan role atau jabatan tertentu
+    $ketua = Pengurus::where('role', 'ketua')->first();
+    $bendahara = Pengurus::where('role', 'bendahara')->first();
+    $sekretaris = Pengurus::where('role', 'sekretaris')->first();
+
+    // Mengirim data ke view
+    return view('pengurus.setting.setting', compact('identitas', 'ketua', 'bendahara', 'sekretaris'));
+}
+
 
     public function update(Request $request)
     {
@@ -47,4 +57,6 @@ class IdentitasKoperasiController extends Controller
 
         return redirect()->route('settings.edit')->with('success', 'Data identitas koperasi berhasil diperbarui.');
     }
+
+   
 }

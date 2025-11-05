@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Pengurus\SimpananWajib;
 use App\Models\Pengurus\MasterSimpananWajib;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Exports\SimpananExport;
@@ -16,7 +17,7 @@ class PengurusSimpananWajibController extends Controller
     // Halaman kelola simpanan wajib
     public function dashboard(Request $request)
     {
-        $anggota = User::where('role', 'anggota')->get();
+        $anggota = User::get();
         $master = MasterSimpananWajib::latest()->first();
 
         // Ambil bulan yang dipilih di filter, default bulan ini
@@ -42,7 +43,7 @@ class PengurusSimpananWajibController extends Controller
     }
     public function index(Request $request)
     {
-        $anggota = User::where('role', 'anggota')->get();
+        $anggota = User::all();
         $master = MasterSimpananWajib::latest()->first();
 
         // Ambil bulan yang dipilih di filter, default bulan ini
@@ -99,7 +100,7 @@ class PengurusSimpananWajibController extends Controller
         // Split periode menjadi tahun dan bulan
         [$tahun, $bulan] = explode('-', $request->bulan);
 
-        $anggota = User::where('role', 'anggota')->get();
+        $anggota = User::get();
 
         foreach ($anggota as $a) {
             $cek = SimpananWajib::where('users_id', $a->id)
@@ -113,6 +114,7 @@ class PengurusSimpananWajibController extends Controller
                     'tahun' => $tahun,
                     'bulan' => $bulan,
                     'status' => 'Diajukan',
+                    'pengurus_id' => Auth::guard('pengurus')->id(),
                     'users_id' => $a->id,
                 ]);
             }
@@ -125,7 +127,7 @@ class PengurusSimpananWajibController extends Controller
     public function updateStatus(Request $request)
     {
         $anggotaDicentang = $request->anggota ?? [];
-        $anggota = User::where('role', 'anggota')->get();
+        $anggota = User::get();
 
         // Ambil bulan yang dipilih di filter, default bulan ini
         $periodeFilter = $request->get('bulan', now()->format('Y-m'));

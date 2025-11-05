@@ -1,6 +1,13 @@
 @php
-    $layout = auth()->user()->role === 'pengurus' ? 'Pengurus.index' : 'User.index';
+    if (Auth::guard('pengurus')->check()) {
+        $layout = 'Pengurus.index';
+    } elseif (Auth::guard('web')->check()) {
+        $layout = 'User.index';
+    } else {
+        $layout = 'layouts.app'; // fallback kalau tidak login
+    }
 @endphp
+
 
 @extends($layout)
 

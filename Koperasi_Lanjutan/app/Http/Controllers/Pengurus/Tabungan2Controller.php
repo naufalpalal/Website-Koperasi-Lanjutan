@@ -15,6 +15,7 @@ class Tabungan2Controller extends Controller
      */
     public function index(Request $request)
     {
+<<<<<<< HEAD
         $search = $request->search;
 
         $tabungans = User::with('tabungans')
@@ -33,6 +34,19 @@ class Tabungan2Controller extends Controller
         });
 
         return view('pengurus.simpanan.tabungan.index', compact('tabungans', 'search'));
+=======
+        // Ambil semua tabungan dengan relasi user
+            $tabungans = Tabungan::with('user')->whereHas('user', function ($query) {
+            $query = User::query(); // hanya user yang role anggota
+        })
+        ->latest()
+        ->get();
+
+        // Ambil semua anggota untuk ditampilkan di form
+        $users = User::get();
+        // Sesuaikan dengan path view kamu
+        return view('pengurus.simpanan.tabungan.index', compact('tabungans', 'users'));
+>>>>>>> e3c6bd7312397e601a245f0c9071b96c70dcc81d
     }
 
     /**

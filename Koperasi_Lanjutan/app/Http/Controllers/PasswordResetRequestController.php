@@ -6,128 +6,190 @@ use App\Models\User;
 use App\Models\PasswordResetRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Mail;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use App\Mail\SendOtpMail;
 
 class PasswordResetRequestController extends Controller
 {
-    // Kirim OTP ke email anggota (fase 1)
+    /**
+     * Step 1: Kirim OTP ke email user
+     */
     public function sendOtp(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string',
-            'nip'  => 'required|string',
+            'nip' => 'required|string',
+            'email' => 'required|email',
         ]);
 
+        // Rate limit 5 percobaan / 15 menit
         $key = 'password-reset-request:' . $request->nip . ':' . $request->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {
-            return back()->withErrors(['too_many' => 'Terlalu banyak percobaan. Coba lagi nanti.']);
+            return response()->json([
+                'status' => false,
+                'message' => 'Terlalu banyak percobaan. Coba lagi nanti.'
+            ], 429);
         }
-        RateLimiter::hit($key, 60 * 15); // blok 15 menit setelah limit
+        RateLimiter::hit($key, 60 * 15);
 
-        $user = User::where('nama', $request->nama)
-            ->where('nip', $request->nip)
-            ->first();
-
-        if (! $user || empty($user->email)) {
-            return back()->withErrors(['not_found' => 'Data anggota tidak ditemukan atau email tidak tersedia.']);
+        // Cek user berdasarkan NIP
+        $user = User::where('nip', $request->nip)->first();
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'NIP tidak ditemukan.'], 404);
         }
 
+        // Gunakan email dari input user (bukan dari tabel users)
+        $email = strtolower(trim($request->email));
+
+        // Generate OTP dan simpan hash-nya
         $otp = random_int(100000, 999999);
-        $otpHash = Hash::make((string)$otp);
-        $expiresAt = Carbon::now()->addMinutes(10);
+        $otpHash = Hash::make((string) $otp);
+        $expiresAt = now()->addMinutes(10);
 
-        // Simpan request OTP sebagai audit (jangan simpan OTP plain)
         $reset = PasswordResetRequest::create([
-            'user_id'    => $user->id,
-            'password'   => null,
-            'otp_hash'   => $otpHash,
-            'expires_at' => $expiresAt,
-            'status'     => 'otp_sent',
-            'ip'         => $request->ip(),
+            'user_id'     => $user->id,
+            'email'       => $email,
+            'otp_hash'    => $otpHash,
+            'reset_token' => null,
+            'expires_at'  => $expiresAt,
+            'status'      => 'otp_sent',
+            'ip'          => $request->ip(),
         ]);
 
-        // Kirim OTP via email (sederhana). Ganti dengan Mailable sesuai kebutuhan.
         try {
-            Mail::raw("Kode OTP Anda: {$otp}. Berlaku 10 menit.", function ($message) use ($user) {
-                $message->to($user->email)
-                    ->subject('OTP Reset Password - Koperasi');
-            });
-        } catch (\Exception $e) {
-            // bersihkan record jika pengiriman gagal
-            $reset->delete();
-            return back()->withErrors(['mail' => 'Gagal mengirim OTP. Periksa konfigurasi mail.']);
-        }
+            Mail::to($email)->send(new SendOtpMail($user, $otp));
+            Log::info("OTP {$otp} sent to {$email} for NIP {$user->nip}");
 
-        return back()->with('success', 'OTP telah dikirim ke email terdaftar. Masukkan OTP untuk melanjutkan.')
-            ->with('request_id', $reset->id);
+            return response()->json([
+                'status'  => true,
+                'message' => 'Kode OTP telah dikirim ke email Anda.',
+                'request_id' => $reset->id
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim OTP: ' . $e->getMessage());
+            $reset->delete();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengirim OTP ke email. Silakan coba lagi.'
+            ], 500);
+        }
     }
 
-    // Verifikasi OTP + set password baru (fase 2)
+    /**
+     * Step 2: Verifikasi OTP dari user
+     */
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'request_id' => 'required|integer|exists:password_reset_requests,id',
-            'otp'        => 'required|digits:6',
-            'password'   => 'required|string|min:6|confirmed',
+            'nip' => 'required|string',
+            'email' => 'required|email',
+            'otp' => 'required|string|digits:6',
         ]);
 
-        $resetRequest = PasswordResetRequest::findOrFail($request->request_id);
-
-        if ($resetRequest->status !== 'otp_sent') {
-            return back()->withErrors(['invalid' => 'Permintaan tidak valid atau sudah diproses.']);
+        $user = User::where('nip', $request->nip)->first();
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'NIP tidak ditemukan.'], 404);
         }
 
-        if (Carbon::now()->greaterThan($resetRequest->expires_at)) {
-            $resetRequest->update(['status' => 'expired']);
-            return back()->withErrors(['expired' => 'OTP telah kadaluarsa. Silakan minta ulang.']);
+        $otpRecord = PasswordResetRequest::where('user_id', $user->id)
+            ->where('email', strtolower(trim($request->email)))
+            ->where('status', 'otp_sent')
+            ->latest()
+            ->first();
+
+        if (!$otpRecord) {
+            return response()->json(['status' => false, 'message' => 'OTP tidak ditemukan.'], 404);
         }
 
-        $verifyKey = 'password-reset-verify:' . $resetRequest->id . ':' . $request->ip();
-        if (RateLimiter::tooManyAttempts($verifyKey, 5)) {
-            return back()->withErrors(['too_many' => 'Terlalu banyak percobaan verifikasi. Coba lagi nanti.']);
+        // Expired
+        if (now()->gt($otpRecord->expires_at)) {
+            $otpRecord->delete();
+            return response()->json(['status' => false, 'message' => 'OTP telah kadaluarsa.'], 400);
         }
 
-        if (! Hash::check((string)$request->otp, $resetRequest->otp_hash)) {
-            RateLimiter::hit($verifyKey, 60 * 15);
-            return back()->withErrors(['otp' => 'OTP tidak sesuai.']);
+        // Cek OTP
+        if (!Hash::check($request->otp, $otpRecord->otp_hash)) {
+            return response()->json(['status' => false, 'message' => 'OTP salah.'], 400);
         }
 
-        // OTP cocok: ganti password secara atomik dan tandai completed
-        DB::transaction(function () use ($resetRequest, $request) {
-            $user = User::findOrFail($resetRequest->user_id);
-            $user->password = Hash::make($request->password);
-            $user->save();
+        // OTP valid, buat token baru untuk reset password
+        $resetToken = bin2hex(random_bytes(32));
+        $otpRecord->update([
+            'status' => 'otp_verified',
+            'reset_token' => Hash::make($resetToken),
+            'expires_at' => now()->addMinutes(60), // token berlaku 1 jam
+        ]);
 
-            $resetRequest->update([
-                'status'     => 'completed',
-                'used_at'    => Carbon::now(),
-                'otp_hash'   => null, // bersihkan hash OTP
-            ]);
-        });
-
-        RateLimiter::clear($verifyKey);
-
-        return redirect()->route('login')->with('success', 'Password berhasil direset. Silakan login dengan password baru.');
+        return response()->json([
+            'status' => true,
+            'message' => 'OTP berhasil diverifikasi.',
+            'reset_token' => $resetToken,
+            'nip' => $request->nip,
+            'email' => strtolower(trim($request->email))
+        ]);
     }
 
-    // Pengurus setujui reset (opsional tetap dipertahankan)
+    /**
+     * Step 3: Reset password setelah OTP terverifikasi
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'nip' => 'required|string',
+            'email' => 'required|email',
+            'reset_token' => 'required|string',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = User::where('nip', $request->nip)->first();
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'User tidak ditemukan.'], 404);
+        }
+
+        $resetRecord = PasswordResetRequest::where('user_id', $user->id)
+            ->where('email', strtolower(trim($request->email)))
+            ->where('status', 'otp_verified')
+            ->latest()
+            ->first();
+
+        if (!$resetRecord || !Hash::check($request->reset_token, $resetRecord->reset_token)) {
+            return response()->json(['status' => false, 'message' => 'Token reset tidak valid.'], 400);
+        }
+
+        if (now()->gt($resetRecord->expires_at)) {
+            $resetRecord->delete();
+            return response()->json(['status' => false, 'message' => 'Token reset telah kadaluarsa.'], 400);
+        }
+
+        // Simpan password baru
+        $user->update(['password' => Hash::make($request->password)]);
+
+        // Tandai selesai
+        $resetRecord->update([
+            'status' => 'completed',
+            'used_at' => now()
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Password berhasil direset. Silakan login kembali.'
+        ]);
+    }
+
+    // (Opsional: admin approval)
     public function approve($id)
     {
         $resetRequest = PasswordResetRequest::findOrFail($id);
-
         $user = $resetRequest->user;
-        $user->password = $resetRequest->password; // jika flow lama menyimpan hash
+        $user->password = $resetRequest->password;
         $user->save();
-
         $resetRequest->update(['status' => 'approved']);
 
         return back()->with('success', 'Password berhasil direset.');
     }
 
-    // Pengurus tolak reset
     public function reject($id)
     {
         $resetRequest = PasswordResetRequest::findOrFail($id);

@@ -14,36 +14,39 @@ class SimpananWajibController extends Controller
     public function index()
     {
         $simpanan = SimpananWajib::where('users_id', Auth::id())
-                    ->orderBy('tahun', 'desc')
-                    ->orderBy('bulan', 'desc')
-                    ->get();
+            ->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->get();
 
         return view('user.simpanan.wajib.index', compact('simpanan'));
     }
 
     // Proses pemotongan simpanan wajib saat gaji masuk
-    public function potongSimpanan($gaji, $tahun, $bulan)
+    public function potongSimpanan($gaji, $tahun, $bulan, $waktuTransfer = null)
     {
         $userId = Auth::id();
 
         // Ambil kewajiban simpanan bulan/tahun ini
         $master = SimpananWajib::where('tahun', $tahun)
-                    ->where('bulan', $bulan)
-                    ->where('users_id', $userId)
-                    ->first();
+            ->where('bulan', $bulan)
+            ->where('users_id', $userId)
+            ->first();
 
-        if(!$master){
+        if (!$master) {
             return back()->with('error', 'Data kewajiban simpanan bulan ini belum ditentukan.');
         }
 
-        if($gaji >= $master->nilai){
-            // Berhasil dipotong
+        if ($gaji >= $master->nilai || $waktuTransfer) {
+            // Berhasil dipotong (otomatis atau manual)
+        $waktuTransfer = $request->waktu_transfer ?? now(); // bisa dari input user
             SimpananWajib::create([
                 'nilai' => $master->nilai,
                 'tahun' => $tahun,
                 'bulan' => $bulan,
                 'status' => 'Dibayar',
-                'users_id' => $userId
+                'users_id' => $userId,
+                'created_at' => $waktuTransfer ? $waktuTransfer : now(),
+                'updated_at' => $waktuTransfer ? $waktuTransfer : now(),
             ]);
         } else {
             // Gagal dipotong → tetap dicatat status Diajukan
@@ -51,15 +54,17 @@ class SimpananWajibController extends Controller
                 'nilai' => $master->nilai,
                 'tahun' => $tahun,
                 'bulan' => $bulan,
-                'status' => 'Diajukan', // bisa dimaknai gagal
-                'users_id' => $userId
+                'status' => 'Diajukan',
+                'users_id' => $userId,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            // Kirim notifikasi
-            // $user = Auth::user();
-            // Notification::send($user, new SimpananNotification(
+            // Kirim notifikasi (opsional)
+            // Notification::send(Auth::user(), new SimpananNotification(
             //     "Pemotongan simpanan wajib bulan $bulan/$tahun gagal karena gaji tidak mencukupi."
             // ));
         }
     }
+
 }

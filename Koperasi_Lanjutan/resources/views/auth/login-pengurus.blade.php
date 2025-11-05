@@ -1,7 +1,12 @@
 <x-guest-layout :isRegister="false">
-    <h2 class="text-3xl sm:text-4xl font-normal text-center text-gray-900 mb-2">Login</h2>
-    <p class="text-center text-gray-600 mb-6 text-base sm:text-lg">To Continue Your Account</p>
-    <form method="POST" action="{{ route('login_submit') }}" class="space-y-6">
+    <h2 class="text-3xl sm:text-4xl font-normal text-center text-gray-900 mb-2">
+        Login Pengurus
+    </h2>
+    <p class="text-center text-gray-600 mb-6 text-base sm:text-lg">
+        Masuk ke akun pengurus koperasi
+    </p>
+
+    <form method="POST" action="{{ route('pengurus.login') }}" class="space-y-6">
         @csrf
 
         <!-- NIP -->
@@ -19,7 +24,7 @@
                        @error('nip') border-red-500 @else border-gray-300 @enderror 
                        bg-white text-black placeholder-gray-500 
                        text-lg focus:outline-none focus:border-blue-500 transition"
-                placeholder="NIP">
+                placeholder="NIP Pengurus">
             @error('nip')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -38,17 +43,17 @@
                        @error('password') border-red-500 @else border-gray-300 @enderror 
                        bg-white text-black placeholder-gray-500 
                        text-lg focus:outline-none focus:border-blue-500 transition"
-                placeholder="Password">
+                placeholder="Password Pengurus">
             @error('password')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
 
-        <!-- Forgot Password & Register -->
-        <div class="flex justify-between text-sm">
-            <a href="{{ route('password.request') }}" class="text-blue-500 hover:underline">Forgot password?</a>
-            <a href="{{ route('register') }}" class="text-blue-500 hover:underline">Register</a>
-            <a href="{{ route('pengurus.login') }}" class="text-blue-500 hover:underline">LOGIN PENGURUS</a>
+        <!-- Forgot Password -->
+        <div class="flex justify-end text-sm">
+            <a href="{{ route('password.request') }}" class="text-blue-500 hover:underline">
+                Lupa password?
+            </a>
         </div>
 
         <!-- Submit -->
@@ -56,7 +61,15 @@
             type="submit"
             class="w-full bg-blue-500 text-white text-2xl sm:text-3xl font-normal py-2 rounded-lg mt-2 
                    border border-blue-500 hover:bg-blue-600 transition">
-            Masuk
+            Masuk sebagai Pengurus
         </button>
+
+        <!-- Link ke Login Anggota -->
+        <p class="text-center text-gray-600 text-sm mt-4">
+            Bukan pengurus? 
+            <a href="{{ route('login') }}" class="text-blue-500 hover:underline">
+                Login Anggota
+            </a>
+        </p>
     </form>
 </x-guest-layout>

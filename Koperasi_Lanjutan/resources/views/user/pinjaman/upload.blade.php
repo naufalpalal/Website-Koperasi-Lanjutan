@@ -18,7 +18,7 @@
         </a>
 
         {{-- Form Upload --}}
-        <form action="{{ route('user.pinjaman.upload', $pinjaman->dokumen_pinjaman) }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ route('user.pinjaman.upload', $pinjaman->id) }}" method="POST" enctype="multipart/form-data"
             class="mt-6">
             @csrf
             <label for="dokumen_pinjaman" class="block text-gray-600 mb-2">
