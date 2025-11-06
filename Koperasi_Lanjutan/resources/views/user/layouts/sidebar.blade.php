@@ -55,7 +55,7 @@
                             Wajib</a>
                         <a href="{{ route('user.simpanan.sukarela.index') }}"
                             class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Simpanan Sukarela</a>
-                        <a href="{{ route('tabungan.index') }}" 
+                        <a href="{{ route('tabungan.index') }}"
                             class="block pl-10 py-2 text-sm hover:bg-green-700 hover:text-white">Tabungan</a>
                     </div>
                 </div>

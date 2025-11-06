@@ -58,11 +58,7 @@ Route::middleware(['auth:pengurus,web'])->group(function () {
     // Hanya pengurus yang bisa akses identitas koperasi
 });
 
-// Login
-Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [UserController::class, 'login'])->name('login_submit');
-
-// Dashboard pengurus
+// Loginurus
 // Route::middleware(['auth', 'role:pengurus'])->group(function () {
 //     Route::get('/pengurus/index', [UserController::class, 'dashboard'])->name('pengurus.index');
 //     Route::get('/pengurus/dashboard', [UserController::class, 'dashboardView'])->name('pengurus.dashboard.index');
@@ -101,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
 //         ->name('simpanan.sukarela.update');
 // });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:web'])->group(function () {
     Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('user.simpanan.wajib.index');
 });
 
@@ -112,56 +108,18 @@ Route::middleware(['auth'])->group(function () {
 //     Route::post('/pengurus/nominal_wajib/update', [SimpananWajibController::class, 'updateNominalWajib'])->name('pengurus.nominal_wajib.update');
 // });
 
-// Simpanan Sukarela - Pengurus;;
+// LOGIN + REGISTER + FORGOT PASSWORD (Guest Area)
+Route::get('/pengurus/login', [PengurusController::class, 'showLoginForm'])->name('pengurus.login');
+Route::post('/pengurus/login', [PengurusController::class, 'login']);
+Route::post('/pengurus/logout', [PengurusController::class, 'logout'])->name('pengurus.logout');
 
 Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
 
     // DASHBOARD
     Route::get('/dashboard', [PengurusController::class, 'dashboard'])->name('pengurus.dashboard.index');
 
-    // PROFIL PENGURUS
 
-    // =====================
-    // 🔐 ROLE: superadmin
-    // =====================
-    Route::middleware('role.pengurus:superadmin')->group(function () {
-        Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
-        Route::put('/identitas-koperasi', [IdentitasKoperasiController::class, 'update'])->name('settings.update');
 
-    });
-
-    // =====================
-    // 📋 ROLE: SEKRETARIS, superadmin, KETUA
-    // =====================
-    Route::middleware('role.pengurus:sekretaris,superadmin,ketua')->group(function () {
-        Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.anggota.index');
-        Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.anggota.create');
-        Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.anggota.store');
-        Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.anggota.edit');
-        Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.anggota.update');
-        Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.anggota.destroy');
-        Route::get('/anggota/verifikasi', [KelolaAnggotController::class, 'verifikasi'])->name('pengurus.anggota.verifikasi');
-        Route::post('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.anggota.approve');
-        Route::post('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.anggota.reject');
-    });
-
-    // =====================
-    // 💰 ROLE: BENDAHARA, superadmin, KETUA
-    // =====================
-    Route::middleware('role.pengurus:bendahara,superadmin,ketua')->group(function () {
-
-        // Simpanan Sukarela
-        Route::prefix('simpanan-sukarela')->group(function () {
-            Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
-            Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
-            Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
-            Route::post('/update', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
-
-            Route::post('/riwayat', [SimpananSukarelaController::class, 'riwayat'])->name('pengurus.simpanan.sukarela.riwayat');
-            Route::post('/pengajuan', [SimpananSukarelaController::class, 'pengajuan'])->name('pengurus.simpanan.sukarela.pengajuan');
-            Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
-            Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
-        });
 
         // Simpanan Wajib
         Route::prefix('simpanan-wajib')->group(function () {
@@ -171,46 +129,76 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib.updateStatus');
         });
 
-        // Tabungan Pengurus
-        Route::middleware(['auth', 'role:pengurus'])->group(function () {
-            // Daftar tabungan
-            Route::get('/pengurus/tabungan', [Tabungan2Controller::class, 'index'])->name('pengurus.tabungan.index');
-            // Detail tabungan anggota
-            Route::get('/pengurus/tabungan/{id}', [Tabungan2Controller::class, 'detail'])->name('pengurus.tabungan.detail');
-            // Tambah saldo manual
-            // Halaman tambah kredit
-            Route::get('/pengurus/tabungan/kredit/{id}', [Tabungan2Controller::class, 'kredit'])->name('pengurus.tabungan.kredit');
-            Route::post('/pengurus/tabungan/kredit/store', [Tabungan2Controller::class, 'storeKredit'])->name('pengurus.tabungan.kredit.store');
-
-            Route::get('/pengurus/tabungan/{id}/tambah', [Tabungan2Controller::class, 'create'])->name('pengurus.tabungan.create');
-            Route::post('/pengurus/tabungan/store', [Tabungan2Controller::class, 'store'])->name('pengurus.tabungan.store');
-            // Debit (penarikan)
-            Route::get('/pengurus/tabungan/debit/{id}', [Tabungan2Controller::class, 'debit'])->name('pengurus.tabungan.debit');
-            Route::post('/pengurus/tabungan/debit/store', [Tabungan2Controller::class, 'storeDebit'])->name('pengurus.tabungan.debit.store');
-            // Approve & Reject Tabungan
-            Route::put('/pengurus/tabungan/{id}/terima', [Tabungan2Controller::class, 'approve'])->name('pengurus.tabungan.terima');
-            Route::put('/pengurus/tabungan/{id}/tolak', [Tabungan2Controller::class, 'reject'])->name('pengurus.tabungan.tolak');
-        });
 
 
-        // Tabungan (anggota)
-        Route::middleware(['auth', 'role:anggota'])->group(function () {
-            Route::get('/tabungan', [TabunganController::class, 'index'])->name('tabungan.index');
-            Route::post('/tabungan/store', [TabunganController::class, 'store'])->name('tabungan.store');
-            Route::get('/tabungan/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
-        });
 
-        // Pinjaman
-        Route::prefix('pinjaman')->group(function () {
-            Route::get('/', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
-            Route::post('/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
-            Route::post('/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
-            Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
-        });
-
-        // Laporan
+    Route::middleware('role.pengurus:bendahara,superadmin,ketua')->group(function () {
+    // Tabungan Pengurus
+        // Daftar tabungan
+        Route::get('/pengurus/tabungan', [Tabungan2Controller::class, 'index'])->name('pengurus.tabungan.index');
+        // Detail tabungan anggota
+        Route::get('/pengurus/tabungan/{id}', [Tabungan2Controller::class, 'detail'])->name('pengurus.tabungan.detail');
+        // Tambah saldo manual
+        // Halaman tambah kredit
+        Route::get('/pengurus/tabungan/kredit/{id}', [Tabungan2Controller::class, 'kredit'])->name('pengurus.tabungan.kredit');
+        Route::post('/pengurus/tabungan/kredit/store', [Tabungan2Controller::class, 'storeKredit'])->name('pengurus.tabungan.kredit.store');
+        Route::get('/pengurus/tabungan/{id}/tambah', [Tabungan2Controller::class, 'create'])->name('pengurus.tabungan.create');
+        Route::post('/pengurus/tabungan/store', [Tabungan2Controller::class, 'store'])->name('pengurus.tabungan.store');
+        // Debit (penarikan)
+        Route::get('/pengurus/tabungan/debit/{id}', [Tabungan2Controller::class, 'debit'])->name('pengurus.tabungan.debit');
+        Route::post('/pengurus/tabungan/debit/store', [Tabungan2Controller::class, 'storeDebit'])->name('pengurus.tabungan.debit.store');
+        // Approve & Reject Tabungan
+        Route::put('/pengurus/tabungan/{id}/terima', [Tabungan2Controller::class, 'approve'])->name('pengurus.tabungan.terima');
+        Route::put('/pengurus/tabungan/{id}/tolak', [Tabungan2Controller::class, 'reject'])->name('pengurus.tabungan.tolak');
     });
+
+
+    // Tabungan (anggota)
+
+    // Pinjaman
+    Route::prefix('pinjaman')->group(function () {
+        Route::get('/', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
+        Route::post('/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
+        Route::post('/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
+        Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
+    });
+
+
+
+// =====================
+// 📋 ROLE: SEKRETARIS, superadmin, KETUA
+// =====================
+Route::middleware('role.pengurus:sekretaris,superadmin,ketua')->group(function () {
+    Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.anggota.index');
+    Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.anggota.create');
+    Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.anggota.store');
+    Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.anggota.edit');
+    Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.anggota.update');
+    Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.anggota.destroy');
+    Route::get('/anggota/verifikasi', [KelolaAnggotController::class, 'verifikasi'])->name('pengurus.anggota.verifikasi');
+    Route::post('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.anggota.approve');
+    Route::post('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.anggota.reject');
 });
+
+});
+
+
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/tabungan', [TabunganController::class, 'index'])->name('tabungan.index');
+    Route::post('/tabungan/store', [TabunganController::class, 'store'])->name('tabungan.store');
+    Route::get('/tabungan/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
+});
+
+
+
+// =====================
+    // 🔐 ROLE: superadmin
+    // =====================
+    Route::middleware('role.pengurus:superadmin')->group(function () {
+        Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
+        Route::put('/identitas-koperasi', [IdentitasKoperasiController::class, 'update'])->name('settings.update');
+
+    });
 
 // Simpanan Wajib - Pengurus
 Route::prefix('pengurus/simpanan-wajib')->group(function () {
@@ -228,6 +216,24 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
     Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib_2.updateNominal');
 });
 
+// =====================
+// 💰 ROLE: BENDAHARA, superadmin, KETUA
+// =====================
+Route::middleware('role.pengurus:bendahara,superadmin,ketua')->group(function () {
+
+    // Simpanan Sukarela
+    Route::prefix('simpanan-sukarela')->group(function () {
+        Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
+        Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
+        Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
+        Route::post('/update', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
+
+        Route::post('/riwayat', [SimpananSukarelaController::class, 'riwayat'])->name('pengurus.simpanan.sukarela.riwayat');
+        Route::post('/pengajuan', [SimpananSukarelaController::class, 'pengajuan'])->name('pengurus.simpanan.sukarela.pengajuan');
+        Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
+        Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
+    });
+});
 
 // Simpanan Sukarela - Anggota
 Route::middleware(['auth:web'])->prefix('simpanan-sukarela-anggota')->group(function () {
@@ -238,10 +244,7 @@ Route::middleware(['auth:web'])->prefix('simpanan-sukarela-anggota')->group(func
     Route::post('/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])->name('simpanan.sukarela.toggle');
 });
 
-// LOGIN + REGISTER + FORGOT PASSWORD (Guest Area)
-Route::get('/pengurus/login', [PengurusController::class, 'showLoginForm'])->name('pengurus.login');
-Route::post('/pengurus/login', [PengurusController::class, 'login']);
-Route::post('/pengurus/logout', [PengurusController::class, 'logout'])->name('pengurus.logout');
+
 
 Route::middleware(['logout.if.authenticated'])->group(function () {
 
@@ -274,3 +277,4 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/upload', [filedokumen::class, 'dashboardUpload'])->name('dokumen.upload');
     Route::post('/upload', [filedokumen::class, 'uploadDokumen'])->name('dokumen.upload.store');
 });
+

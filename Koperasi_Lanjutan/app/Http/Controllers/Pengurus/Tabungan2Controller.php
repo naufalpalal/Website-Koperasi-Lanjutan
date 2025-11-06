@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pengurus;
 use App\Http\Controllers\Controller;
 use App\Models\Tabungan;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -18,7 +19,7 @@ class Tabungan2Controller extends Controller
         $search = $request->search;
 
         $tabungans = User::with('tabungans')
-            ->where('role', 'anggota')
+            // ->where('role', 'anggota')
             ->when($search, function ($query, $search) {
                 $query->where('nama', 'like', "%{$search}%");
             })
@@ -41,7 +42,10 @@ class Tabungan2Controller extends Controller
     public function approve($id)
     {
         $tabungan = Tabungan::findOrFail($id);
-        $tabungan->update(['status' => 'diterima']);
+        $tabungan->update([
+            'status' => 'diterima',
+            'pengurus_id' => Auth::guard('pengurus')->id()
+        ]);
 
         return redirect()
             ->route('pengurus.tabungan.detail', $tabungan->users_id)
@@ -54,7 +58,10 @@ class Tabungan2Controller extends Controller
     public function reject($id)
     {
         $tabungan = Tabungan::findOrFail($id);
-        $tabungan->update(['status' => 'ditolak']);
+        $tabungan->update([
+            'status' => 'ditolak',
+            'pengurus_id' => Auth::guard('pengurus')->id()
+        ]);
 
         return redirect()
             ->route('pengurus.tabungan.detail', $tabungan->users_id)
@@ -74,6 +81,7 @@ class Tabungan2Controller extends Controller
 
         Tabungan::create([
             'users_id'        => $request->users_id,
+            'pengurus_id'     => Auth::guard('pengurus')->id(),
             'tanggal'         => $request->tanggal,
             'nilai'           => $request->nilai,
             'status'          => 'diterima', // langsung diterima karena pengurus yang input
@@ -122,6 +130,7 @@ class Tabungan2Controller extends Controller
 
         Tabungan::create([
             'users_id' => $request->users_id,
+            'pengurus_id' => Auth::guard('pengurus')->id(),
             'tanggal'  => $request->tanggal,
             'nilai'    => 0,
             'debit'    => $request->debit,
@@ -161,6 +170,7 @@ class Tabungan2Controller extends Controller
 
         Tabungan::create([
             'users_id'       => $request->users_id,
+            'pengurus_id'    => Auth::guard('pengurus')->id(),
             'tanggal'        => $request->tanggal,
             'nilai'          => $request->nilai,
             'status'         => 'diterima',

@@ -14,6 +14,7 @@ class IdentitasKoperasi extends Model
     protected $fillable = [
         'nama_koperasi',
         'nama_ketua_koperasi',
+        'nama_sekretaris_koperasi',
         'nama_bendahara_koperasi',
         'nama_bendahara_pengeluaran',
         'nama_wadir',

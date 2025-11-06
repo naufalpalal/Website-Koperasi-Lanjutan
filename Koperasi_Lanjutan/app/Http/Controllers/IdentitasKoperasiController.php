@@ -28,6 +28,7 @@ class IdentitasKoperasiController extends Controller
         $request->validate([
             'nama_koperasi' => 'required|string|max:255',
             'nama_ketua_koperasi' => 'required|string|max:255',
+            'nama_sekretaris_koperasi' => 'required|string|max:255',
             'nama_bendahara_koperasi' => 'required|string|max:255',
             'nama_bendahara_pengeluaran' => 'required|string|max:255',
             'nama_wadir' => 'required|string|max:255',
@@ -39,6 +40,7 @@ class IdentitasKoperasiController extends Controller
             $identitas->fill($request->only([
                 'nama_koperasi',
                 'nama_ketua_koperasi',
+                'nama_sekretaris_koperasi',
                 'nama_bendahara_koperasi',
                 'nama_bendahara_pengeluaran',
                 'nama_wadir',
@@ -48,6 +50,7 @@ class IdentitasKoperasiController extends Controller
             $identitas->update($request->only([
                 'nama_koperasi',
                 'nama_ketua_koperasi',
+                'nama_sekretaris_koperasi',
                 'nama_bendahara_koperasi',
                 'nama_bendahara_pengeluaran',
                 'nama_wadir',

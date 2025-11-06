@@ -76,6 +76,7 @@ class TabunganController extends Controller
             'tanggal' => $request->tanggal,
             'nilai' => $request->nilai,
             'status' => 'pending',
+            'pengurus_id' => null,
             'bukti_transfer' => $namaFile,
         ]);
 
