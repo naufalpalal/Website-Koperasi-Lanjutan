@@ -158,6 +158,8 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     // Pinjaman
     Route::prefix('pinjaman')->group(function () {
         Route::get('/', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
+        Route::get('/pengajuan', [PinjamanController::class, 'pengajuan'])->name('pengurus.pinjaman.pengajuan');
+        Route::get('/pemotongan', [PinjamanController::class, 'pemotongan'])->name('pengurus.pinjaman.pemotongan');
         Route::post('/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
         Route::post('/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
         Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
