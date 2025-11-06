@@ -22,6 +22,7 @@
     <!-- JS eksternal -->
      <script src="{{ asset('assets/js/reviewdoc.js') }}"></script>
      <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
+     @yield('scripts')
 </body>
 
 </html>

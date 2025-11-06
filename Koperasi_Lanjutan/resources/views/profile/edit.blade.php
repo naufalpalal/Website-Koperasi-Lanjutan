@@ -11,16 +11,17 @@
 
 @extends($layout)
 
+
 @section('title', 'Profil')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<!-- <div class="max-w-4xl mx-auto">
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Profile</h1>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Kelola informasi profil dan keamanan akun Anda
         </p>
-    </div>
+    </div> -->
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 md:p-8">
         <form action="{{ route('profile.update-combined') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
@@ -61,4 +62,7 @@
         </form>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script src="{{ asset('js/profile-preview.js') }}"></script>
 @endsection

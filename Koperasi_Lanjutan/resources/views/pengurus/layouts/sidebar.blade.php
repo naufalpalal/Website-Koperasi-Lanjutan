@@ -33,15 +33,18 @@
                     <button @click="openAnggota = !openAnggota"
                         class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                         <span>Kelola Anggota</span>
-                        <svg :class="{ 'rotate-180': openAnggota }" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg :class="{ 'rotate-180': openAnggota }" class="w-4 h-4 transform transition-transform"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M19 9l-7 7-7-7" stroke-width="2" />
                         </svg>
                     </button>
                     <div x-show="openAnggota" x-collapse class="ml-4 space-y-1">
-                        <a href="{{ route('pengurus.anggota.verifikasi') }}" class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('pengurus.anggota.verifikasi') }}"
+                            class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                             Verifikasi Anggota
                         </a>
-                        <a href="{{ route('pengurus.anggota.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('pengurus.anggota.index') }}"
+                            class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                             Data Anggota
                         </a>
                     </div>
@@ -54,32 +57,38 @@
                     <button @click="openSimpanan = !openSimpanan"
                         class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                         <span>Kelola Simpanan</span>
-                        <svg :class="{ 'rotate-180': openSimpanan }" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg :class="{ 'rotate-180': openSimpanan }" class="w-4 h-4 transform transition-transform"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M19 9l-7 7-7-7" stroke-width="2" />
                         </svg>
                     </button>
                     <div x-show="openSimpanan" x-collapse class="ml-4 space-y-1">
-                        <a href="{{ route('pengurus.simpanan.sukarela.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('pengurus.simpanan.sukarela.index') }}"
+                            class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                             Simpanan Sukarela
                         </a>
-                        <a href="{{ route('pengurus.simpanan.wajib_2.dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('pengurus.simpanan.wajib_2.dashboard') }}"
+                            class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                             Simpanan Wajib
                         </a>
-                        <a href="{{ route('pengurus.tabungan.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                        <a href="{{ route('pengurus.tabungan.index') }}"
+                            class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                             Tabungan
                         </a>
                     </div>
                 </div>
 
                 <!-- Pinjaman -->
-                <a href="{{ route('pengurus.pinjaman.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                <a href="{{ route('pengurus.pinjaman.index') }}"
+                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                     Pinjaman
                 </a>
             @endif
 
             <!-- Hanya untuk ADMIN -->
             @if(auth('pengurus')->check() && auth('pengurus')->user()->role === 'superadmin')
-                <a href="{{ route('settings.edit') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                <a href="{{ route('settings.edit') }}"
+                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                     Pengaturan Koperasi
                 </a>
             @endif
@@ -89,7 +98,8 @@
         <!-- Logout -->
         <form method="POST" action="{{ route('pengurus.logout') }}" class="mt-6 px-4">
             @csrf
-            <button type="submit" class="flex items-center w-full px-4 py-3 text-left rounded-lg hover:bg-red-700 transition">
+            <button type="submit"
+                class="flex items-center w-full px-4 py-3 text-left rounded-lg hover:bg-red-700 transition">
                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -107,11 +117,16 @@
 
                 <img src="{{ $pengurus && $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
                     alt="{{ $pengurus ? $pengurus->name : 'Guest' }}" class="h-10 w-10 rounded-full mr-3">
-                <div>
-                    <span class="font-semibold">{{ $pengurus ? $pengurus->name : 'Guest' }}</span>
-                    <svg class="inline h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 9l6 6 6-6" stroke-width="2" />
-                    </svg>
+                <div class="flex flex-col">
+                    {{-- Nama --}}
+                    <span class="font-semibold text-gray-800 dark:text-gray-100">
+                        {{ $pengurus ? $pengurus->name : 'Guest' }}
+                    </span>
+
+                    {{-- Role --}}
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ $pengurus ? ucfirst($pengurus->role) : 'Role Tidak Diketahui' }}
+                    </span>
                 </div>
             </a>
         </div>

@@ -15,16 +15,15 @@
             </label>
             <div class="mt-2 flex items-center">
                 <span class="inline-block h-20 w-20 rounded-full overflow-hidden bg-gray-100">
-                    @if($user->photo_path)
-                        <img src="{{ asset('storage/' . $user->photo_path) }}" alt="Profile Photo"
-                            class="h-full w-full object-cover">
-                    @else
-                        <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 24H0V0h24v24z" fill="none" />
-                            <path
-                                d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
-                    @endif
+                    <img id="photoPreview" src="{{ $user->photo_path ? asset('storage/' . $user->photo_path) : '' }}"
+                        data-original="{{ $user->photo_path ? asset('storage/' . $user->photo_path) : '' }}"
+                        alt="Profile Photo" class="h-full w-full object-cover">
+                    <svg id="defaultAvatar" class="{{ $user->photo_path ? 'hidden' : '' }} h-full w-full text-gray-300"
+                        fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 24H0V0h24v24z" fill="none" />
+                        <path
+                            d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
                 </span>
                 <input type="file" name="photo" id="photo" accept="image/*"
                     class="ml-5 text-sm text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
