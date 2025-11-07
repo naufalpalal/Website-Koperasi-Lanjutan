@@ -222,3 +222,8 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/upload', [filedokumen::class, 'dashboardUpload'])->name('dokumen.upload');
     Route::post('/upload', [filedokumen::class, 'uploadDokumen'])->name('dokumen.upload.store');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
+        ->name('dokumen.lihat');
+});

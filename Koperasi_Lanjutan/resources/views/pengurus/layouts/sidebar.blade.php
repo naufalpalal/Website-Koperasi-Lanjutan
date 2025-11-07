@@ -1,13 +1,7 @@
-<!-- Responsive Sidebar Navigation -->
-<button id="sidebarToggle" class="absolute top-4 left-4 z-60 sm:hidden focus:outline-none">
-    <svg class="h-5 w-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" />
-    </svg>
-</button>
-
+<!-- Sidebar -->
 <aside id="sidebar"
-    class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white flex flex-col justify-between z-50 shadow-lg transform -translate-x-full sm:translate-x-0 sm:flex transition-transform duration-300
-           overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 scrollbar-track-transparent">
+    class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white flex flex-col justify-between z-10 shadow-lg 
+            overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 scrollbar-track-transparent">
 
     <div class="flex-1">
         <!-- Logo -->
@@ -115,25 +109,32 @@
                     $pengurus = Auth::guard('pengurus')->user();
                 @endphp
 
-                <img src="{{ $pengurus && $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
-                    alt="{{ $pengurus ? $pengurus->name : 'Guest' }}" class="h-10 w-10 rounded-full mr-3">
-                <div class="flex flex-col">
-                    {{-- Nama --}}
-                    <span class="font-semibold text-gray-800 dark:text-gray-100">
-                        {{ $pengurus ? $pengurus->name : 'Guest' }}
-                    </span>
+                <img src="{{ $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
+                    alt="{{ $pengurus->nama }}" class="h-10 w-10 rounded-full mr-3">
 
-                    {{-- Role --}}
-                    <span class="text-sm text-gray-500 dark:text-gray-400">
-                        {{ $pengurus ? ucfirst($pengurus->role) : 'Role Tidak Diketahui' }}
-                    </span>
+                <div>
+                    <span class="font-semibold">{{ $pengurus->nama }}</span>
+                    <!-- Teks selamat datang & role spesifik -->
+                    <p class="text-sm text-gray-400">
+                        Selamat datang
+                        @if($pengurus->role == 'superadmin')
+                            Super Admin
+                        @elseif($pengurus->role == 'ketua')
+                            Ketua
+                        @elseif($pengurus->role == 'bendahara')
+                            Bendahara
+                        @elseif($pengurus->role == 'sekretaris')
+                            Sekretaris
+                        @else
+                            Pengurus
+                        @endif
+                    </p>
                 </div>
             </a>
         </div>
+
     </div>
 </aside>
-
-<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden sm:hidden"></div>
 
 <script src="https://unpkg.com/alpinejs" defer></script>
 <script src="{{ asset('assets/js/script.js') }}"></script>

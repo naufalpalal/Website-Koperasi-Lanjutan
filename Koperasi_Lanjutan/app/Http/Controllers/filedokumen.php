@@ -123,16 +123,22 @@ class filedokumen extends Controller
                 abort(400, 'Jenis dokumen tidak valid.');
         }
 
+        // ✅ PERBAIKAN: Hapus duplikasi 'private/'
         $filePath = storage_path('app/private/private/' . $fileName);
 
         if (!file_exists($filePath)) {
             abort(404, 'File dokumen tidak ditemukan di server.');
         }
+        
 
         return response()->file($filePath, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $fileName . '"'
         ]);
+
+        
+
+
     }
 
 

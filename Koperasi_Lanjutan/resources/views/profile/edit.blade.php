@@ -64,5 +64,6 @@
 </div>
 @endsection
 @section('scripts')
-<script src="{{ asset('js/profile-preview.js') }}"></script>
+<script src="{{ asset('assets/js/profile-preview.js') }}"></script>
+<script src="{{ asset('assets/js/show-password.js') }}"></script>
 @endsection
