@@ -66,7 +66,6 @@
                 </span>
                 <span>Andi Mengajukan Pinjaman (10:45)</span>
             </div>
-            <!-- Tambahkan aktivitas lain di sini -->
         </div>
     </div>
 </div>
