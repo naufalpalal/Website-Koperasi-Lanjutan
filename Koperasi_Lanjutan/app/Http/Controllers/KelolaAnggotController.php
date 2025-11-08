@@ -22,7 +22,7 @@ class KelolaAnggotController extends Controller
         $search = $request->input('q');
 
         // Query dasar untuk user dengan role anggota
-        $query = User::query();
+         $query = User::where('status', 'aktif'); 
 
         // Jika ada pencarian, tambahkan filter
         if ($search) {
@@ -74,7 +74,7 @@ class KelolaAnggotController extends Controller
         // (Opsional) Kirim notifikasi atau buat log
         // Notification::send($anggota, new AnggotaApprovedNotification());
 
-        return redirect()->route('pengurus.KelolaAnggota.verifikasi')
+        return redirect()->route('pengurus.anggota.verifikasi')
             ->with('success', "Anggota {$anggota->nama} berhasil disetujui dan diaktifkan.");
     }
 
@@ -91,7 +91,7 @@ class KelolaAnggotController extends Controller
         // (Opsional) Hapus dokumen pendaftaran jika perlu
         // Storage::delete($anggota->dokumen_path);
 
-        return redirect()->route('pengurus.KelolaAnggota.verifikasi')
+        return redirect()->route('pengurus.anggota.verifikasi')
             ->with('error', "Pendaftaran anggota {$anggota->nama} telah ditolak.");
     }
 
