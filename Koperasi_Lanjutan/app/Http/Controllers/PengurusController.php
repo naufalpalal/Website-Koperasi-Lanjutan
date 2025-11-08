@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Pengurus\SimpananWajib;
+use App\Models\Pengurus\SimpananSukarela;
+use App\Models\Pinjaman;
 
 
 class PengurusController extends Controller
@@ -40,10 +43,25 @@ class PengurusController extends Controller
         $request->session()->regenerateToken();
         return redirect('/pengurus/login');
     }
-      public function dashboard()
+    public function dashboard()
     {
-        $totalAnggota = User::count();
-        return view('pengurus.dashboard.index', compact('totalAnggota'));
+        $totalAnggota = User::where('status', 'aktif')->count();
+
+        // Total simpanan wajib dan sukarela
+        $totalSimpananWajib = SimpananWajib::sum('nilai');
+        $totalSimpananSukarela = SimpananSukarela::sum('nilai');
+        $totalSimpanan = $totalSimpananWajib + $totalSimpananSukarela;
+
+        // Total simpanan yang sudah dibayar
+        $totalSimpananWajibDibayar = SimpananWajib::where('status', 'Dibayar')->sum('nilai');
+        $totalSimpananSukarelaDibayar = SimpananSukarela::where('status', 'Dibayar')->sum('nilai');
+        $totalSimpananDibayar = $totalSimpananWajibDibayar + $totalSimpananSukarelaDibayar;
+
+        // Total pinjaman (kalau modelnya ada)
+        $totalPinjaman = Pinjaman::sum('nominal');
+        $totalPinjamanDibayar = Pinjaman::where('status', 'Dibayar')->sum('nominal');
+
+        return view('pengurus.dashboard.index', compact('totalAnggota', 'totalSimpanan', 'totalPinjaman', 'totalSimpananDibayar', 'totalPinjamanDibayar'));
     }
 
 }

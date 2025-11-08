@@ -41,10 +41,7 @@ Route::post('/logout', function () {
 })->name('logout');
 
 
-// Dashboard Umum
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 
 // Profile User (Auth wajib)
@@ -78,7 +75,7 @@ Route::middleware(['auth:web'])->prefix('user/simpanan')->as('user.simpanan.')->
     Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:web'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
     Route::get('/dashboard', [TabunganController::class, 'dashboard'])->middleware('auth')->name('user.dashboard.index');
 });

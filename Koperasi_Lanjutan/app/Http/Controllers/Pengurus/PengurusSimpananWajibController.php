@@ -17,7 +17,7 @@ class PengurusSimpananWajibController extends Controller
     // Halaman kelola simpanan wajib
     public function dashboard(Request $request)
     {
-        $anggota = User::get();
+        $anggota = User::where('status', 'aktif')->get();
         $master = MasterSimpananWajib::latest()->first();
 
         // Ambil bulan yang dipilih di filter, default bulan ini
@@ -43,7 +43,7 @@ class PengurusSimpananWajibController extends Controller
     }
     public function index(Request $request)
     {
-        $anggota = User::all();
+        $anggota = User::where('status', 'aktif')->get();
         $master = MasterSimpananWajib::latest()->first();
 
         // Ambil bulan yang dipilih di filter, default bulan ini
@@ -100,7 +100,7 @@ class PengurusSimpananWajibController extends Controller
         // Split periode menjadi tahun dan bulan
         [$tahun, $bulan] = explode('-', $request->bulan);
 
-        $anggota = User::get();
+        $anggota = User::where('status', 'aktif')->get();
 
         foreach ($anggota as $a) {
             $cek = SimpananWajib::where('users_id', $a->id)
@@ -127,7 +127,7 @@ class PengurusSimpananWajibController extends Controller
     public function updateStatus(Request $request)
     {
         $anggotaDicentang = $request->anggota ?? [];
-        $anggota = User::get();
+        $anggota = User::where('status', 'aktif')->get();
 
         // Ambil bulan yang dipilih di filter, default bulan ini
         $periodeFilter = $request->get('bulan', now()->format('Y-m'));
