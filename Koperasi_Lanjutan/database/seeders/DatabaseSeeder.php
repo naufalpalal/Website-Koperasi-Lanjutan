@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-   public function run()
+    public function run()
     {
         DB::table('pengurus')->insert([
             // Superadmin Example
@@ -104,21 +104,21 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('users')->insert([
-    'nama' => 'nopal',
-    'no_telepon' => '082136443134',
-    'password' => Hash::make('anggota123'),
-    'nip' => '1234567891',
-    'tempat_lahir' => 'Genteng',
-    'tanggal_lahir' => Carbon::parse('1988-07-25'),
-    'alamat_rumah' => 'Jl. Malioboro No. 3, Genteng',
-    'unit_kerja' => 'Karyawan',
-    'sk_perjanjian_kerja' => 'SK-SR-004',
-    'status' => 'aktif',
-    'photo_path' => null, // pastikan ENUM atau VARCHAR di DB mendukung ini
-    'created_at' => now(),
-    'updated_at' => now(),
-]);
+            'nama' => 'nopal',
+            'no_telepon' => '082136443134',
+            'password' => Hash::make('anggota123'),
+            'nip' => '1234567891',
+            'tempat_lahir' => 'Genteng',
+            'tanggal_lahir' => Carbon::parse('1988-07-25'),
+            'alamat_rumah' => 'Jl. Malioboro No. 3, Genteng',
+            'unit_kerja' => 'Karyawan',
+            'sk_perjanjian_kerja' => 'SK-SR-004',
+            'status' => 'aktif',
+            'photo_path' => null, // pastikan ENUM atau VARCHAR di DB mendukung ini
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
-  
+
 }
