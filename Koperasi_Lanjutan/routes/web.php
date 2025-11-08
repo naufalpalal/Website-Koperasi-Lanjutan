@@ -125,6 +125,7 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
         Route::post('/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
         Route::post('/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
         Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
+        Route::get('/{id}', [PinjamanController::class, 'show'])->name('pengurus.pinjaman.show');
     });
     // Kelola Anggota (sekretaris, superadmin, ketua)
     Route::middleware('role.pengurus:sekretaris,superadmin,ketua')->group(function () {
