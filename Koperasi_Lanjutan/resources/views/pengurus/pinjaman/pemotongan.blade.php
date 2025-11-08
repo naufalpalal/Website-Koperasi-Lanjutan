@@ -9,16 +9,23 @@
             {{ $selectedPeriod instanceof \Carbon\Carbon ? $selectedPeriod->locale('id')->translatedFormat('F Y') : 'Tidak Diketahui' }}
         </h2>
 
-        {{-- Filter periode --}}
-        <form method="GET" action="{{ route('pengurus.pinjaman.pemotongan') }}" class="mb-4 flex items-center gap-2">
-            @csrf
-            
-            <label for="periode" class="text-sm">Periode</label>
-            <input id="periode" name="periode" type="month" value="{{ request('periode', now()->format('Y-m')) }}"
-                class="border rounded px-2 py-1">
-            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Filter</button>
-            <a href="{{ route('pengurus.pinjaman.pemotongan') }}" class="text-sm text-gray-600 ml-4">Reset</a>
-        </form>
+        {{-- Filter periode + tombol di kanan --}}
+        <div class="mb-4 flex items-center justify-between">
+            <form method="GET" action="{{ route('pengurus.pinjaman.pemotongan') }}" class="flex items-center gap-2">
+                @csrf
+
+                <label for="periode" class="text-sm">Periode</label>
+                <input id="periode" name="periode" type="month" value="{{ request('periode', now()->format('Y-m')) }}"
+                    class="border rounded px-2 py-1">
+                <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Filter</button>
+                <a href="{{ route('pengurus.pinjaman.pemotongan') }}" class="text-sm text-gray-600 ml-4">Reset</a>
+            </form>
+
+            <a href="{{ route('pengurus.pinjaman.pengajuan') }}"
+                class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-150 ease-in-out">
+                Daftar Pengajuan
+            </a>
+        </div>
 
         @if ($angsuran->count() > 0)
             <div class="overflow-x-auto">
@@ -88,17 +95,17 @@
 
                     try {
                         const res = await fetch(
-                        `{{ url('/pengurus/pinjaman') }}/${id}/status`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                status: newStatus
-                            })
-                        });
+                            `{{ url('/pengurus/pinjaman') }}/${id}/status`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    status: newStatus
+                                })
+                            });
                         const data = await res.json();
 
                         if (data.success) {

@@ -123,7 +123,7 @@
                 </tr>
                 <tr>
                     <td>Alamat</td>
-                    <td>: {{ $pemohon->alamat ?? '-' }}</td>
+                    <td>: {{ $pemohon->alamat_rumah ?? '-' }}</td>
                 </tr>
             </table>
         </div>

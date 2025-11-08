@@ -121,19 +121,19 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
 
 
 
-        // Simpanan Wajib
-        Route::prefix('simpanan-wajib')->group(function () {
-            Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('pengurus.simpanan.wajib.dashboard');
-            Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib.index');
-            Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib.generate');
-            Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib.updateStatus');
-        });
+    // Simpanan Wajib
+    Route::prefix('simpanan-wajib')->group(function () {
+        Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('pengurus.simpanan.wajib.dashboard');
+        Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib.index');
+        Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib.generate');
+        Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib.updateStatus');
+    });
 
 
 
 
     Route::middleware('role.pengurus:bendahara,superadmin,ketua')->group(function () {
-    // Tabungan Pengurus
+        // Tabungan Pengurus
         // Daftar tabungan
         Route::get('/pengurus/tabungan', [Tabungan2Controller::class, 'index'])->name('pengurus.tabungan.index');
         // Detail tabungan anggota
@@ -159,13 +159,22 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     Route::prefix('pinjaman')->group(function () {
         Route::get('/', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
         Route::get('/pengajuan', [PinjamanController::class, 'pengajuan'])->name('pengurus.pinjaman.pengajuan');
-        Route::get('/pemotongan', [PinjamanController::class, 'pemotongan'])->name('pengurus.pinjaman.pemotongan');
+        Route::get('/pemotongan', [AngsuranController::class, 'periodePotongan'])->name('pengurus.pinjaman.pemotongan');
         Route::post('/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
         Route::post('/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
         Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
     });
 
 
+
+});
+
+
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/tabungan', [TabunganController::class, 'index'])->name('tabungan.index');
+    Route::post('/tabungan/store', [TabunganController::class, 'store'])->name('tabungan.store');
+    Route::get('/tabungan/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
+});
 
 // =====================
 // 📋 ROLE: SEKRETARIS, superadmin, KETUA
@@ -182,25 +191,14 @@ Route::middleware('role.pengurus:sekretaris,superadmin,ketua')->group(function (
     Route::post('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.anggota.reject');
 });
 
-});
-
-
-Route::middleware(['auth:web'])->group(function () {
-    Route::get('/tabungan', [TabunganController::class, 'index'])->name('tabungan.index');
-    Route::post('/tabungan/store', [TabunganController::class, 'store'])->name('tabungan.store');
-    Route::get('/tabungan/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
-});
-
-
-
 // =====================
-    // 🔐 ROLE: superadmin
-    // =====================
-    Route::middleware('role.pengurus:superadmin')->group(function () {
-        Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
-        Route::put('/identitas-koperasi', [IdentitasKoperasiController::class, 'update'])->name('settings.update');
+// 🔐 ROLE: superadmin
+// =====================
+Route::middleware('role.pengurus:superadmin')->group(function () {
+    Route::get('/identitas-koperasi', [IdentitasKoperasiController::class, 'edit'])->name('settings.edit');
+    Route::put('/identitas-koperasi', [IdentitasKoperasiController::class, 'update'])->name('settings.update');
 
-    });
+});
 
 // Simpanan Wajib - Pengurus
 Route::prefix('pengurus/simpanan-wajib')->group(function () {

@@ -72,7 +72,7 @@
                 </div>
 
                 <!-- Pinjaman -->
-                <a href="{{ route('pengurus.pinjaman.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                <a href="{{ route('pengurus.pinjaman.pemotongan') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                     Pinjaman
                 </a>
             @endif

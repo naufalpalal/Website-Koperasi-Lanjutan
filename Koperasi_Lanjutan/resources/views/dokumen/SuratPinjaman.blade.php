@@ -216,7 +216,7 @@
             <tr>
                 <td class="label">Alamat Rumah</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $user->alamat }}</td>
+                <td class="value">{{ $user->alamat_rumah }}</td>
             </tr>
             <tr>
                 <td class="label">Jumlah Pinjaman</td>
@@ -226,7 +226,7 @@
             <tr>
                 <td class="label">Telepon</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $user->telepon }}</td>
+                <td class="value">{{ $user->no_telepon }}</td>
             </tr>
             <tr>
                 <td class="label">Nama Istri/Suami</td>
@@ -263,12 +263,12 @@
             <tr>
                 <td class="label">Alamat Rumah</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $user->alamat }}</td>
+                <td class="value">{{ $user->alamat_rumah }}</td>
             </tr>
             <tr>
                 <td class="label">Telepon</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $user->telepon }}</td>
+                <td class="value">{{ $user->no_telepon }}</td>
             </tr>
         </table>
 
