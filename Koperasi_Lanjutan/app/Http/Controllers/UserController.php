@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\user\SimpananWajib;
+use App\Models\user\SimpananSukarela;
+use App\Models\Pinjaman;
 
 class UserController extends Controller
 {
@@ -42,18 +45,26 @@ class UserController extends Controller
     }
 
     // 🔹 Dashboard pengurus
-  
+
 
     // 🔹 Dashboard user (anggota)
     public function dashboardUserView()
     {
         $user = Auth::user();
 
-        // Hitung total simpanan wajib
-        $totalSimpananWajib = $user->simpananWajib()->sum('jumlah');
+        // Hitung total simpanan wajib (hanya yang berhasil dibayar)
+        $totalSimpananWajib = $user->simpananWajib()->where('status', 'Dibayar')->sum('nilai');
 
-        // Hitung total simpanan sukarela
-        $totalSimpananSukarela = $user->simpananSukarela()->sum('jumlah');
+        // Hitung total simpanan sukarela (hanya yang berhasil dibayar)
+        $totalSimpananSukarela = $user->simpananSukarela()->where('status', 'Dibayar')->sum('nilai');
+
+        $totalPinjaman = 0; // Default 0 jika tidak ada
+
+        if (method_exists($user, 'pinjaman')) {
+            $totalPinjaman = $user->pinjaman()
+                ->where('status', 'disetujui') // atau status yang sesuai
+                ->sum('nominal'); // sesuaikan nama kolom
+        }
 
         // Hitung total simpanan pokok (kalau tabelnya ada)
         if (method_exists($user, 'simpanan')) {
@@ -78,7 +89,9 @@ class UserController extends Controller
             'totalSimpananSukarela',
             'totalSimpananPokok',
             'totalTabungan',
-            'totalKeseluruhan'
+            'totalKeseluruhan',
+            'totalPinjaman'
+
         ));
     }
 
