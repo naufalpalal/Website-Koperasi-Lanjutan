@@ -113,7 +113,7 @@ class PinjamanController extends Controller
         //     $angsuran_bulanan = round($total_pembayaran / $request->tenor, 2);
 
         //     // Update status pinjaman & data perhitungan
- 
+
 
         //     // Tentukan tanggal awal (tanggal persetujuan)
         //     $tanggalPersetujuan = now();
@@ -172,10 +172,12 @@ class PinjamanController extends Controller
 
         // Simpan ke storage (public)
         $fileName = 'verifikasi_pinjaman_' . $pinjaman->id . '.pdf';
-        $filePath = 'public/dokumen_verifikasi/' . $fileName;
-        Storage::put($filePath, $pdf->output());
+        $filePath = $pdf->output();
 
-        // Simpan path ke database
+        // Simpan ke storage/public/dokumen_verifikasi
+        Storage::disk('public')->put('dokumen_verifikasi/' . $fileName, $filePath);
+
+        // Simpan path relatif ke database
         $pinjaman->dokumen_verifikasi = 'dokumen_verifikasi/' . $fileName;
         $pinjaman->save();
 

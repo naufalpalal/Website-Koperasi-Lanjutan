@@ -73,8 +73,15 @@ class PinjamanAnggotaController extends Controller
 
     public function create()
     {
-        return view('user.pinjaman.create');
+        // Ambil pinjaman terakhir user yang login
+        $pinjaman = Pinjaman::where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        // Kirim ke view
+        return view('user.pinjaman.create', compact('pinjaman'));
     }
+
 
     public function store(Request $request)
     {
@@ -82,17 +89,15 @@ class PinjamanAnggotaController extends Controller
             'nominal' => 'required|numeric|min:100000',
         ]);
 
-        $pinjaman = Pinjaman::create([
-            'user_id' => Auth::id(),
-            'nominal' => $request->nominal,
-            'status' => 'draft',
-        ]);
+        // Simpan atau update pinjaman user
+        $pinjaman = Pinjaman::updateOrCreate(
+            ['user_id' => auth()->id(), 'status' => 'pending'],
+            ['nominal' => $request->nominal]
+        );
 
-        // ✅ Redirect ke halaman upload setelah pengajuan
-        return redirect()
-            ->route('user.pinjaman.uploadForm', $pinjaman->id)
-            ->with('success', 'Pengajuan pinjaman berhasil dibuat. Silakan unduh surat pinjaman dan upload kembali setelah ditandatangani.');
+        return redirect()->route('user.pinjaman.create')->with('success', 'Nominal pinjaman tersimpan.');
     }
+
 
     public function download($id)
     {
