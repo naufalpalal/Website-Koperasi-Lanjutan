@@ -24,7 +24,7 @@
             </div>
             <h3 class="text-lg font-semibold text-gray-800 mb-2">Simpanan Sukarela</h3>
             <p class="text-2xl font-bold text-green-800 mt-2">
-            Rp {{ number_format($totalSimpananSukarela ?? 0, 0, ',', '.') }}
+            Rp {{ number_format($totalSimpananSukarela, 0, ',', '.') }}
         </p>
         </a>
 
@@ -43,7 +43,7 @@
             </div>
             <h3 class="text-lg font-semibold text-gray-800 mb-2">Simpanan Wajib</h3>
             <p class="text-2xl font-bold text-blue-800 mt-2">
-            Rp {{ number_format($totalSimpananWajib ?? 0, 0, ',', '.') }}
+            Rp {{ number_format($totalSimpananWajib, 0, ',', '.') }}
         </p>
         </a>
 
@@ -62,7 +62,7 @@
             </div>
             <h3 class="text-lg font-semibold text-gray-800 mb-2">Pinjaman</h3>
             <p class="text-2xl font-bold text-yellow-800 mt-2">
-            Rp {{ number_format($totalPinjaman ?? 0, 0, ',', '.') }}
+            Rp {{ number_format($totalPinjaman, 0, ',', '.') }}
         </p>
         </a>
     </div>

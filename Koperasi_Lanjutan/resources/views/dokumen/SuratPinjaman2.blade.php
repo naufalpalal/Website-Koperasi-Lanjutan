@@ -60,19 +60,36 @@
             text-align: center;
         }
 
-        .stamp-placeholder {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 2px solid #0b5;
-            display: inline-block;
-            margin-top: 8px;
+        /* Updated styles for signatures */
+        .signature-section {
+            margin-top: 20px;
+            width: 100%;
         }
 
-        .sign-img {
-            max-height: 70px;
-            display: block;
-            margin: 0 auto;
+        .signature-right {
+            float: right;
+            text-align: left;
+            margin-bottom: 50px;
+        }
+
+        .signature-bottom {
+            clear: both;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .signature-box {
+            text-align: left;
+        }
+
+        .signature-name {
+            margin-top: 50px;
+            font-weight: bold;
+        }
+
+        .signature-title {
+            margin-bottom: 10px;
         }
 
         table.info {
@@ -142,52 +159,31 @@
             Demikian pengajuan ini, atas perkenan nya disampaikan terima kasih.
         </div>
 
-        <div class="mt-6" style="display:flex; justify-content:flex-end; width:100%;">
-            <div style="width:240px; text-align:center;">
-                <div>Hormat kami,</div>
-                <div>Pemohon</div>
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature-right">
+                Hormat kami,<br>
+                Pemohon<br>
+                <div class="signature-name">
+                    {{ $pemohon->nama ?? 'EVA OLIVIA PUTASOIT, S.T.,M.T.' }}
+                </div>
+            </div>
 
-                <div class="signature-area">
-                    @if(isset($pemohon->signature_path) && $pemohon->signature_path)
-                        <img src="{{ asset('storage/' . $pemohon->signature_path) }}" alt="Tanda Tangan" class="sign-img">
-                    @else
-                        <!-- blank space for signature -->
-                        <div style="height:64px;"></div>
-                    @endif
+            <div class="signature-bottom">
+                <div class="signature-box">
+                    <div class="signature-title">Mengetahui,<br>Wadir II Bidang Umum & Keuangan</div>
+                    <div class="signature-name">
+                            ({{ $identitas->nama_wadir ?? 'Devit Suwardiyanto,S.Si.,M.T.' }})</div>
                 </div>
 
-                <div class="underline"><strong>{{ $pemohon->nama ?? '-' }}</strong></div>
-                <div class="small">{{ $pemohon->nip_kppk ?? $pemohon->nip ?? '' }}</div>
+                <div class="signature-box">
+                    <div class="signature-title">Menyetujui,<br>Bendahara Pengeluaran</div>
+                    <div class="signature-name">
+                            ({{ $identitas->nama_bendahara_pengeluaran ?? 'Imarotul Husna, S.E.' }})</div>
+                </div>
             </div>
         </div>
 
-        <!-- Pejabat Mengetahui & Menyetujui -->
-        <div class="two-cols">
-            <div class="col">
-                <div class="small">Mengetahui,<br>{{ $mengetahui->title ?? 'Wadir III Bidang Umum & Keuangan' }}</div>
-                <div class="stamp-placeholder">
-                    @if(isset($mengetahui->signature_path) && $mengetahui->signature_path)
-                        <img src="{{ asset('storage/' . $mengetahui->signature_path) }}" alt="Tanda Tangan"
-                            style="max-width:100%; max-height:110px; display:block; margin:8px auto 0;">
-                    @endif
-                </div>
-                <div class="mt-2 underline"><strong>{{ $mengetahui->nama ?? 'DEVIT SUPARDIANTO, S.SI., M.T.' }}</strong>
-                </div>
-                <div class="small">NIP. {{ $mengetahui->nip ?? '198311052015041001' }}</div>
-            </div>
-
-            <div class="col">
-                <div class="small">Menyetujui,<br>{{ $menyetujui->title ?? 'Bendahara Pengeluaran' }}</div>
-                <div class="stamp-placeholder">
-                    @if(isset($menyetujui->signature_path) && $menyetujui->signature_path)
-                        <img src="{{ asset('storage/' . $menyetujui->signature_path) }}" alt="Tanda Tangan"
-                            style="max-width:100%; max-height:110px; display:block; margin:8px auto 0;">
-                    @endif
-                </div>
-                <div class="mt-2 underline"><strong>{{ $menyetujui->nama ?? 'IMAROTUL HUSNA, S.E.' }}</strong></div>
-                <div class="small">NIP. {{ $menyetujui->nip ?? '198605182014042001' }}</div>
-            </div>
-        </div>
     </div>
 </body>
 

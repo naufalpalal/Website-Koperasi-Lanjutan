@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\user\SimpananWajib;
-use App\Models\user\SimpananSukarela;
+use App\Models\Pengurus\SimpananSukarela;
 use App\Models\Pinjaman;
 
 class UserController extends Controller
@@ -51,47 +51,48 @@ class UserController extends Controller
     public function dashboardUserView()
     {
         $user = Auth::user();
+        $simpananWajib = SimpananWajib::all();
+        $simpananSukarela = SimpananSukarela::all();
+        $pinjaman = Pinjaman::all();
 
         // Hitung total simpanan wajib (hanya yang berhasil dibayar)
-        $totalSimpananWajib = $user->simpananWajib()->where('status', 'Dibayar')->sum('nilai');
+        $totalSimpananWajib = $simpananWajib->where('status', 'Dibayar')->sum('nilai');
 
         // Hitung total simpanan sukarela (hanya yang berhasil dibayar)
-        $totalSimpananSukarela = $user->simpananSukarela()->where('status', 'Dibayar')->sum('nilai');
+        $totalSimpananSukarela = $simpananSukarela->where('status', 'Dibayar')->sum('nilai');
 
         $totalPinjaman = 0; // Default 0 jika tidak ada
 
         if (method_exists($user, 'pinjaman')) {
-            $totalPinjaman = $user->pinjaman()
+            $totalPinjaman = $pinjaman
                 ->where('status', 'disetujui') // atau status yang sesuai
                 ->sum('nominal'); // sesuaikan nama kolom
         }
 
-        // Hitung total simpanan pokok (kalau tabelnya ada)
-        if (method_exists($user, 'simpanan')) {
-            $totalSimpananPokok = $user->simpanan()->sum('jumlah');
-        } else {
-            $totalSimpananPokok = 0;
-        }
+        // // Hitung total simpanan pokok (kalau tabelnya ada)
+        // if (method_exists($user, 'simpanan')) {
+        //     $totalSimpananPokok = $user->simpanan()->sum('jumlah');
+        // } else {
+        //     $totalSimpananPokok = 0;
+        // }
 
         // Hitung total tabungan
         if (method_exists($user, 'tabungans')) {
-            $totalTabungan = $user->tabungans()->sum('jumlah');
+            $totalTabungan = $user->tabungans()->sum('nilai');
         } else {
             $totalTabungan = 0;
         }
 
         // Total keseluruhan
-        $totalKeseluruhan = $totalSimpananWajib + $totalSimpananSukarela + $totalSimpananPokok + $totalTabungan;
+        $totalKeseluruhan = $totalSimpananWajib + $totalSimpananSukarela + $totalTabungan;
 
         return view('user.dashboard.index', compact(
             'user',
             'totalSimpananWajib',
             'totalSimpananSukarela',
-            'totalSimpananPokok',
             'totalTabungan',
             'totalKeseluruhan',
             'totalPinjaman'
-
         ));
     }
 

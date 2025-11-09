@@ -77,7 +77,6 @@ Route::middleware(['auth:web'])->prefix('user/simpanan')->as('user.simpanan.')->
 
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
-    Route::get('/dashboard', [TabunganController::class, 'dashboard'])->middleware('auth')->name('user.dashboard.index');
 });
 
 Route::middleware(['auth:web'])->group(function () {
