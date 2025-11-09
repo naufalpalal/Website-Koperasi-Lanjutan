@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <title>Surat Permohonan Pinjaman</title>
     <style>
-        /* Print-friendly, close to letter appearance in image */
         body {
             font-family: "Times New Roman", Times, serif;
             color: #000;
@@ -17,8 +16,8 @@
             max-width: 720px;
             margin: 0 auto;
             background: white;
-            padding: 40px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px 60px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .right {
@@ -41,57 +40,70 @@
             font-size: 0.9rem;
         }
 
-        /* Updated styles for signatures */
-        .signature-section {
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .signature-right {
-            float: right;
-            text-align: center;
-            margin-bottom: 80px;
-            width: 40%;
-        }
-
-        .signature-bottom {
-            clear: both;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .signature-box {
-            text-align: center;
-            width: 45%;
-        }
-
-        .signature-name {
-            margin-top: 60px;
-            font-weight: bold;
-        }
-
-        .signature-title {
-            margin-bottom: 10px;
-        }
-
         table.info {
             width: 100%;
             margin-top: 8px;
+            border-collapse: collapse;
         }
 
         table.info td {
             vertical-align: top;
             padding: 2px 6px;
         }
+
+        /* SECTION TANDA TANGAN SEJAJAR */
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .signature-box {
+            width: 30%;
+        }
+
+        .signature-title {
+            margin-bottom: 60px;
+            /* ruang untuk tanda tangan */
+        }
+
+        .signature-name {
+            font-weight: bold;
+        }
+
+        .signature-nip {
+            font-size: 0.85em;
+            font-weight: normal;
+        }
+
+        /* Agar tampilan tetap sejajar walau tinggi teks berbeda */
+        .signature-section>div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* Responsive fallback */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Tanggal -->
         <div class="right small">
-            Banyuwangi, 02 Juni 2025
+            @php $dt = isset($tanggal) ? \Carbon\Carbon::parse($tanggal) : now(); @endphp
+            Banyuwangi, {{ $dt->format('d') }} {{ $dt->translatedFormat('F Y') }}
         </div>
 
         <div class="mt-3">
@@ -102,73 +114,70 @@
         </div>
 
         <div class="mt-3">
-            Yang bertanda tangan dibawah ini :
+            Yang bertanda tangan di bawah ini :
             <table class="info">
                 <tr>
                     <td style="width:120px">Nama</td>
-                    <td>: <strong>EVA OLIVIA HUTASOIT, S.T.,M.T.</strong></td>
+                    <td>: <strong>{{ $pemohon->nama ?? '-' }}</strong></td>
                 </tr>
                 <tr>
                     <td>NIP/KPPK</td>
-                    <td>: 199211220220032011</td>
+                    <td>: {{ $pemohon->nip_kppk ?? ($pemohon->nip ?? '-') }}</td>
                 </tr>
                 <tr>
                     <td>No. KTP</td>
-                    <td>: 1202096211920002</td>
+                    <td>: {{ $pemohon->no_ktp ?? ($pemohon->ktp ?? '-') }}</td>
                 </tr>
                 <tr>
                     <td>Jabatan</td>
-                    <td>: Dosen</td>
+                    <td>: {{ $pemohon->jabatan ?? '-' }}</td>
                 </tr>
                 <tr>
                     <td>Alamat</td>
-                    <td>: PERUM. PESONA ROGOJAMPI BLOK H 11 ROGOJAMPI</td>
+                    <td>: {{ $pemohon->alamat_rumah ?? '-' }}</td>
                 </tr>
             </table>
         </div>
 
         <div class="mt-3">
             Dengan ini bermaksud mengajukan pinjaman pada Koperasi Karyawan Politeknik Negeri Banyuwangi sebesar
-            <strong>Rp 10.000.000,-
-                (Sepuluh Juta Rupiah)</strong>,
-            dan pinjaman tersebut diangsur <strong>10 bulan</strong> dengan jumlah angsuran
+            <strong>Rp {{ number_format($jumlah ?? 10000000, 0, ',', '.') }},-
+                ({{ $jumlah_terbilang ?? 'Sepuluh Juta Rupiah' }})</strong>,
+            dan pinjaman tersebut diangsur <strong>{{ $lama_angsuran ?? 10 }} bulan</strong> dengan jumlah angsuran
             sebesar
-            <strong>Rp 1.100.000,-
-                (Satu Juta Seratus Ribu Rupiah)</strong>.
+            <strong>Rp {{ number_format($angsuran ?? 1100000, 0, ',', '.') }},-
+                ({{ $angsuran_terbilang ?? 'Satu Juta Seratus Rupiah' }})</strong>.
         </div>
+
 
         <div class="mt-3 mb-4">
-            Demikian pengajuan ini, atas perkenan nya disampaikan terima kasih.
+            Demikian pengajuan ini, atas perkenannya disampaikan terima kasih.
         </div>
 
-        <!-- Signature Section -->
-        <div class="signature-section">
-            <div class="signature-right">
-                Hormat kami,<br>
-                Pemohon<br>
-                <div class="signature-name">
-                    <strong>EVA OLIVIA HUTASOIT, S.T.,M.T.</strong>
-                </div>
-            </div>
-
-            <div class="signature-bottom">
-                <div class="signature-box">
-                    <div class="signature-title">Mengetahui,<br>Wadir II Bidang Umum & Keuangan</div>
-                    <div class="signature-name">
-                        <strong>DEVIT SUWARDIYANTO, S.Si., M.T.</strong><br>
-                        <span style="font-weight: normal; font-size: 0.85em;">NIP.198311052015041001</span>
-                    </div>
-                </div>
-
-                <div class="signature-box">
-                    <div class="signature-title">Menyetujui,<br>Bendahara Pengeluaran</div>
-                    <div class="signature-name">
-                        <strong>IMAROTUL HUSNA, S.E.</strong><br>
-                        <span style="font-weight: normal; font-size: 0.85em;">NIP.198605182014042001</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- TANDA TANGAN SEJAJAR -->
+        <!-- Bagian tanda tangan -->
+        <table style="width:100%; margin-top:60px; text-align:center;">
+            <tr>
+                <td style="width:33%;">
+                    Mengetahui,<br>
+                    Wadir II Bidang Umum & Keuangan<br><br><br><br>
+                    <strong>DEVIT SUWARDIYANTO, S.Si., M.T.</strong><br>
+                    NIP. 198311052015041001
+                </td>
+                <td style="width:33%;">
+                    Menyetujui,<br>
+                    Bendahara Pengeluaran<br><br><br><br>
+                    <strong>IMAROTUL HUSNA, S.E.</strong><br>
+                    NIP. 198605182014042001
+                </td>
+                <td style="width:33%;">
+                    Hormat kami,<br>
+                    Pemohon<br><br><br><br>
+                    <strong> {{ $pemohon->nama ?? 'EVA OLIVIA PUTASOIT, S.T.,M.T.' }}
+                    </strong>
+                </td>
+            </tr>
+        </table>
 
     </div>
 </body>
