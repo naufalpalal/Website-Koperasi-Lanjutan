@@ -10,11 +10,15 @@
             font-family: "Times New Roman", Times, serif;
             color: #000;
             padding: 36px;
+            background: #f5f5f5;
         }
 
         .container {
             max-width: 720px;
             margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         .right {
@@ -33,31 +37,8 @@
             margin-bottom: 1rem;
         }
 
-        .signature-area {
-            height: 80px;
-        }
-
         .small {
             font-size: 0.9rem;
-        }
-
-        .underline {
-            text-decoration: underline;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .two-cols {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 48px;
-        }
-
-        .col {
-            width: 48%;
-            text-align: center;
         }
 
         /* Updated styles for signatures */
@@ -68,8 +49,9 @@
 
         .signature-right {
             float: right;
-            text-align: left;
-            margin-bottom: 50px;
+            text-align: center;
+            margin-bottom: 80px;
+            width: 40%;
         }
 
         .signature-bottom {
@@ -80,11 +62,12 @@
         }
 
         .signature-box {
-            text-align: left;
+            text-align: center;
+            width: 45%;
         }
 
         .signature-name {
-            margin-top: 50px;
+            margin-top: 60px;
             font-weight: bold;
         }
 
@@ -108,8 +91,7 @@
     <div class="container">
         <!-- Tanggal -->
         <div class="right small">
-            @php $dt = isset($tanggal) ? \Carbon\Carbon::parse($tanggal) : now(); @endphp
-            Banyuwangi, {{ $dt->format('d') }} {{ $dt->translatedFormat('F Y') }}
+            Banyuwangi, 02 Juni 2025
         </div>
 
         <div class="mt-3">
@@ -124,35 +106,35 @@
             <table class="info">
                 <tr>
                     <td style="width:120px">Nama</td>
-                    <td>: <strong>{{ $pemohon->nama ?? '-' }}</strong></td>
+                    <td>: <strong>EVA OLIVIA HUTASOIT, S.T.,M.T.</strong></td>
                 </tr>
                 <tr>
                     <td>NIP/KPPK</td>
-                    <td>: {{ $pemohon->nip_kppk ?? $pemohon->nip ?? '-' }}</td>
+                    <td>: 199211220220032011</td>
                 </tr>
                 <tr>
                     <td>No. KTP</td>
-                    <td>: {{ $pemohon->no_ktp ?? $pemohon->ktp ?? '-' }}</td>
+                    <td>: 1202096211920002</td>
                 </tr>
                 <tr>
                     <td>Jabatan</td>
-                    <td>: {{ $pemohon->jabatan ?? '-' }}</td>
+                    <td>: Dosen</td>
                 </tr>
                 <tr>
                     <td>Alamat</td>
-                    <td>: {{ $pemohon->alamat_rumah ?? '-' }}</td>
+                    <td>: PERUM. PESONA ROGOJAMPI BLOK H 11 ROGOJAMPI</td>
                 </tr>
             </table>
         </div>
 
         <div class="mt-3">
             Dengan ini bermaksud mengajukan pinjaman pada Koperasi Karyawan Politeknik Negeri Banyuwangi sebesar
-            <strong>Rp {{ number_format($jumlah ?? 10000000, 0, ',', '.') }},-
-                ({{ $jumlah_terbilang ?? 'Sepuluh Juta Rupiah' }})</strong>,
-            dan pinjaman tersebut diangsur <strong>{{ $lama_angsuran ?? 10 }} bulan</strong> dengan jumlah angsuran
+            <strong>Rp 10.000.000,-
+                (Sepuluh Juta Rupiah)</strong>,
+            dan pinjaman tersebut diangsur <strong>10 bulan</strong> dengan jumlah angsuran
             sebesar
-            <strong>Rp {{ number_format($angsuran ?? 1100000, 0, ',', '.') }},-
-                ({{ $angsuran_terbilang ?? 'Satu Juta Seratus Rupiah' }})</strong>.
+            <strong>Rp 1.100.000,-
+                (Satu Juta Seratus Ribu Rupiah)</strong>.
         </div>
 
         <div class="mt-3 mb-4">
@@ -165,7 +147,7 @@
                 Hormat kami,<br>
                 Pemohon<br>
                 <div class="signature-name">
-                    {{ $pemohon->nama ?? 'EVA OLIVIA PUTASOIT, S.T.,M.T.' }}
+                    <strong>EVA OLIVIA HUTASOIT, S.T.,M.T.</strong>
                 </div>
             </div>
 
@@ -173,13 +155,17 @@
                 <div class="signature-box">
                     <div class="signature-title">Mengetahui,<br>Wadir II Bidang Umum & Keuangan</div>
                     <div class="signature-name">
-                            ({{ $identitas->nama_wadir ?? 'Devit Suwardiyanto,S.Si.,M.T.' }})</div>
+                        <strong>DEVIT SUWARDIYANTO, S.Si., M.T.</strong><br>
+                        <span style="font-weight: normal; font-size: 0.85em;">NIP.198311052015041001</span>
+                    </div>
                 </div>
 
                 <div class="signature-box">
                     <div class="signature-title">Menyetujui,<br>Bendahara Pengeluaran</div>
                     <div class="signature-name">
-                            ({{ $identitas->nama_bendahara_pengeluaran ?? 'Imarotul Husna, S.E.' }})</div>
+                        <strong>IMAROTUL HUSNA, S.E.</strong><br>
+                        <span style="font-weight: normal; font-size: 0.85em;">NIP.198605182014042001</span>
+                    </div>
                 </div>
             </div>
         </div>
