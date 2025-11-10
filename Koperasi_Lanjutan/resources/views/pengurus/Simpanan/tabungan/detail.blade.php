@@ -24,11 +24,19 @@
     <form method="GET" class="bg-white shadow-md rounded-2xl p-5 mb-6 border border-gray-100">
         <div class="flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
             {{-- Input Tanggal --}}
-            <div class="flex-1">
+            <div class="flex-1 relative">
                 <label for="tanggal" class="block text-sm font-medium text-gray-600 mb-1">Tanggal</label>
-                <input type="date" name="tanggal" id="tanggal"
-                    value="{{ request('tanggal') }}"
-                    class="w-full border-gray-300 rounded-xl px-4 py-2.5 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                <input 
+                    type="date" 
+                    name="tanggal" 
+                    min="2000-01-01" 
+                    max="{{ date('Y-m-d') }}"
+                    value="{{ request('tanggal', old('tanggal')) }}"
+                    class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                @error('tanggal')
+                    <p class="text-red-500 text-sm mt-1 absolute">{{ $message }}</p>
+                @enderror
             </div>
 
             {{-- Filter Status --}}

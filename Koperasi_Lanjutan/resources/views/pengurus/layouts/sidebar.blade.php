@@ -25,7 +25,7 @@
             @if(auth('pengurus')->check() && in_array(auth('pengurus')->user()->role, ['sekretaris', 'superadmin', 'ketua']))
                 <div x-data="{ openAnggota: false }" class="space-y-1">
                     <button @click="openAnggota = !openAnggota"
-                        class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                        class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-blue-700 transition">
                         <span>Kelola Anggota</span>
                         <svg :class="{ 'rotate-180': openAnggota }" class="w-4 h-4 transform transition-transform"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@
             @if(auth('pengurus')->check() && in_array(auth('pengurus')->user()->role, ['bendahara', 'superadmin', 'ketua']))
                 <div x-data="{ openSimpanan: false }" class="space-y-1">
                     <button @click="openSimpanan = !openSimpanan"
-                        class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                        class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-blue-700 transition">
                         <span>Kelola Simpanan</span>
                         <svg :class="{ 'rotate-180': openSimpanan }" class="w-4 h-4 transform transition-transform"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +73,7 @@
                 </div>
 
                 <!-- Pinjaman -->
-                <a href="{{ route('pengurus.pinjaman.pemotongan') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                <a href="{{ route('pengurus.pinjaman.pemotongan') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-blue-700 transition">
                     Pinjaman
                 </a>
             @endif

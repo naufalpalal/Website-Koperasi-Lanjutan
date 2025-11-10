@@ -7,6 +7,7 @@ use App\Models\Tabungan;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class Tabungan2Controller extends Controller
@@ -75,16 +76,29 @@ class Tabungan2Controller extends Controller
     {
         $request->validate([
             'users_id' => 'required|exists:users,id',
-            'tanggal'  => ['required', 'date', 'after_or_equal:today'],
+            'tanggal'  => 'required|date|after_or_equal:2000-01-01|before_or_equal:' . now()->format('Y-m-d'),
             'nilai'    => 'required|numeric|min:1000',
+        ], [
+            'tanggal.required' => 'Tanggal harus diisi.',
+            'tanggal.date' => 'Format tanggal tidak valid.',
+            'tanggal.after_or_equal' => 'Tanggal tidak boleh sebelum tahun 2000.',
+            'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
         ]);
+
+        // Tambahan validasi logis: pastikan tahun tidak aneh seperti 11111111
+        $tanggal = Carbon::parse($request->tanggal);
+        if ($tanggal->year < 2000 || $tanggal->year > 2100) {
+            throw ValidationException::withMessages([
+                'tanggal' => 'Tahun tidak valid (harus antara 2000 dan 2100).',
+            ]);
+        }
 
         Tabungan::create([
             'users_id'        => $request->users_id,
             'pengurus_id'     => Auth::guard('pengurus')->id(),
             'tanggal'         => $request->tanggal,
             'nilai'           => $request->nilai,
-            'status'          => 'diterima', // langsung diterima karena pengurus yang input
+            'status'          => 'diterima',
             'bukti_transfer'  => null,
         ]);
 
@@ -117,24 +131,33 @@ class Tabungan2Controller extends Controller
     {
         $request->validate([
             'users_id' => 'required|exists:users,id',
-            'tanggal'  => 'required|date',
-            'debit'    => 'required|numeric|min:1',
+            'tanggal'  => 'required|date|before_or_equal:today',
+            'debit'    => 'required|numeric|min:100',
+        ], [
+            'users_id.required' => 'User tidak ditemukan.',
+            'users_id.exists'   => 'Data user tidak valid.',
+            'tanggal.required'  => 'Tanggal harus diisi.',
+            'tanggal.date'      => 'Tanggal tidak sesuai.',
+            'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
+            'debit.required'    => 'Nominal harus diisi.',
+            'debit.numeric'     => 'Nominal harus berupa angka.',
+            'debit.min'         => 'Nominal minimal 100.',
         ]);
 
         $user = User::findOrFail($request->users_id);
         $saldoSekarang = $user->totalSaldo();
 
         if ($saldoSekarang < $request->debit) {
-            return back()->with('error', 'Saldo tidak mencukupi untuk melakukan debit.');
+            return back()->withInput()->with('error', 'Saldo tidak mencukupi untuk melakukan debit.');
         }
 
         Tabungan::create([
-            'users_id' => $request->users_id,
-            'pengurus_id' => Auth::guard('pengurus')->id(),
-            'tanggal'  => $request->tanggal,
-            'nilai'    => 0,
-            'debit'    => $request->debit,
-            'status'   => 'dipotong',
+            'users_id'   => $user->id,
+            'pengurus_id'=> Auth::guard('pengurus')->id(),
+            'tanggal'    => $request->tanggal,
+            'nilai'      => 0,
+            'debit'      => $request->debit,
+            'status'     => 'dipotong',
         ]);
 
         return back()->with('success', 'Debit berhasil dilakukan dan saldo telah diperbarui.');
@@ -164,8 +187,17 @@ class Tabungan2Controller extends Controller
     {
         $request->validate([
             'users_id' => 'required|exists:users,id',
-            'tanggal'  => 'required|date',
-            'nilai'    => 'required|numeric|min:1',
+            'tanggal'  => 'required|date|before_or_equal:today',
+            'nilai'    => 'required|numeric|min:100',
+        ], [
+            'users_id.required' => 'User tidak ditemukan.',
+            'users_id.exists'   => 'Data user tidak valid.',
+            'tanggal.required'  => 'Tanggal harus diisi.',
+            'tanggal.date'      => 'Format tanggal tidak valid.',
+            'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
+            'nilai.required'    => 'Nominal harus diisi.',
+            'nilai.numeric'     => 'Nominal harus berupa angka.',
+            'nilai.min'         => 'Nominal minimal Rp 100.',
         ]);
 
         Tabungan::create([

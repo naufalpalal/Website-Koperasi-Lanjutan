@@ -69,7 +69,7 @@
 
     <!-- Info Card -->
     <a href="{{ route('user.simpanan.tabungan.index') }}" class="block">
-    <div class="w-full max-w-5xl mb-8">
+    <div class="w-full mx-auto mb-8">
         <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
@@ -137,7 +137,7 @@
                         </div>
                         <div>
                             <div class="font-medium text-gray-800">Moh Naufal</div>
-                            <div class="text-gray-600 text-sm">+62 856-4881-8190</div>
+                            <div class="text-gray-600 text-sm">+62 896-7580-3596</div>
                         </div>
                     </li>
                     <li class="bg-gray-50 p-3 rounded-lg flex items-center gap-3">

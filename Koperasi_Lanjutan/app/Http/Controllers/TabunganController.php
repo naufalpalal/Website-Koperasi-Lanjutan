@@ -13,15 +13,19 @@ class TabunganController extends Controller
     public function index(Request $request)
     {
         $tabungans = Tabungan::where('users_id', auth()->id())
-                    ->orderBy('id', 'desc')
-                    ->take(5)
-                    ->get();
+            ->orderBy('id', 'desc')
+            ->take(5)
+            ->get();
 
-        $showQr = $request->has('show_qr'); // jika ada parameter show_qr, tampilkan QR
+        $showQr = $request->has('show_qr');
         $tanggal = $request->input('tanggal');
         $nilai = $request->input('nilai');
 
-        return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr', 'tanggal', 'nilai'));
+        // Hitung total tabungan juga di halaman index (optional)
+        $user = Auth::user();
+        $totalTabungan = $user->totalSaldo();
+
+        return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr', 'tanggal', 'nilai', 'totalTabungan'));
     }
 
     public function historyFull(Request $request)
@@ -36,33 +40,43 @@ class TabunganController extends Controller
         if (!empty($tanggal)) {
             $query->whereDate('tanggal', $tanggal);
         }
+
         if (!empty($status)) {
             $query->where('status', $status);
         }
 
         $tabungans = $query->orderBy('tanggal', 'desc')->paginate(10);
+
         return view('user.simpanan.tabungan.history', compact('tabungans', 'tanggal', 'status'));
     }
 
     // Form tambah tabungan
     public function create(Request $request)
     {
-        $showQr = $request->has('show_qr'); // jika ada parameter show_qr, tampilkan QR
+        $showQr = $request->has('show_qr');
         $tabungans = Tabungan::where('users_id', auth()->id())->latest()->get();
 
-        return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr'));
+        $user = Auth::user();
+        $totalTabungan = $user->totalSaldo();
+
+        return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr', 'totalTabungan'));
     }
 
     // Simpan tabungan baru
     public function store(Request $request)
     {
         $request->validate([
-            'nilai' => 'required|numeric|min:1000',
+            'nilai' => ['required', 'numeric', 'min:100'],
             'tanggal' => ['required', 'date', 'after_or_equal:today'],
-            'bukti_transfer' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Maks 2MB
+            'bukti_transfer' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ], [
+            'nilai.min' => 'Nominal tabungan minimal terdiri dari 3 digit angka.',
+            'tanggal.after_or_equal' => 'Tanggal tidak boleh sebelum hari ini.',
+            'bukti_transfer.required' => 'Bukti transfer wajib diupload.',
+            'bukti_transfer.image' => 'Bukti transfer harus berupa file gambar (jpg/png).',
         ]);
 
-        // Siapkan nama file bukti transfer (jika ada)
+        // Upload bukti transfer
         $namaFile = null;
         if ($request->hasFile('bukti_transfer')) {
             $file = $request->file('bukti_transfer');
@@ -70,7 +84,6 @@ class TabunganController extends Controller
             $file->move(public_path('uploads/bukti_transfer'), $namaFile);
         }
 
-        // Simpan ke database
         Tabungan::create([
             'users_id' => auth()->id(),
             'tanggal' => $request->tanggal,
@@ -81,14 +94,14 @@ class TabunganController extends Controller
         ]);
 
         return redirect()->route('user.simpanan.tabungan.index')
-                         ->with('success', 'Tabungan berhasil diajukan.');
+            ->with('success', 'Tabungan berhasil diajukan.');
     }
 
     // Update status tabungan (digunakan oleh pengurus)
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,diterima,ditolak',
+            'status' => 'required|in:pending,diterima,ditolak,dipotong',
         ]);
 
         $tabungan = Tabungan::findOrFail($id);
@@ -96,26 +109,5 @@ class TabunganController extends Controller
         $tabungan->save();
 
         return redirect()->back()->with('success', 'Status tabungan berhasil diperbarui.');
-    }
-
-    // Dashboard pengguna
-    public function dashboard()
-    {
-
-    $userId = auth()->id();
-    // Total tabungan yang diterima
-    $totalDiterima = Tabungan::where('users_id', $userId)
-                             ->where('status', 'diterima')
-                             ->sum('nilai');
-
-    // Total saldo yang sudah dipotong / diambil
-    $totalDipakai = Tabungan::where('users_id', $userId)
-                             ->where('status', 'dipotong')
-                             ->sum('debit');
-
-    // Hitung saldo akhir
-    $totalTabungan = $totalDiterima - $totalDipakai;
-
-        return view('user.dashboard.index', compact('totalTabungan'));
     }
 }

@@ -67,17 +67,18 @@ class User extends Authenticatable
 
     public function tabungans()
     {
-        return $this->hasMany(Tabungan::class, 'users_id');
+        return $this->hasMany(\App\Models\Tabungan::class, 'users_id');
     }
+
     public function totalSaldo()
     {
-        $totalMasuk = $this->tabungans()
-            ->where('status', 'diterima')
-            ->sum('nilai');
+        // Ambil semua tabungan dengan status diterima atau dipotong
+        $tabungans = $this->tabungans()
+            ->whereIn('status', ['diterima', 'dipotong'])
+            ->get();
 
-        $totalKeluar = $this->tabungans()
-            ->where('status', 'dipotong')
-            ->sum('debit');
+        $totalMasuk = $tabungans->sum('nilai');
+        $totalKeluar = $tabungans->sum('debit');
 
         return $totalMasuk - $totalKeluar;
     }

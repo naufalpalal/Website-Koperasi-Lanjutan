@@ -78,7 +78,15 @@ class UserController extends Controller
 
         // Hitung total tabungan
         if (method_exists($user, 'tabungans')) {
-            $totalTabungan = $user->tabungans()->sum('nilai');
+        $totalMasuk = $user->tabungans()
+            ->where('status', 'diterima')
+            ->sum('nilai');
+
+        $totalKeluar = $user->tabungans()
+            ->where('status', 'dipotong')
+            ->sum('debit');
+
+        $totalTabungan = $totalMasuk - $totalKeluar;
         } else {
             $totalTabungan = 0;
         }

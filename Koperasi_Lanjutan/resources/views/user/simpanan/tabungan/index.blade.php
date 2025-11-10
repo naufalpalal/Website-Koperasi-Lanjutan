@@ -7,7 +7,7 @@
     <div class="bg-white shadow-lg rounded-xl p-6 max-w-lg mx-auto mb-10">
         <h2 class="text-2xl font-semibold text-gray-700 mb-6">Tambah Tabungan</h2>
 
-        {{-- TAMPILKAN ERROR --}}
+        {{-- PESAN ERROR --}}
         @if ($errors->any())
             <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
                 <ul class="list-disc pl-5">
@@ -18,7 +18,7 @@
             </div>
         @endif
 
-        {{-- Tahap 1: Isi nominal & tanggal --}}
+        {{-- Tahap 1 --}}
         @if (!$showQr)
             <form action="{{ route('tabungan.index') }}" method="GET" class="space-y-4">
                 <div>
@@ -26,13 +26,16 @@
                     <input type="date" id="tanggal" name="tanggal"
                         value="{{ old('tanggal', date('Y-m-d')) }}"
                         min="{{ date('Y-m-d') }}"
+                        pattern="\d{4}-\d{2}-\d{2}"
+                        title="Gunakan format tanggal yang benar (YYYY-MM-DD)"
                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm px-3 py-2" required>
                 </div>
+
                 <div>
                     <label for="nilai" class="block text-sm font-medium text-gray-700">Nominal Tabungan (Rp)</label>
                     <input type="number" id="nilai" name="nilai"
-                           value="{{ old('nilai') }}" min="1000" step="1000"
-                           placeholder="Masukkan nominal (contoh: 100000)"
+                           value="{{ old('nilai') }}" min="100" step="100"
+                           placeholder="Masukkan minimal 3 digit nominal (contoh: 100)"
                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm px-3 py-2" required>
                 </div>
 
@@ -43,8 +46,9 @@
                     </button>
                 </div>
             </form>
+
         @else
-        {{-- Tahap 2: Tampilkan QR dan upload bukti --}}
+            {{-- Tahap 2 --}}
             <form action="{{ route('user.simpanan.tabungan.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 <input type="hidden" name="tanggal" value="{{ $tanggal }}">
@@ -58,7 +62,8 @@
                     <label for="bukti_transfer" class="block text-sm font-medium text-gray-700 mb-1">
                         Upload Bukti Transfer
                     </label>
-                    <input type="file" id="bukti_transfer" name="bukti_transfer" accept="image/*"
+                    <input type="file" id="bukti_transfer" name="bukti_transfer"
+                           accept="image/png, image/jpeg, image/jpg"
                            class="block w-full text-sm text-gray-700 border rounded-lg p-2" required>
                 </div>
 
@@ -72,20 +77,20 @@
         @endif
     </div>
 
-    {{-- RIWAYAT TABUNGAN TERBARU --}}
-<div class="bg-white shadow-md rounded-xl p-6 mt-10">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 border-b pb-4">
-        <h2 class="text-2xl font-semibold text-gray-700">Riwayat Tabungan Terbaru</h2>
-        <a href="{{ route('tabungan.history') }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition text-sm">
-            Lihat Semua Riwayat
-        </a>
-    </div>
+    {{-- Riwayat --}}
+    <div class="bg-white shadow-md rounded-xl p-6 mt-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 border-b pb-4">
+            <h2 class="text-2xl font-semibold text-gray-700">Riwayat Tabungan Terbaru</h2>
+            <a href="{{ route('tabungan.history') }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition text-sm">
+                Lihat Semua Riwayat
+            </a>
+        </div>
 
         @if(session('success'))
             <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">{{ session('success') }}</div>
         @endif
-        
+
         <table class="w-full border border-gray-300 rounded-lg">
             <thead class="bg-gray-200">
                 <tr>

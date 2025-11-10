@@ -39,17 +39,42 @@
             {{-- Input tanggal --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-                <input type="date" name="tanggal" required
-                    min="{{ date('Y-m-d') }}"
-                    class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <input 
+                    type="date" 
+                    name="tanggal"
+                    required
+                    max="{{ date('Y-m-d') }}"
+                    class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none @error('tanggal') border-red-500 @enderror"
+                >
+                @error('tanggal')
+                    <p class="text-sm text-red-600 mt-1">
+                        {{ $message }}
+                    </p>
+                @enderror
             </div>
             
             {{-- Input nominal --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nominal (Rp)</label>
-                <input type="number" name="nilai" required min="1"
-                    class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    placeholder="Masukkan jumlah saldo yang ditambahkan">
+                <input 
+                    type="number" 
+                    name="nilai" 
+                    required 
+                    min="100"
+                    value="{{ old('nilai') }}"
+                    class="border border-gray-300 rounded-lg px-3 py-2 w-full 
+                        focus:ring-2 focus:ring-blue-500 focus:outline-none 
+                        @error('nilai') border-red-500 @enderror"
+                    placeholder="Masukkan minimal Rp 100">
+                @error('nilai')
+                    <p class="text-sm text-red-600 mt-1">
+                        @if (str_contains($message, 'minimal'))
+                            Nominal minimal Rp 100.
+                        @else
+                            {{ $message }}
+                        @endif
+                    </p>
+                @enderror
             </div>
             
             {{-- Tombol simpan --}}

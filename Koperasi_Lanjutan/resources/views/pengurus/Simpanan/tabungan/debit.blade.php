@@ -39,19 +39,53 @@
             @csrf
             <input type="hidden" name="users_id" value="{{ $user->id }}">
 
+            {{-- Input tanggal --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-                <input type="date" name="tanggal" required
-                    min="{{ date('Y-m-d') }}"
-                    class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <input 
+                    type="date" 
+                    name="tanggal" 
+                    required
+                    max="{{ date('Y-m-d') }}" 
+                    pattern="\d{4}-\d{2}-\d{2}"
+                    inputmode="numeric"
+                    title="Format tanggal harus YYYY-MM-DD dan tidak boleh melebihi hari ini."
+                    value="{{ old('tanggal') }}"
+                    class="border border-gray-300 rounded-lg px-3 py-2 w-full 
+                        focus:ring-2 focus:ring-blue-500 focus:outline-none 
+                        @error('tanggal') border-red-500 @enderror">
+                @error('tanggal')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
+            {{-- Input nominal --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nominal Debit (Rp)</label>
-                <input type="number" name="debit" required min="1"
+                <input 
+                    type="number" 
+                    name="debit" 
+                    required 
+                    min="100"
                     max="{{ $totalSaldo }}"
-                    class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    placeholder="Masukkan jumlah yang ingin diambil">
+                    value="{{ old('debit') }}"
+                    class="border border-gray-300 rounded-lg px-3 py-2 w-full 
+                        focus:ring-2 focus:ring-blue-500 focus:outline-none 
+                        @error('debit') border-red-500 @enderror"
+                    placeholder="Masukkan jumlah minimal 100">
+                @error('debit')
+                    <p class="text-sm text-red-600 mt-1">
+                        @if ($message == 'Nominal harus diisi.')
+                            Nominal harus diisi.
+                        @elseif (str_contains($message, 'minimal'))
+                            Nominal minimal 100.
+                        @elseif (str_contains($message, 'Saldo tidak mencukupi'))
+                            Saldo tidak mencukupi.
+                        @else
+                            {{ $message }}
+                        @endif
+                    </p>
+                @enderror
             </div>
 
             <div class="flex items-end">
