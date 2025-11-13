@@ -102,11 +102,20 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->group(function (
 });
 
 // Tabungan Pengurus
-Route::middleware(['auth', 'role:pengurus'])->prefix('pengurus/tabungan')->as('pengurus.tabungan.')->group(function () {
-    Route::get('/', [Tabungan2Controller::class, 'index'])->name('index');
-    Route::post('/{id}/approve', [Tabungan2Controller::class, 'approve'])->name('approve');
-    Route::post('/{id}/reject', [Tabungan2Controller::class, 'reject'])->name('reject');
-    Route::post('/store', [Tabungan2Controller::class, 'store'])->name('store');
+Route::middleware(['auth', 'role:pengurus'])->group(function () {
+    // Daftar tabungan
+    Route::get('/pengurus/tabungan', [Tabungan2Controller::class, 'index'])->name('pengurus.tabungan.index');
+    // Detail tabungan anggota
+    Route::get('/pengurus/tabungan/{id}', [Tabungan2Controller::class, 'detail'])->name('pengurus.tabungan.detail');
+    // Tambah saldo manual
+    Route::get('/pengurus/tabungan/{id}/tambah', [Tabungan2Controller::class, 'create'])->name('pengurus.tabungan.create');
+    Route::post('/pengurus/tabungan/store', [Tabungan2Controller::class, 'store'])->name('pengurus.tabungan.store');
+    // Debit (penarikan)
+    Route::get('/pengurus/tabungan/debit/{id}', [Tabungan2Controller::class, 'debit'])->name('pengurus.tabungan.debit');
+    Route::post('/pengurus/tabungan/debit/store', [Tabungan2Controller::class, 'storeDebit'])->name('pengurus.tabungan.debit.store');
+    // Approve & Reject
+    Route::post('/pengurus/tabungan/approve/{tabungan}', [Tabungan2Controller::class, 'approve'])->name('pengurus.tabungan.approve');
+    Route::post('/pengurus/tabungan/reject/{tabungan}', [Tabungan2Controller::class, 'reject'])->name('pengurus.tabungan.reject');
 });
 
 // Tabungan (anggota)
@@ -206,8 +215,16 @@ Route::middleware(['logout.if.authenticated'])->group(function () {
     Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])
         ->name('password.sendOtp');
 
+    Route::get('/verify-otp', function () {
+        return view('auth.verify-otp');
+    })->name('password.verifyOtp.form');
+
     Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])
         ->name('password.verifyOtp');
+
+    Route::get('/reset-password', function () {
+        return view('auth.reset-password');
+    })->name('password.reset.form');
 });
 
 
