@@ -158,23 +158,33 @@
         <!-- Bagian tanda tangan -->
         <table style="width:100%; margin-top:60px; text-align:center;">
             <tr>
-                <td style="width:33%;">
-                    Mengetahui,<br>
-                    Wadir II Bidang Umum & Keuangan<br><br><br><br>
-                    <strong>DEVIT SUWARDIYANTO, S.Si., M.T.</strong><br>
-                    NIP. 198311052015041001
-                </td>
-                <td style="width:33%;">
+                {{-- Kolom Wadir, hanya untuk internal --}}
+                @if($user->nip)
+                    <td>
+                        Mengetahui,<br>
+                        Wadir II Bidang Umum & Keuangan
+                        <br><br><br><br><br>
+                        <strong><u>{{ $identitas->nama_wadir }}</u></strong>
+                    </td>
+                @endif
+
+                {{-- Kolom Bendahara Gaji --}}
+                <td>
                     Menyetujui,<br>
-                    Bendahara Pengeluaran<br><br><br><br>
-                    <strong>IMAROTUL HUSNA, S.E.</strong><br>
-                    NIP. 198605182014042001
+                    Bendahara Gaji
+                    @if($user->nip)
+                        <br>Politeknik Negeri Banyuwangi
+                    @endif
+                    <br><br><br><br><br>
+                    <strong><u>{{ $identitas->bendahara_gaji }}</u></strong>
                 </td>
-                <td style="width:33%;">
-                    Hormat kami,<br>
-                    Pemohon<br><br><br><br>
-                    <strong> {{ $pemohon->nama ?? 'EVA OLIVIA PUTASOIT, S.T.,M.T.' }}
-                    </strong>
+
+                {{-- Kolom Pemohon --}}
+                <td>
+                    Banyuwangi, {{ \Carbon\Carbon::parse($tanggal_permohonan)->format('d F Y') }}<br>
+                    Pemohon
+                    <br><br><br><br><br>
+                    <strong><u>{{ $user->nama }}</u></strong>
                 </td>
             </tr>
         </table>

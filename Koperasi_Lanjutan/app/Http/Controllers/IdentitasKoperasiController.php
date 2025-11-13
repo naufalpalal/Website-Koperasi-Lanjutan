@@ -30,7 +30,7 @@ class IdentitasKoperasiController extends Controller
             'nama_ketua_koperasi' => 'required|string|max:255',
             'nama_sekretaris_koperasi' => 'required|string|max:255',
             'nama_bendahara_koperasi' => 'required|string|max:255',
-            'nama_bendahara_pengeluaran' => 'required|string|max:255',
+            'bendahara_gaji' => 'required|string|max:255',
             'nama_wadir' => 'required|string|max:255',
         ]);
         $identitas = IdentitasKoperasi::first();
@@ -42,7 +42,7 @@ class IdentitasKoperasiController extends Controller
                 'nama_ketua_koperasi',
                 'nama_sekretaris_koperasi',
                 'nama_bendahara_koperasi',
-                'nama_bendahara_pengeluaran',
+                'bendahara_gaji',
                 'nama_wadir',
             ]));
             $identitas->save();
@@ -52,7 +52,7 @@ class IdentitasKoperasiController extends Controller
                 'nama_ketua_koperasi',
                 'nama_sekretaris_koperasi',
                 'nama_bendahara_koperasi',
-                'nama_bendahara_pengeluaran',
+                'bendahara_gaji',
                 'nama_wadir',
             ]));
         }
