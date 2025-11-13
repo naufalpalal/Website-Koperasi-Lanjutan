@@ -31,7 +31,13 @@
             <div class="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-4 mb-6 gap-4">
                 <h5 class="text-2xl font-semibold text-gray-700 dark:text-gray-100">Kelola Anggota</h5>
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('pengurus.KelolaAnggota.create') }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition text-sm">
+                    <!-- Icon Download -->
+                    <a href="#" class="text-green-600 hover:text-green-800 transition" title="Download">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd" d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V10.5Z" clip-rule="evenodd" />
+                    </svg>
+                    </a>
+                    <a href="{{ route('pengurus.anggota.create') }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         <span>Tambah</span>
                     </a>
@@ -46,10 +52,10 @@
             @endif
 
             {{-- Search Input (Tanpa Form tag untuk AJAX) --}}
-<form method="GET" action="{{ route('pengurus.KelolaAnggota.index') }}" class="flex items-center gap-2 w-full md:w-1/2 mb-4">
+<form method="GET" action="{{ route('pengurus.anggota.index') }}" class="flex items-center gap-2 w-full md:w-1/2 mb-4">
     <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari anggota..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">Cari</button>
-    <a href="{{ route('pengurus.KelolaAnggota.index') }}" class="text-sm text-gray-500 ml-2">Reset</a>
+    <a href="{{ route('pengurus.anggota.index') }}" class="text-sm text-gray-500 ml-2">Reset</a>
 </form>
 
 
@@ -89,12 +95,12 @@
                                             <td class="px-6 py-4 align-middle text-gray-600 dark:text-gray-300">{{ $a->unit_kerja ?? '-' }}</td>
                                             <td class="px-6 py-4 text-center align-middle">
                                                 <div class="inline-flex items-center gap-2 justify-center">
-                                                    <a href="{{ route('pengurus.KelolaAnggota.edit', $a->id) }}" title="Edit" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-md text-sm shadow">
+                                                    <a href="{{ route('pengurus.anggota.edit', $a->id) }}" title="Edit" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-md text-sm shadow">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                                         <span class="hidden xl:inline">Edit</span>
                                                     </a>
 
-                                                    <form action="{{ route('pengurus.KelolaAnggota.destroy', $a->id) }}" method="POST" class="m-0 p-0 inline">
+                                                    <form action="{{ route('pengurus.anggota.destroy', $a->id) }}" method="POST" class="m-0 p-0 inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" class="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm shadow">
@@ -123,8 +129,8 @@
                                         <div class="text-xs text-gray-500 dark:text-gray-400 truncate mt-1" title="{{ $a->alamat_rumah ?? '-' }}">{{ $a->alamat_rumah ?? '-' }}</div>
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
-                                        <a href="{{ route('pengurus.KelolaAnggota.edit', $a->id) }}" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-md text-xs">Edit</a>
-                                        <form action="{{ route('pengurus.KelolaAnggota.destroy', $a->id) }}" method="POST" class="m-0 p-0">
+                                        <a href="{{ route('pengurus.anggota.edit', $a->id) }}" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-md text-xs">Edit</a>
+                                        <form action="{{ route('pengurus.anggota.destroy', $a->id) }}" method="POST" class="m-0 p-0">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Yakin ingin menghapus?')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-xs">Hapus</button>

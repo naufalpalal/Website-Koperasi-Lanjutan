@@ -8,6 +8,7 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="resources/js/script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 </head>
 
@@ -30,6 +31,7 @@
     <script src="{{ asset('assets/js/dataanggota.js') }}"></script>
     <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
     <script src="{{ asset('assets/js/simpananwajib_search.js') }}"></script>
+    @yield('scripts')
 </body>
 
 </html>

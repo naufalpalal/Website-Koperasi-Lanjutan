@@ -1,6 +1,6 @@
 <x-guest-layout :isRegister="false">
     <h2 class="text-3xl sm:text-4xl font-normal text-center text-gray-900 mb-2">Login</h2>
-    <p class="text-center text-gray-600 mb-6 text-base sm:text-lg">To Continue Your Account</p>
+    <p class="text-center text-gray-600 mb-6 text-base sm:text-lg">Login Sebagai Anggota</p>
     <form method="POST" action="{{ route('login_submit') }}" class="space-y-6">
         @csrf
 
@@ -48,6 +48,7 @@
         <div class="flex justify-between text-sm">
             <a href="{{ route('password.request') }}" class="text-blue-500 hover:underline">Forgot password?</a>
             <a href="{{ route('register') }}" class="text-blue-500 hover:underline">Register</a>
+            <a href="{{ route('pengurus.login') }}" class="text-blue-500 hover:underline">LOGIN PENGURUS</a>
         </div>
 
         <!-- Submit -->

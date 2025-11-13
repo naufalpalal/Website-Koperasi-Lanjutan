@@ -73,8 +73,15 @@ class PinjamanAnggotaController extends Controller
 
     public function create()
     {
-        return view('user.pinjaman.create');
+        // Ambil pinjaman terakhir user yang login
+        $pinjaman = Pinjaman::where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        // Kirim ke view
+        return view('user.pinjaman.create', compact('pinjaman'));
     }
+
 
     public function store(Request $request)
     {
@@ -82,17 +89,15 @@ class PinjamanAnggotaController extends Controller
             'nominal' => 'required|numeric|min:100000',
         ]);
 
-        $pinjaman = Pinjaman::create([
-            'user_id' => Auth::id(),
-            'nominal' => $request->nominal,
-            'status' => 'draft',
-        ]);
+        // Simpan atau update pinjaman user
+        $pinjaman = Pinjaman::updateOrCreate(
+            ['user_id' => auth()->id(), 'status' => 'pending'],
+            ['nominal' => $request->nominal]
+        );
 
-        // ✅ Redirect ke halaman upload setelah pengajuan
-        return redirect()
-            ->route('user.pinjaman.uploadForm', $pinjaman->id)
-            ->with('success', 'Pengajuan pinjaman berhasil dibuat. Silakan unduh surat pinjaman dan upload kembali setelah ditandatangani.');
+        return redirect()->route('user.pinjaman.create')->with('success', 'Nominal pinjaman tersimpan.');
     }
+
 
     public function download($id)
     {
@@ -117,22 +122,22 @@ class PinjamanAnggotaController extends Controller
     public function upload(Request $request, $id)
     {
         $request->validate([
-            'dokumen_pinjaman' => 'required|mimes:pdf|max:2048',
+            'dokumen_pinjaman.*' => 'required|mimes:pdf|max:2048',
         ]);
 
         $pinjaman = Pinjaman::findOrFail($id);
 
         // Proses upload file
         if ($request->hasFile('dokumen_pinjaman')) {
-            $file = $request->file('dokumen_pinjaman');
+            $files = [];
+            foreach ($request->file('dokumen_pinjaman') as $file) {
+                $path = $file->store('dokumen_pinjaman', 'public');
+                $files[] = $path;
+            }
 
-            // Simpan file ke storage/app/public/dokumen_pinjaman
-            $path = $file->store('dokumen_pinjaman', 'public');
-
-            // Update kolom di tabel pinjaman
             $pinjaman->update([
-                'dokumen_pinjaman' => $path,
-                'status' => 'pending', // status langsung pending setelah upload
+                'dokumen_pinjaman' => json_encode($files),
+                'status' => 'pending', // ✅ ubah status agar muncul di pengurus
             ]);
         }
 

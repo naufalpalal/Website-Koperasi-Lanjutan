@@ -21,10 +21,7 @@ class AngsuranController extends Controller
 
     public function updateStatus(Request $request, $pinjaman_id)
     {
-        // Pastikan user pengurus
-        if (auth()->user()->role !== 'pengurus') {
-            return response()->json(['success' => false, 'message' => 'Akses ditolak.'], 403);
-        }
+       
 
         // Ambil semua ID angsuran yang dicentang
         $angsuranIds = $request->input('angsuran_ids', []);

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Dokumen;
 use App\Models\DokumenPinjaman;
+use App\Models\user\SimpananWajib;
+use App\Models\Pinjaman;
 
 class User extends Authenticatable
 {
@@ -17,19 +19,19 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-   protected $fillable = [
-    'nama',
-    'email',
-    'no_telepon',
-    'password',
-    'nip',
-    'tempat_lahir',
-    'tanggal_lahir',
-    'alamat_rumah',
-    'unit_kerja',
-    'role',
-    'status',// aktif, non-aktif, pending
-];
+    protected $fillable = [
+        'nama',
+        'email',
+        'no_telepon',
+        'password',
+        'nip',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'alamat_rumah',
+        'unit_kerja',
+        'role',
+        'status',// aktif, non-aktif, pending
+    ];
 
     /**
      * Hidden attributes for serialization
@@ -45,7 +47,7 @@ class User extends Authenticatable
 
     public function simpananWajib()
     {
-        return $this->hasMany(\App\Models\Pengurus\SimpananWajib::class, 'users_id');
+        return $this->hasMany(\App\Models\Pengurus\SimpananWajib::class, 'users_id', 'id');
     }
 
     public function simpanan()
@@ -58,9 +60,27 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\Pengurus\SimpananSukarela::class, 'users_id');
     }
 
+    public function pinjaman()
+    {
+        return $this->hasMany(Pinjaman::class, 'users_id');
+    }
+
     public function tabungans()
     {
-        return $this->hasMany(Tabungan::class, 'users_id');
+        return $this->hasMany(\App\Models\Tabungan::class, 'users_id');
+    }
+
+    public function totalSaldo()
+    {
+        // Ambil semua tabungan dengan status diterima atau dipotong
+        $tabungans = $this->tabungans()
+            ->whereIn('status', ['diterima', 'dipotong'])
+            ->get();
+
+        $totalMasuk = $tabungans->sum('nilai');
+        $totalKeluar = $tabungans->sum('debit');
+
+        return $totalMasuk - $totalKeluar;
     }
 
     // RELASI DOKUMEN (tanpa Media Library)

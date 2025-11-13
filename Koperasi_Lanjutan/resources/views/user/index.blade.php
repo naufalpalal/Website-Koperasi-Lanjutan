@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 </head>
 
@@ -20,8 +21,9 @@
     <!-- Sidebar khusus user -->
     @include('user.layouts.sidebar')
     <!-- JS eksternal -->
-     <script src="{{ asset('assets/js/reviewdoc.js') }}"></script>
-     <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
+    <script src="{{ asset('assets/js/reviewdoc.js') }}"></script>
+    <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
+    @yield('scripts')
 </body>
 
 </html>

@@ -81,51 +81,51 @@ class ProfileController extends Controller
     /**
      * Update gabungan: profil + password + foto.
      */
-    public function updateCombined(Request $request): RedirectResponse
+   public function updateCombined(Request $request): RedirectResponse
 {
     $user = auth()->user();
 
-    // Validasi profil
+    // Validasi data dasar
     $request->validate([
-        'nama' => 'required|string|max:255',
-        'nip'  => 'required|string|max:20|unique:users,nip,' . $user->id,
-        'no_telepon' => 'required|string|max:15|unique:users,no_telepon,' . $user->id,
-        'photo' => 'nullable|image|max:2048',
+        'nama'         => 'required|string|max:255',
+        'nip'          => 'required|string|max:20|unique:users,nip,' . $user->id,
+        'no_telepon'   => 'required|string|max:15|unique:users,no_telepon,' . $user->id,
+        'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         'alamat_rumah' => 'nullable|string|max:500',
+        'password'     => 'nullable|string|min:8|confirmed',
     ]);
 
-    // Upload foto baru jika ada
+    // === Upload Foto Baru (jika ada) ===
     if ($request->hasFile('photo')) {
-        // Hapus foto lama jika ada
+        // Hapus foto lama jika ada dan file eksis
         if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
             Storage::disk('public')->delete($user->photo_path);
         }
 
-        // Simpan foto baru
+        // Simpan foto baru ke storage/app/public/profile-photos
         $path = $request->file('photo')->store('profile-photos', 'public');
+
+        // Simpan path baru ke kolom photo_path
         $user->photo_path = $path;
     }
 
-    // Update password hanya jika diisi
+    // === Update Password (jika diisi) ===
     if ($request->filled('password')) {
-        $request->validate([
-            'password' => 'required|string|min:8|confirmed',
-        ]);
         $user->password = Hash::make($request->password);
     }
 
-    // Update data profil lainnya
-    $user->update([
-        'nama' => $request->nama,
-        'nip' => $request->nip,
-        'no_telepon' => $request->no_telepon,
-        'alamat_rumah' => $request->alamat_rumah,
-        'photo_path' => $user->photo_path ?? $user->photo_path,
-    ]);
+    // === Update Data Profil Lain ===
+    $user->nama         = $request->nama;
+    $user->nip          = $request->nip;
+    $user->no_telepon   = $request->no_telepon;
+    $user->alamat_rumah = $request->alamat_rumah;
+
+    // Simpan semua perubahan
+    $user->save();
 
     return redirect()
         ->route('profile.edit')
-        ->with('success', 'Profil dan password berhasil diperbarui.');
+        ->with('success', 'Profil, password, dan foto berhasil diperbarui.');
 }
 
 }

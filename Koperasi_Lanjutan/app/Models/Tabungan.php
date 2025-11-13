@@ -15,14 +15,22 @@ class Tabungan extends Model
 
     protected $fillable = [
         'nilai',
+        'debit',
         'status',
         'tanggal',
         'users_id',
         'bukti_transfer',
+        'users_id',
+        'pengurus_id'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id', 'id');
+    }
+
+    public function pengurus()
+    {
+        return $this->belongsTo(Pengurus::class, 'pengurus_id', 'id');
     }
 }
