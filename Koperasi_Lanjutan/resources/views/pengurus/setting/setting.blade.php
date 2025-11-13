@@ -67,14 +67,14 @@
                     @enderror
                 </div>
 
-                {{-- Nama Bendahara Pengeluaran --}}
+                {{-- Nama Bendahara Gaji --}}
                 <div>
-                    <label for="nama_bendahara_pengeluaran" class="block text-gray-600 font-semibold">Nama Bendahara
-                        Pengeluaran:</label>
-                    <input type="text" name="nama_bendahara_pengeluaran" id="nama_bendahara_pengeluaran"
-                        value="{{ old('nama_bendahara_pengeluaran', $identitas->nama_bendahara_pengeluaran ?? '') }}"
+                    <label for="bendahara_gaji" class="block text-gray-600 font-semibold">Nama Bendahara
+                        Gaji:</label>
+                    <input type="text" name="bendahara_gaji" id="bendahara_gaji"
+                        value="{{ old('bendahara_gaji', $identitas->bendahara_gaji ?? '') }}"
                         class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    @error('nama_bendahara_pengeluaran')
+                    @error('bendahara_gaji')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

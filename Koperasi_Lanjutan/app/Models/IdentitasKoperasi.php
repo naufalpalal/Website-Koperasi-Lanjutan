@@ -16,7 +16,7 @@ class IdentitasKoperasi extends Model
         'nama_ketua_koperasi',
         'nama_sekretaris_koperasi',
         'nama_bendahara_koperasi',
-        'nama_bendahara_pengeluaran',
+        'bendahara_gaji',
         'nama_wadir',
     ];
 }

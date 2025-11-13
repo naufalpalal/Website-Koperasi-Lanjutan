@@ -62,12 +62,22 @@ class User extends Authenticatable
 
     public function pinjaman()
     {
-        return $this->hasMany(Pinjaman::class, 'users_id');
+        return $this->hasMany(Pinjaman::class, 'user_id');
     }
 
     public function tabungans()
     {
         return $this->hasMany(\App\Models\Tabungan::class, 'users_id');
+    }
+
+    public function angsuran()
+    {
+        return $this->hasMany(\App\Models\Pengurus\Angsuran::class, 'users_id');
+    }
+
+    public function simpananPokok()
+    {
+        return $this->hasMany(\App\Models\SimpananPokok::class, 'users_id');
     }
 
     public function totalSaldo()

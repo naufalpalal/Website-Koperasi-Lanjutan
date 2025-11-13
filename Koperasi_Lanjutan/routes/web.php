@@ -131,12 +131,18 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
         Route::get('/anggota', [KelolaAnggotController::class, 'index'])->name('pengurus.anggota.index');
         Route::get('/anggota/create', [KelolaAnggotController::class, 'create'])->name('pengurus.anggota.create');
         Route::post('/anggota', [KelolaAnggotController::class, 'store'])->name('pengurus.anggota.store');
+        Route::get('/anggota/download-excel', [KelolaAnggotController::class, 'downloadExcel'])->name('pengurus.anggota.download');
         Route::get('/anggota/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.anggota.edit');
         Route::put('/anggota/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.anggota.update');
         Route::delete('/anggota/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.anggota.destroy');
         Route::get('/anggota/verifikasi', [KelolaAnggotController::class, 'verifikasi'])->name('pengurus.anggota.verifikasi');
         Route::post('/anggota/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.anggota.approve');
         Route::post('/anggota/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.anggota.reject');
+        Route::get('/anggota/tidak-aktif', [KelolaAnggotController::class, 'nonaktif'])
+            ->name('pengurus.anggota.nonaktif');
+        Route::patch('/anggota/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
+            ->name('pengurus.anggota.toggleStatus');
+
     });
 });
 

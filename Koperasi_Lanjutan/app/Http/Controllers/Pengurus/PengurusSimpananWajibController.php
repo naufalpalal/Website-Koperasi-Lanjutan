@@ -170,8 +170,34 @@ class PengurusSimpananWajibController extends Controller
 
     public function downloadExcel()
     {
-        $fileName = 'Simpanan_Wajib' . now()->format('Y_m_d') . '.xlsx';
-        return Excel::download(new SimpananExport, $fileName);
+        $simpanan = \App\Models\Pengurus\SimpananWajib::with('user')->get();
+
+        $filename = 'laporan_simpanan_wajib_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        return response()->stream(function () use ($simpanan) {
+            $handle = fopen('php://output', 'w');
+
+            // Header kolom CSV
+            fputcsv($handle, ['Nama Anggota', 'Nominal', 'Bulan', 'Tahun', 'Status']);
+
+            // Data isi CSV
+            foreach ($simpanan as $s) {
+                fputcsv($handle, [
+                    $s->user->nama ?? '-',
+                    $s->nilai,
+                    $s->bulan,
+                    $s->tahun,
+                    ucfirst($s->status),
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
     }
 
     public function lockPeriode(Request $request)

@@ -32,7 +32,7 @@
                 <h5 class="text-2xl font-semibold text-gray-700 dark:text-gray-100">Kelola Anggota</h5>
                 <div class="flex items-center gap-3">
                     <!-- Icon Download -->
-                    <a href="#" class="text-green-600 hover:text-green-800 transition" title="Download">
+                    <a href="{{ route('pengurus.anggota.download') }}" class="text-green-600 hover:text-green-800 transition" title="Download">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                     <path fill-rule="evenodd" d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V10.5Z" clip-rule="evenodd" />
                     </svg>
@@ -42,6 +42,19 @@
                         <span>Tambah</span>
                     </a>
                 </div>
+            </div>
+            {{-- Navigasi Tombol Aktif/Tidak Aktif - Dipindahkan ke sini --}}
+            <div class="flex items-center gap-2 mb-6">
+                <a href="{{ route('pengurus.anggota.index') }}" 
+                    class="px-4 py-2 rounded-lg text-sm font-medium 
+                    {{ request()->routeIs('pengurus.anggota.index') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    Anggota Aktif
+                </a>
+                <a href="{{ route('pengurus.anggota.nonaktif') }}" 
+                    class="px-4 py-2 rounded-lg text-sm font-medium 
+                    {{ request()->routeIs('pengurus.anggota.nonaktif') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    Anggota Tidak Aktif
+                </a>
             </div>
 
             {{-- Notifikasi --}}
@@ -75,6 +88,7 @@
                                         <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider max-w-[260px]">Alamat</th>
                                         <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tempat, Tgl Lahir</th>
                                         <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Unit Kerja</th>
+                                        <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider text-center">Status</th>
                                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
@@ -93,6 +107,24 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 align-middle text-gray-600 dark:text-gray-300">{{ $a->unit_kerja ?? '-' }}</td>
+                                            {{-- STATUS ANGGOTA --}}
+                                            <td class="px-6 py-4 text-center">
+                                                <form action="{{ route('pengurus.anggota.toggleStatus', $a->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mengubah status anggota ini?')">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    @if($a->status == 'aktif')
+                                                        <button type="submit" 
+                                                            class="bg-green-100 text-green-700 hover:bg-green-600 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition">
+                                                            Aktif
+                                                        </button>
+                                                    @else
+                                                        <button type="submit" 
+                                                            class="bg-red-100 text-red-700 hover:bg-red-600 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition">
+                                                            Tidak Aktif
+                                                        </button>
+                                                    @endif
+                                                </form>
+                                            </td>
                                             <td class="px-6 py-4 text-center align-middle">
                                                 <div class="inline-flex items-center gap-2 justify-center">
                                                     <a href="{{ route('pengurus.anggota.edit', $a->id) }}" title="Edit" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-md text-sm shadow">
@@ -127,6 +159,14 @@
                                         <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">NIP: {{ $a->nip ?? '-' }}</div>
                                         <div class="text-xs text-gray-500 dark:text-gray-400">Tel: {{ $a->no_telepon }}</div>
                                         <div class="text-xs text-gray-500 dark:text-gray-400 truncate mt-1" title="{{ $a->alamat_rumah ?? '-' }}">{{ $a->alamat_rumah ?? '-' }}</div>
+                                        {{-- STATUS ANGGOTA MOBILE --}}
+                                        <div class="mt-2">
+                                            @if($a->status == 'aktif')
+                                                <span class="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">Aktif</span>
+                                            @else
+                                                <span class="bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded-full">Tidak Aktif</span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
                                         <a href="{{ route('pengurus.anggota.edit', $a->id) }}" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-md text-xs">Edit</a>
