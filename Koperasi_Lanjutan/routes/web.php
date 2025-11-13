@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RolePengurusMiddleware;
@@ -68,25 +69,6 @@ Route::middleware(['auth:web'])->prefix('anggota')->group(function () {
     Route::delete('/pinjaman/dokumen/{id}', [PinjamanAnggotaController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
 });
 
-<<<<<<< HEAD
-// Tabungan Pengurus
-Route::middleware(['auth', 'role:pengurus'])->group(function () {
-    // Daftar tabungan
-    Route::get('/pengurus/tabungan', [Tabungan2Controller::class, 'index'])->name('pengurus.tabungan.index');
-    // Detail tabungan anggota
-    Route::get('/pengurus/tabungan/{id}', [Tabungan2Controller::class, 'detail'])->name('pengurus.tabungan.detail');
-    // Tambah saldo manual
-    Route::get('/pengurus/tabungan/{id}/tambah', [Tabungan2Controller::class, 'create'])->name('pengurus.tabungan.create');
-    Route::post('/pengurus/tabungan/store', [Tabungan2Controller::class, 'store'])->name('pengurus.tabungan.store');
-    // Debit (penarikan)
-    Route::get('/pengurus/tabungan/debit/{id}', [Tabungan2Controller::class, 'debit'])->name('pengurus.tabungan.debit');
-    Route::post('/pengurus/tabungan/debit/store', [Tabungan2Controller::class, 'storeDebit'])->name('pengurus.tabungan.debit.store');
-    // Approve & Reject
-    Route::post('/pengurus/tabungan/approve/{tabungan}', [Tabungan2Controller::class, 'approve'])->name('pengurus.tabungan.approve');
-    Route::post('/pengurus/tabungan/reject/{tabungan}', [Tabungan2Controller::class, 'reject'])->name('pengurus.tabungan.reject');
-});
-=======
->>>>>>> f83689e46c24e49bb76b5a3c161756d97e56f406
 
 // Tabungan (Anggota)
 Route::middleware(['auth:web'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
@@ -161,7 +143,6 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.anggota.nonaktif');
         Route::patch('/anggota/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
             ->name('pengurus.anggota.toggleStatus');
-
     });
 });
 
@@ -232,25 +213,8 @@ Route::middleware(['logout.if.authenticated'])->group(function () {
     Route::get('/forgot-password', function () {
         return view('auth.forgot-password');
     })->name('password.request');
-<<<<<<< HEAD
-
-    Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])
-        ->name('password.sendOtp');
-
-    Route::get('/verify-otp', function () {
-        return view('auth.verify-otp');
-    })->name('password.verifyOtp.form');
-
-    Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])
-        ->name('password.verifyOtp');
-
-    Route::get('/reset-password', function () {
-        return view('auth.reset-password');
-    })->name('password.reset.form');
-=======
     Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])->name('password.sendOtp');
     Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])->name('password.verifyOtp');
->>>>>>> f83689e46c24e49bb76b5a3c161756d97e56f406
 });
 
 
@@ -260,12 +224,9 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/download', [filedokumen::class, 'dokumenverifikasi'])->name('dokumen.download');
     Route::get('/upload', [filedokumen::class, 'dashboardUpload'])->name('dokumen.upload');
     Route::post('/upload', [filedokumen::class, 'uploadDokumen'])->name('dokumen.upload.store');
-<<<<<<< HEAD
-=======
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
         ->name('dokumen.lihat');
->>>>>>> f83689e46c24e49bb76b5a3c161756d97e56f406
 });
