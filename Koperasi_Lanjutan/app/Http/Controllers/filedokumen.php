@@ -88,58 +88,71 @@ class filedokumen extends Controller
     }
 
     public function lihatDokumen($userId, $jenis)
-    {
-        // Ambil user yang login
-        $currentUser = auth()->user();
+{
+    $currentUser = auth()->user();
 
-        if (!$currentUser) {
-            abort(403, 'Silakan login terlebih dahulu.');
-        }
-
-        // Ambil user target
-        $targetUser = User::findOrFail($userId);
-
-        // Hanya user sendiri atau pengurus bisa akses
-        $allowedRoles = ['pengurus']; // bisa ditambahkan role lain jika perlu
-        if ($currentUser->id !== $targetUser->id && !in_array($currentUser->role, $allowedRoles)) {
-            abort(403, 'Akses ditolak.');
-        }
-
-        // Ambil dokumen
-        $dokumen = Dokumen::where('user_id', $targetUser->id)->first();
-        if (!$dokumen) {
-            abort(404, 'Dokumen tidak ditemukan.');
-        }
-
-        // Tentukan jenis file
-        switch ($jenis) {
-            case 'pendaftaran':
-                $fileName = $dokumen->dokumen_pendaftaran;
-                break;
-            case 'sk':
-                $fileName = $dokumen->sk_tenaga_kerja;
-                break;
-            default:
-                abort(400, 'Jenis dokumen tidak valid.');
-        }
-
-        // ✅ PERBAIKAN: Hapus duplikasi 'private/'
-        $filePath = storage_path('app/private/private/' . $fileName);
-
-        if (!file_exists($filePath)) {
-            abort(404, 'File dokumen tidak ditemukan di server.');
-        }
-        
-
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $fileName . '"'
-        ]);
-
-        
-
-
+    if (!$currentUser) {
+        abort(403, 'Silakan login terlebih dahulu.');
     }
+
+    // Ambil data user target (pemilik dokumen)
+    $targetUser = \App\Models\User::findOrFail($userId);
+
+    // Cek apakah yang login pengurus
+    $isPengurus = auth()->guard('pengurus')->check();
+
+    // Jika pengurus login, ambil role dari tabel pengurus
+    if ($isPengurus) {
+        $pengurus = \App\Models\Pengurus::where('id', auth()->guard('pengurus')->id())->first();
+
+        // Jika pengurus tidak ditemukan
+        if (!$pengurus) {
+            abort(403, 'Data pengurus tidak ditemukan.');
+        }
+
+        $allowedRoles = ['bendahara', 'ketua', 'sekretaris', 'superadmin']; // bisa disesuaikan
+        if (!in_array($pengurus->role, $allowedRoles)) {
+            abort(403, 'Anda tidak memiliki izin untuk mengakses dokumen ini.');
+        }
+    } else {
+        // Jika yang login bukan pengurus, maka hanya bisa melihat dokumennya sendiri
+        if ($currentUser->id !== $targetUser->id) {
+            abort(403, 'Akses ditolak. Anda tidak bisa melihat dokumen milik orang lain.');
+        }
+    }
+
+    // Ambil dokumen berdasarkan user_id
+    $dokumen = \App\Models\Dokumen::where('user_id', $targetUser->id)->first();
+    if (!$dokumen) {
+        abort(404, 'Dokumen tidak ditemukan.');
+    }
+
+    // Tentukan jenis file
+    switch ($jenis) {
+        case 'pendaftaran':
+            $fileName = $dokumen->dokumen_pendaftaran;
+            break;
+        case 'sk':
+            $fileName = $dokumen->sk_tenaga_kerja;
+            break;
+        default:
+            abort(400, 'Jenis dokumen tidak valid.');
+    }
+
+    // Pastikan path tidak duplikat
+    $filePath = storage_path('app/private/private/' . $fileName);
+
+    if (!file_exists($filePath)) {
+        abort(404, 'File dokumen tidak ditemukan di server.');
+    }
+
+    // Tampilkan file PDF langsung di browser
+    return response()->file($filePath, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="' . $fileName . '"'
+    ]);
+}
+
 
 
 
