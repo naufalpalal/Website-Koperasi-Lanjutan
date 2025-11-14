@@ -14,6 +14,10 @@ use App\Models\User;
 use App\Models\user\SimpananWajib;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+
 
 class KelolaAnggotController extends Controller
 {
@@ -97,69 +101,72 @@ class KelolaAnggotController extends Controller
 
     // Simpan anggota baru
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'no_telepon' => 'required|string|max:20',
-            'password' => 'nullable',
-            'nip' => 'nullable|string|max:20',
-            'tempat_lahir' => 'nullable|string|max:255',
-            'tanggal_lahir' => 'nullable|date',
-            'alamat_rumah' => 'nullable|string|max:255',
-            'unit_kerja' => 'nullable|string|max:255',
+{
+    $validated = $request->validate([
+        'nama' => 'required|string|max:255',
+        'no_telepon' => 'required|string|max:20',
+        'password' => 'nullable|string|min:6',
+        'nip' => 'nullable|string|max:20',
+        'tempat_lahir' => 'nullable|string|max:255',
+        'tanggal_lahir' => 'nullable|date',
+        'alamat_rumah' => 'nullable|string|max:255',
+        'unit_kerja' => 'nullable|string|max:255',
 
-            // simpanan
-            'simpanan_pokok' => 'required|numeric|min:10000',
-            'simpanan_wajib' => 'required|numeric|min:10000',
-            'simpanan_sukarela_awal' => 'required|numeric|min:10000',
-        ]);
+        // simpanan
+        'simpanan_pokok' => 'required|numeric|min:10000',
+        'simpanan_wajib' => 'required|numeric|min:0',
+        'simpanan_sukarela' => 'nullable|numeric|min:0',
+    ]);
 
-        // buat user baru
-        $user = User::create([
-            'nama' => $validated['nama'],
-            'no_telepon' => $validated['no_telepon'],
-            'password' => isset($validated['password']) ? bcrypt($validated['password']) : bcrypt('default123'),
-            'nip' => $validated['nip'] ?? null,
-            'tempat_lahir' => $validated['tempat_lahir'] ?? null,
-            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-            'alamat_rumah' => $validated['alamat_rumah'] ?? null,
-            'unit_kerja' => $validated['unit_kerja'] ?? null,
-            'status' => 'aktif',
-        ]);
+    DB::transaction(function () use ($validated) {
 
-        // Simpanan Pokok
-        SimpananPokok::create([
-            'users_id' => $user->id,
-            'nilai' => $validated['simpanan_pokok'],
-            'tahun' => now()->format('Y'),
-            'bulan' => now()->format('m'),
-            'status' => 'Belum Dibayar',
-        ]);
+    // 🔹 Buat user baru
+    $user = User::create([
+        'nama' => $validated['nama'],
+        'no_telepon' => $validated['no_telepon'],
+        'password' => isset($validated['password'])
+            ? bcrypt($validated['password'])
+            : bcrypt('default123'), // password default
+        'nip' => $validated['nip'] ?? null,
+        'tempat_lahir' => $validated['tempat_lahir'] ?? null,
+        'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+        'alamat_rumah' => $validated['alamat_rumah'] ?? null,
+        'unit_kerja' => $validated['unit_kerja'] ?? null,
+        'status' => 'aktif',
+    ]);
 
+    // 🔹 Simpanan Pokok (dibuat saat awal masuk koperasi)
+    SimpananPokok::create([
+        'users_id' => $user->id,
+        'nilai' => $validated['simpanan_pokok'],
+        'tahun' => now()->year,
+        'bulan' => now()->month,
+        'status' => 'Dibayar',
+    ]);
 
-        // Simpanan Wajib
-        MasterSimpananWajib::create([
-            'users_id' => $user->id,
-            'nilai' => $validated['simpanan_wajib'],
-            'tahun' => now()->format('Y'),
-            'bulan' => now()->format('m'),
-            'status' => 'Diajukan',
-        ]);
+    // 🔹 Simpanan Wajib (mulai dari bulan berjalan)
+    MasterSimpananWajib::create([
+        'users_id' => $user->id,
+        'pengurus_id' => Auth::id(),
+        'nilai' => $validated['simpanan_wajib'],
+        'tahun' => now()->year,
+        'bulan' => now()->month,
+        'status' => 'Diajukan',
+    ]);
 
+    // 🔹 Simpanan Sukarela (awal)
+    MasterSimpananSukarela::create([
+        'users_id' => $user->id,
+        'nilai' => $validated['simpanan_sukarela'] ?? 0,
+        'tahun' => now()->year,
+        'bulan' => now()->month,
+        'status' => 'Disetujui',
+    ]);
 
-        // Simpanan Sukarela
-        MasterSimpananSukarela::create([
-            'users_id' => $user->id,
-            'nilai' => $validated['simpanan_sukarela_awal'],
-            'tahun' => now()->format('Y'),
-            'bulan' => now()->format('m'),
-            'status' => 'Disetujui',
-        ]);
-
-
-        return redirect()->route('pengurus.KelolaAnggota.index')
+        return redirect()->route('pengurus.anggota.index')
             ->with('success', 'Anggota berhasil ditambahkan beserta simpanannya');
-    }
+    });
+}
 
     // Tampilkan form edit anggota
     public function edit($id)
@@ -300,7 +307,7 @@ class KelolaAnggotController extends Controller
         $anggota->delete();
 
         return redirect()
-            ->route('pengurus.KelolaAnggota.index')
+            ->route('pengurus.anggota.index')
             ->with('success', 'Anggota berhasil dihapus');
     }
 

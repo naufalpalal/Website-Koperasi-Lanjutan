@@ -25,6 +25,7 @@ class User extends Authenticatable
         'no_telepon',
         'password',
         'nip',
+        'username',
         'tempat_lahir',
         'tanggal_lahir',
         'alamat_rumah',

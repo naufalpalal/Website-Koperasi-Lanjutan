@@ -327,7 +327,8 @@ Route::middleware(['auth:web'])->group(function () {
 
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
-        ->name('dokumen.lihat');
-});
+Route::middleware(['auth:web'])->get('/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
+    ->name('dokumen.lihat.user');
+
+Route::middleware(['auth:pengurus'])->get('/pengurus/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
+    ->name('dokumen.lihat.pengurus');

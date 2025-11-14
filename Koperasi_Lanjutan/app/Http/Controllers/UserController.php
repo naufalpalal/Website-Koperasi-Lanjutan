@@ -27,6 +27,7 @@ class UserController extends Controller
         ]);
 
         $user = User::where('nip', $request->nip)
+            ->orWhere('username', $request->nip)
             ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
@@ -51,6 +52,9 @@ class UserController extends Controller
     public function dashboardUserView()
     {
         $user = Auth::user();
+        $simpananWajib = SimpananWajib::where('users_id', $user->id)->get();
+        $simpananSukarela = SimpananSukarela::where('users_id', $user->id)->get();
+        $pinjaman = Pinjaman::where('user_id', $user->id)->get();
 
         // =============================
         // 1. Total Simpanan Wajib User
