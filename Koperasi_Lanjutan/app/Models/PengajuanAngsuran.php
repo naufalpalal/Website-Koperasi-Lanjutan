@@ -19,5 +19,17 @@ class PengajuanAngsuran extends Model
     protected $casts = [
         'angsuran_ids' => 'array'
     ];
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relasi ke Pinjaman
+    public function pinjaman()
+    {
+        return $this->belongsTo(Pinjaman::class, 'pinjaman_id');
+    }
 }
 

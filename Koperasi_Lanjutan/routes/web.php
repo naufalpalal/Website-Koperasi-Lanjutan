@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Pengurus\PengajuanAngsuranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RolePengurusMiddleware;
+use App\Models\PengajuanAngsuran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 // Controllers
@@ -67,20 +69,22 @@ Route::middleware(['auth:web'])->prefix('anggota')->group(function () {
     Route::get('/pinjaman/create', [PinjamanAnggotaController::class, 'create'])->name('user.pinjaman.create');
     Route::post('/pinjaman/store', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
     Route::post('/pinjaman/{id}/upload', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
-    Route::post('/{pinjaman_id}/angsuran', [AngsuranController::class, 'bayar'])->name('anggota.angsuran.index');
     // Pilih bulan angsuran
-    Route::post(
+    // Route::get(
+    //     '/angsuran/{pinjaman}',
+    //     [AngsuranAnggotaController::class, 'index']
+    // )->name('anggota.angsuran.index');
+
+
+    Route::get(
         '/angsuran/pilih/{pinjaman}',
         [AngsuranAnggotaController::class, 'pilihBulan']
     )->name('anggota.angsuran.pilih');
 
-    // Bayar + Upload bukti transfer
     Route::post(
         '/angsuran/bayar/{pinjaman}',
         [AngsuranAnggotaController::class, 'bayar']
     )->name('anggota.angsuran.bayar');
-
-
     // Route::get('/pinjaman/download/{id}', [PinjamanAnggotaController::class, 'download'])->name('user.pinjaman.download');
     // Route::get('/pinjaman/upload/{id}', [PinjamanAnggotaController::class, 'uploadForm'])->name('user.pinjaman.uploadForm');
     // Route::post('/pinjaman/upload/{id}', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
@@ -189,6 +193,10 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.pinjaman.reject');
         Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])
             ->name('pengurus.angsuran.index');
+        Route::post(
+            '/pengurus/pinjaman/{id}/status',
+            [AngsuranController::class, 'updateStatus']
+        )->name('pengurus.pinjaman.updateStatus');
         // Setting pinjaman
         Route::get('/settings', [PinjamanSettingController::class, 'index'])
             ->name('pengurus.settings.index');
@@ -197,6 +205,18 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
         // Detail pinjaman → letakkan paling bawah biar tidak bentrok
         Route::get('/{id}', [PinjamanController::class, 'show'])
             ->name('pengurus.pinjaman.show');
+
+        Route::prefix('pengurus/pinjaman')->group(function () {
+            Route::get('/pengajuan', [PengajuanAngsuranController::class, 'pengajuanList'])
+                ->name('pengurus.angsuran.pengajuan');
+
+            Route::post('/pengajuan/{id}/acc', [PengajuanAngsuranController::class, 'accPengajuan'])
+                ->name('pengurus.angsuran.acc');
+
+            Route::post('/pengajuan/{id}/tolak', [PengajuanAngsuranController::class, 'tolakPengajuan'])
+                ->name('pengurus.angsuran.tolak');
+        });
+
     });
     // ============================
     // KELOLA ANGGOTA

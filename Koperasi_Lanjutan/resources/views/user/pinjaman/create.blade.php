@@ -131,7 +131,7 @@
 
             @if ($angsuran->count() > 0)
 
-                <form action="{{ route('anggota.angsuran.pilih', $pinjaman->id) }}" method="POST">
+                <form action="{{ route('anggota.angsuran.pilih', $pinjaman->id) }}" method="GET">
                     @csrf
 
                     <table class="w-full border mb-4">
