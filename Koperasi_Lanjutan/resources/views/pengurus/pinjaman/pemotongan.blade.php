@@ -25,6 +25,11 @@
                 class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-150 ease-in-out">
                 Daftar Pengajuan
             </a>
+
+             <a href="{{ route('pengurus.settings.index') }}"
+                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                ⚙️ Setting Tenor & Bunga    
+            </a>
         </div>
 
         @if ($angsuran->count() > 0)

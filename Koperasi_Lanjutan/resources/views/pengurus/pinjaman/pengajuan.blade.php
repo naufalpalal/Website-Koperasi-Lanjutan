@@ -4,13 +4,6 @@
 <div class="max-w-5xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-6">📋 Daftar Pengajuan Pinjaman Anggota</h1>
     <div class="space-y-4">
-        <div class="bg-gray-100 border border-gray-200 rounded-lg p-4">
-            <div class="grid grid-cols-3 gap-4">
-                <div class="font-semibold">Nama Anggota</div>
-                <div class="font-semibold">Tanggal Pengajuan</div>
-                <div class="font-semibold">Nominal</div>
-            </div>
-        </div>
         @forelse($pinjaman as $item)
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition p-4 flex items-center justify-between">
                 <div class="flex items-center space-x-4">

@@ -96,94 +96,53 @@ class PinjamanController extends Controller
      */
     public function approve(Request $request, $id)
     {
-        $request->validate([
-            'bunga' => 'required|numeric|min:0',
-            'tenor' => 'required|integer|min:1',
-        ]);
+        $pinjaman = Pinjaman::findOrFail($id);
 
-        // $pinjaman = Pinjaman::findOrFail($id);
+        // Ambil dari database pinjaman (anggota sudah memilih sebelumnya)
+        $bunga = $pinjaman->bunga;
+        $tenor = $pinjaman->tenor;
 
-        // DB::beginTransaction();
+        if ($tenor == 0 || $tenor == null) {
+            return back()->with('error', 'Tenor tidak boleh kosong atau 0.');
+        }
 
-        // try {
-        //     // Hitung bunga dan total pembayaran
-        //     $bunga_per_bulan = $pinjaman->nominal * ($request->bunga / 100);
-        //     $total_bunga = $bunga_per_bulan * $request->tenor;
-        //     $total_pembayaran = $pinjaman->nominal + $total_bunga;
-        //     $angsuran_bulanan = round($total_pembayaran / $request->tenor, 2);
+        DB::beginTransaction();
 
-        //     // Update status pinjaman & data perhitungan
+        try {
 
+            $bunga_per_bulan = $pinjaman->nominal * ($bunga / 100);
+            $total_bunga = $bunga_per_bulan * $tenor;
+            $total_pembayaran = $pinjaman->nominal + $total_bunga;
+            $angsuran_bulanan = round($total_pembayaran / $tenor, 2);
 
-        //     // Tentukan tanggal awal (tanggal persetujuan)
-        //     $tanggalPersetujuan = now();
+            // Update status pinjaman
+            $pinjaman->update([
+                'status' => 'disetujui',
+                'angsuran_bulanan' => $angsuran_bulanan,
+                'approved_at' => now(),
+            ]);
 
-        //     // Generate data angsuran otomatis (dengan tanggal jatuh tempo)
-        //     for ($i = 1; $i <= $request->tenor; $i++) {
-        //         $jatuhTempo = $tanggalPersetujuan->copy()->addMonths($i - 1);
+            // Generate angsuran
+            $tanggalPersetujuan = now();
+            for ($i = 1; $i <= $tenor; $i++) {
+                $jatuhTempo = $tanggalPersetujuan->copy()->addMonths($i - 1);
 
-        //         Angsuran::create([
-        //             'pinjaman_id' => $pinjaman->id,
-        //             'bulan_ke' => $i,
-        //             'jumlah_bayar' => $angsuran_bulanan,
-        //             'tanggal_bayar' => $jatuhTempo, // agar bisa terbaca oleh periodePotongan()
-        //             'status' => 'belum_lunas',
-        //             'jenis_pembayaran' => 'angsuran',
-        //         ]);
-        //     }
+                Angsuran::create([
+                    'pinjaman_id' => $pinjaman->id,
+                    'bulan_ke' => $i,
+                    'jumlah_bayar' => $angsuran_bulanan,
+                    'tanggal_bayar' => $jatuhTempo,
+                    'status' => 'belum_lunas',
+                    'jenis_pembayaran' => 'angsuran',
+                ]);
+            }
 
-        //     DB::commit();
+            DB::commit();
+            return back()->with('success', 'Pinjaman disetujui dan angsuran dibuat.');
 
-        //     return redirect()
-        //         ->back()
-        //         ->with('success', '✅ Pinjaman berhasil disetujui dan angsuran otomatis dibuat.');
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     return redirect()
-        //         ->back()
-        //         ->with('error', '❌ Terjadi kesalahan: ' . $e->getMessage());
-        // }
-        // Ambil data pinjaman + relasi user (anggota)
-        $pinjaman = Pinjaman::with('user')->findOrFail($id);
-
-        $pinjaman->update([
-            'bunga' => $request->bunga,
-            'tenor' => $request->tenor,
-            'status' => 'disetujui',
-        ]);
-
-        // Update status jadi disetujui
-        $pinjaman->status = 'disetujui';
-        $pinjaman->save();
-
-        // Data tambahan untuk surat
-        $data = [
-            'pemohon' => $pinjaman->user,
-            'jumlah' => $pinjaman->jumlah_pinjaman,
-            'jumlah_terbilang' => $this->terbilang($pinjaman->jumlah_pinjaman),
-            'lama_angsuran' => $pinjaman->lama_angsuran,
-            'angsuran' => $pinjaman->angsuran_bulanan,
-            'angsuran_terbilang' => $this->terbilang($pinjaman->angsuran_bulanan),
-            'tanggal' => now(),
-        ];
-
-        // Buat PDF dari view SuratPinjaman2
-        $pdf = Pdf::loadView('dokumen.SuratPinjaman2', $data);
-
-        // Simpan ke storage (public)
-        $fileName = 'verifikasi_pinjaman_' . $pinjaman->id . '.pdf';
-        $filePath = $pdf->output();
-
-        // Simpan ke storage/public/dokumen_verifikasi
-        Storage::disk('public')->put('dokumen_verifikasi/' . $fileName, $filePath);
-
-        // Simpan path relatif ke database
-        $pinjaman->dokumen_verifikasi = 'dokumen_verifikasi/' . $fileName;
-        $pinjaman->save();
-
-        // Kembalikan response
-        return redirect()->back()->with('success', 'Pinjaman disetujui dan dokumen verifikasi berhasil dibuat.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
     }
-
-
 }

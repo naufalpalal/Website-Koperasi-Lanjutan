@@ -16,6 +16,11 @@
                 🔍 Lihat Potongan Bulan Ini
             </a>
 
+            {{-- <a href="{{ route('pengurus.settings.index') }}"
+                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                ⚙️ Setting Tenor & Bunga    
+            </a> --}}
+
         </div>
 
 
