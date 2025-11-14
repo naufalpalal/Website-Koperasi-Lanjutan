@@ -103,12 +103,6 @@
     <script>
         let currentNip = '', currentEmail = '', resetToken = '';
 
-        const nipInput = document.getElementById('nip');
-        const emailInput = document.getElementById('email');
-        const otpInput = document.getElementById('otp');
-        const passwordInput = document.getElementById('password');
-        const confirmInput = document.getElementById('password_confirmation');
-
         function showStep(n) {
             ['step1', 'step2', 'step3'].forEach((id, i) =>
                 document.getElementById(id).classList.toggle('hidden', n !== i + 1)
@@ -137,8 +131,8 @@
         // STEP 1: Kirim OTP
         document.getElementById('requestOtpForm').addEventListener('submit', async e => {
             e.preventDefault();
-            const nip = nipInput.value.trim();
-            const email = emailInput.value.trim();
+            const nip = document.getElementById('nip').value.trim();
+            const email = document.getElementById('email').value.trim();
             if (!nip || !email) return alertMsg('error', 'Isi NIP dan Email terlebih dahulu.');
 
             currentNip = nip;
@@ -166,14 +160,14 @@
         // STEP 2: Verifikasi OTP
         document.getElementById('verifyOtpForm').addEventListener('submit', async e => {
             e.preventDefault();
-            const otp = otpInput.value.trim();
+            const otp = document.getElementById('otp').value.trim();
             if (!otp) return alertMsg('error', 'Masukkan OTP terlebih dahulu.');
 
             showLoading('Memverifikasi kode OTP...');
             const res = await fetch("{{ route('password.verifyOtp') }}", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ nip: currentNip, otp })
+                body: JSON.stringify({ nip: currentNip, email: currentEmail, otp })
             });
 
             const data = await res.json();
@@ -191,8 +185,8 @@
         // STEP 3: Reset Password
         document.getElementById('resetPasswordForm').addEventListener('submit', async e => {
             e.preventDefault();
-            const password = passwordInput.value;
-            const confirm = confirmInput.value;
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('password_confirmation').value;
             if (!password || password !== confirm) return alertMsg('error', 'Password tidak sama.');
 
             showLoading('Menyimpan password baru...');

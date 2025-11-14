@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RolePengurusMiddleware;
@@ -142,7 +143,6 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.anggota.nonaktif');
         Route::patch('/anggota/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
             ->name('pengurus.anggota.toggleStatus');
-
     });
 });
 
