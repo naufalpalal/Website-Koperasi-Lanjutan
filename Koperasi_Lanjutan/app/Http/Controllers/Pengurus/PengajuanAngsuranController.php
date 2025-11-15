@@ -23,7 +23,7 @@ class PengajuanAngsuranController extends Controller
         $pengajuan = PengajuanAngsuran::findOrFail($id);
 
         // Update status utama menjadi ACC
-        $pengajuan->update(['status' => 'acc']);
+        $pengajuan->update(['status' => 'disetujui']);
 
         // Ubah status angsuran yang dipilih menjadi lunas
         $angsuranIds = json_decode($pengajuan->angsuran_ids, true);
@@ -39,7 +39,7 @@ class PengajuanAngsuranController extends Controller
         $pengajuan = PengajuanAngsuran::findOrFail($id);
 
         $pengajuan->update([
-            'status' => 'reject'
+            'status' => 'ditolak'
         ]);
 
         return back()->with('success', 'Pengajuan angsuran ditolak.');

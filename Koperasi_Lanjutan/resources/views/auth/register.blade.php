@@ -163,4 +163,5 @@
         </div>
     </div>
 
+<script src="{{ asset('assets/js/show-password.js') }}"></script>
 </x-guest-layout>

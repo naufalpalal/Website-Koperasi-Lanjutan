@@ -71,7 +71,7 @@
                                 </div>
                             @else
                                 <span class="px-3 py-1 rounded text-white
-                                    {{ $p->status === 'acc' ? 'bg-green-600' : 'bg-red-600' }}">
+                                    {{ $p->status === 'disetujui' ? 'bg-green-600' : 'bg-red-600' }}">
                                     {{ strtoupper($p->status) }}
                                 </span>
                             @endif

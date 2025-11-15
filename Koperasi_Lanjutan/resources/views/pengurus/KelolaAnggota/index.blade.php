@@ -88,8 +88,8 @@
                                         <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider max-w-[260px]">Alamat</th>
                                         <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tempat, Tgl Lahir</th>
                                         <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Unit Kerja</th>
-                                        <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider text-center">Status</th>
                                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
+                                        <th class="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-100">
@@ -107,6 +107,23 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 align-middle text-gray-600 dark:text-gray-300">{{ $a->unit_kerja ?? '-' }}</td>
+                                            <td class="px-6 py-4 text-center align-middle">
+                                                <div class="inline-flex items-center gap-2 justify-center">
+                                                    <a href="{{ route('pengurus.anggota.edit', $a->id) }}" title="Edit" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-md text-sm shadow">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                        <span class="hidden xl:inline">Edit</span>
+                                                    </a>
+
+                                                    <form action="{{ route('pengurus.anggota.destroy', $a->id) }}" method="POST" class="m-0 p-0 inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" class="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm shadow">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a1 1 0 011 1v1H9V4a1 1 0 011-1z"/></svg>
+                                                            <span class="hidden xl:inline">Hapus</span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
                                             {{-- STATUS ANGGOTA --}}
                                             <td class="px-6 py-4 text-center">
                                                 <form action="{{ route('pengurus.anggota.toggleStatus', $a->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mengubah status anggota ini?')">
@@ -124,23 +141,6 @@
                                                         </button>
                                                     @endif
                                                 </form>
-                                            </td>
-                                            <td class="px-6 py-4 text-center align-middle">
-                                                <div class="inline-flex items-center gap-2 justify-center">
-                                                    <a href="{{ route('pengurus.anggota.edit', $a->id) }}" title="Edit" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-md text-sm shadow">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                                        <span class="hidden xl:inline">Edit</span>
-                                                    </a>
-
-                                                    <form action="{{ route('pengurus.anggota.destroy', $a->id) }}" method="POST" class="m-0 p-0 inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" class="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm shadow">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a1 1 0 011 1v1H9V4a1 1 0 011-1z"/></svg>
-                                                            <span class="hidden xl:inline">Hapus</span>
-                                                        </button>
-                                                    </form>
-                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

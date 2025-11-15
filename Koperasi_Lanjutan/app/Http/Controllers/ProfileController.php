@@ -125,7 +125,7 @@ class ProfileController extends Controller
 
     return redirect()
         ->route('profile.edit')
-        ->with('success', 'Profil, password, dan foto berhasil diperbarui.');
+        ->with('status', 'Profil atau Password Berhasil Diperbarui');
 }
 
 }

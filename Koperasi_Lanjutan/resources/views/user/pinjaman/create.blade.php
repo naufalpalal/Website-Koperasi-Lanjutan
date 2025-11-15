@@ -91,12 +91,12 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-3">📄 Dokumen Pengajuan</h3>
 
             <div class="space-y-3">
-                <a href="{{ route('anggota.pinjaman.download', 1) }}" class="btn btn-primary">
-                    Download Dokumen Pernyataan
+                <a href="{{ route('anggota.pinjaman.download', 1) }}" class="text-blue-600 hover:underline flex items-center gap-1">
+                    ⬇️ Download Dokumen Pernyataan
                 </a>
 
-                <a href="{{ route('anggota.pinjaman.download', 2) }}" class="btn btn-secondary">
-                    Download Surat Permohonan
+                <a href="{{ route('anggota.pinjaman.download', 2) }}" class="text-blue-600 hover:underline flex items-center gap-1">
+                    ⬇️ Download Surat Permohonan
                 </a>
             </div>
 
@@ -113,7 +113,7 @@
                     class="border rounded w-full p-2 mb-4">
 
                 <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                    📤 Upload Dokumen
+                    ⬆️ Upload Dokumen 
                 </button>
             </form>
 

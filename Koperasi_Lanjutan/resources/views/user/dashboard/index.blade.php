@@ -4,7 +4,7 @@
     <div class="container mx-auto bg-blue-100 min-h-screen p-6 flex flex-col items-center">
         <!-- Dashboard Title -->
         <div class="text-gray-800 font-bold mb-8 text-2xl">
-            Dashboard User
+            Dashboard Anggota {{ Auth::user()->nama }}
         </div>
 
         <!-- Grid Menu -->
