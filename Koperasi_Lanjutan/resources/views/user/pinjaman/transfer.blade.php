@@ -5,6 +5,13 @@
 @section('content')
 
     <div class="bg-white p-6 rounded-xl shadow-lg max-w-xl mx-auto mt-6">
+        {{-- === NOTIFIKASI DI ATAS === --}}
+        @if (session('success'))
+            <div class="mb-4 p-3 rounded-lg bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200">
+                ✓ {{ session('success') }}
+            </div>
+        @endif
+
 
         <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
             Konfirmasi Pembayaran Angsuran

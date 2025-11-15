@@ -145,4 +145,66 @@ class PinjamanController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function downloadExcel()
+    {
+        $pinjaman = Pinjaman::with('user')->get();
+
+        $filename = 'laporan_pinjaman_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->stream(function () use ($pinjaman) {
+
+            // Bersihkan output buffer agar tidak merusak CSV
+            if (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            $handle = fopen('php://output', 'w');
+
+            // Tambahkan UTF-8 BOM agar excel tidak berantakan
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header kolom
+            fputcsv($handle, [
+                'Nama Anggota',
+                'Nominal Pinjaman',
+                'Tenor (bulan)',
+                'Bunga (%)',
+                'Total Bunga',
+                'Angsuran Bulanan',
+                'Status',
+                'Tanggal Pengajuan',
+                'Tanggal Disetujui'
+            ]);
+
+            // Isi data CSV
+            foreach ($pinjaman as $p) {
+
+                $totalBunga = ($p->nominal * ($p->bunga / 100)) * ($p->tenor ?? 0);
+
+                fputcsv($handle, [
+                    $p->user->nama ?? '-',
+                    $p->nominal,
+                    $p->tenor,
+                    $p->bunga,
+                    $totalBunga,
+                    $p->angsuran_bulanan,
+                    ucfirst($p->status),
+                    $p->created_at,
+                    $p->created_at?->format('d-m-Y H:i'),
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
 }

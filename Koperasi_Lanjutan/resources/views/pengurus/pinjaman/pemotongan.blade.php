@@ -55,7 +55,7 @@
                 </a>
 
                 {{-- TOMBOL TAMBAHAN --}}
-                <a href="#"
+                <a href="{{ route('pengurus.pinjaman.download') }}"
                     class="bg-purple-600 hover:bg-purple-700 text-white py-1.5 px-3 rounded-md text-sm shadow transition">
                     📥 Export Excel
                 </a>
