@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Models\user\SimpananWajib;
 use App\Models\Pengurus\SimpananSukarela;
 use App\Models\Pinjaman;
-
+use App\Models\Pengurus\Angsuran;
 class UserController extends Controller
 {
     // 🔹 Menampilkan halaman login
@@ -27,6 +27,7 @@ class UserController extends Controller
         ]);
 
         $user = User::where('nip', $request->nip)
+            ->orWhere('username', $request->nip)
             ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
@@ -51,48 +52,91 @@ class UserController extends Controller
     public function dashboardUserView()
     {
         $user = Auth::user();
-        $simpananWajib = SimpananWajib::all();
-        $simpananSukarela = SimpananSukarela::all();
-        $pinjaman = Pinjaman::all();
+        $simpananWajib = SimpananWajib::where('users_id', $user->id)->get();
+        $simpananSukarela = SimpananSukarela::where('users_id', $user->id)->get();
+        $pinjaman = Pinjaman::where('user_id', $user->id)->get();
 
-        // Hitung total simpanan wajib (hanya yang berhasil dibayar)
-        $totalSimpananWajib = $simpananWajib->where('status', 'Dibayar')->sum('nilai');
-
-        // Hitung total simpanan sukarela (hanya yang berhasil dibayar)
-        $totalSimpananSukarela = $simpananSukarela->where('status', 'Dibayar')->sum('nilai');
-
-        $totalPinjaman = 0; // Default 0 jika tidak ada
-
-        if (method_exists($user, 'pinjaman')) {
-            $totalPinjaman = $pinjaman
-                ->where('status', 'disetujui') // atau status yang sesuai
-                ->sum('nominal'); // sesuaikan nama kolom
-        }
-
-        // // Hitung total simpanan pokok (kalau tabelnya ada)
-        // if (method_exists($user, 'simpanan')) {
-        //     $totalSimpananPokok = $user->simpanan()->sum('jumlah');
-        // } else {
-        //     $totalSimpananPokok = 0;
-        // }
-
-        // Hitung total tabungan
-        if (method_exists($user, 'tabungans')) {
-        $totalMasuk = $user->tabungans()
-            ->where('status', 'diterima')
+        // =============================
+        // 1. Total Simpanan Wajib User
+        // =============================
+        $totalSimpananWajib = SimpananWajib::where('users_id', $user->id)
+            ->where('status', 'Dibayar')
             ->sum('nilai');
 
-        $totalKeluar = $user->tabungans()
-            ->where('status', 'dipotong')
-            ->sum('debit');
+        // =============================
+        // 2. Total Simpanan Sukarela User
+        // =============================
+        $totalSimpananSukarela = SimpananSukarela::where('users_id', $user->id)
+            ->where('status', 'Dibayar')
+            ->sum('nilai');
 
-        $totalTabungan = $totalMasuk - $totalKeluar;
+        // =============================
+        // 3. Hitung Total Tabungan User
+        // =============================
+        if (method_exists($user, 'tabungans')) {
+
+            $totalMasuk = $user->tabungans()
+                ->where('status', 'diterima')
+                ->sum('nilai');
+
+            $totalKeluar = $user->tabungans()
+                ->where('status', 'dipotong')
+                ->sum('debit');
+
+            $totalTabungan = $totalMasuk - $totalKeluar;
+
         } else {
             $totalTabungan = 0;
         }
 
-        // Total keseluruhan
-        $totalKeseluruhan = $totalSimpananWajib + $totalSimpananSukarela + $totalTabungan;
+        // =============================
+        // 4. Ambil Pinjaman Aktif User
+        // =============================
+        $pinjamanAktif = Pinjaman::where('user_id', $user->id)
+            ->where('status', 'disetujui')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        // Jika tidak ada pinjaman aktif
+        $totalPinjaman = $pinjamanAktif ? $pinjamanAktif->nominal : 0;
+
+        // =============================
+        // 5. Hitung total angsuran yang belum dibayar
+        // =============================
+        $totalBayar = 0;
+
+        if ($pinjamanAktif) {
+            $totalBayar = Angsuran::where('pinjaman_id', $pinjamanAktif->id)
+                ->where('status', 'belum_lunas')
+                ->sum('jumlah_bayar');
+        }
+
+        // =============================
+        // 6. Status angsuran bulan ini
+        // =============================
+        $statusAngsuranBulanIni = "-";
+
+        if ($pinjamanAktif) {
+            $angsuranBulanIni = Angsuran::where('pinjaman_id', $pinjamanAktif->id)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->first();
+
+            if ($angsuranBulanIni) {
+                $statusAngsuranBulanIni = $angsuranBulanIni->status;
+            } else {
+                $statusAngsuranBulanIni = "Belum Ada Tagihan";
+            }
+        }
+
+
+        // =============================
+        // 7. Total Keseluruhan Dana
+        // =============================
+        $totalKeseluruhan =
+            $totalSimpananWajib +
+            $totalSimpananSukarela +
+            $totalTabungan;
 
         return view('user.dashboard.index', compact(
             'user',
@@ -100,7 +144,9 @@ class UserController extends Controller
             'totalSimpananSukarela',
             'totalTabungan',
             'totalKeseluruhan',
-            'totalPinjaman'
+            'totalPinjaman',
+            'totalBayar',
+            'statusAngsuranBulanIni'
         ));
     }
 

@@ -17,8 +17,8 @@
                 <span class="inline-block h-20 w-20 rounded-full overflow-hidden bg-gray-100">
                     <img id="photoPreview" src="{{ $user->photo_path ? asset('storage/' . $user->photo_path) : '' }}"
                         data-original="{{ $user->photo_path ? asset('storage/' . $user->photo_path) : '' }}"
-                        alt="Profile Photo" class="h-full w-full object-cover">
-                    <svg id="defaultAvatar" class="{{ $user->photo_path ? 'hidden' : '' }} h-full w-full text-gray-300"
+                        alt="Profile Photo" class="h-full w-full object-cover {{ $user->photo_path ? '' : 'hidden' }}">
+                    <svg id="defaultAvatar" class="h-full w-full text-gray-300 {{ $user->photo_path ? 'hidden' : '' }}"
                         fill="currentColor" viewBox="0 0 24 24">
                         <path d="M24 24H0V0h24v24z" fill="none" />
                         <path

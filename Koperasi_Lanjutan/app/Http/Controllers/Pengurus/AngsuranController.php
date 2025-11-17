@@ -19,39 +19,18 @@ class AngsuranController extends Controller
         return view('pengurus.pinjaman.angsuran.index', compact('pinjaman', 'angsuran'));
     }
 
-    public function updateStatus(Request $request, $pinjaman_id)
+    public function updateStatus(Request $request, $id)
     {
-       
-
-        // Ambil semua ID angsuran yang dicentang
-        $angsuranIds = $request->input('angsuran_ids', []);
-
-        if (empty($angsuranIds)) {
-            return redirect()
-                ->back()
-                ->with('warning', 'Tidak ada angsuran yang dipilih untuk diperbarui.');
-        }
-
-        // Update semua angsuran yang dipilih menjadi lunas
-        Angsuran::whereIn('id', $angsuranIds)->update([
-            'status' => 'lunas',
-            'tanggal_bayar' => now(),
-            'petugas_id' => auth()->id(),
+        $request->validate([
+            'status' => 'required|in:lunas,belum lunas',
         ]);
 
-        // Opsi tambahan (jika semua sudah lunas, update status pinjaman)
-        $pinjaman = Pinjaman::with('angsuran')->findOrFail($pinjaman_id);
-        $sisa = $pinjaman->angsuran->where('status', 'belum_lunas')->count();
+        $angsuran = Angsuran::findOrFail($id);
+        $angsuran->status = $request->status;
+        $angsuran->save();
 
-        if ($sisa === 0) {
-            $pinjaman->update(['status' => 'lunas']);
-        }
-
-        return redirect()
-            ->route('pengurus.angsuran.index', ['pinjaman_id' => $pinjaman_id])
-            ->with('success', 'Status angsuran berhasil diperbarui.');
+        return back()->with('success', 'Status angsuran diperbarui');
     }
-
 
     public function periodePotongan(Request $request)
     {

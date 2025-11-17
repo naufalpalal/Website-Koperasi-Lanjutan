@@ -11,12 +11,20 @@ return new class extends Migration
         Schema::create('password_reset_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('otp_hash'); // hash OTP untuk verifikasi
-            $table->string('password')->nullable(); // password baru (setelah diapprove)
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->timestamp('expires_at')->nullable(); // waktu kedaluwarsa OTP
-            $table->timestamp('used_at')->nullable(); // kapan digunakan
-            $table->string('ip')->nullable(); // IP yang mengajukan reset
+            $table->string('email');               // Email tujuan OTP
+            $table->string('otp_hash');                        // Hash OTP untuk verifikasi
+            $table->string('reset_token')->nullable();         // Token reset password setelah OTP valid
+            $table->enum('status', [                           // Status proses
+                'pending',
+                'approved',
+                'rejected',
+                'otp_sent',
+                'otp_verified',
+                'completed'
+            ])->default('pending');
+            $table->timestamp('expires_at')->nullable();       // Waktu kadaluarsa OTP/token
+            $table->timestamp('used_at')->nullable();          // Kapan OTP/token digunakan
+            $table->string('ip')->nullable();                  // IP pengaju reset
             $table->timestamps();
         });
     }

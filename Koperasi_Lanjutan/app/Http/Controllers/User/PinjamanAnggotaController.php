@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Pengurus\PinjamanSetting;
+use App\Models\Pengurus\Angsuran;
 
 class PinjamanAnggotaController extends Controller
 {
@@ -73,51 +75,156 @@ class PinjamanAnggotaController extends Controller
 
     public function create()
     {
-        // Ambil pinjaman terakhir user yang login
-        $pinjaman = Pinjaman::where('user_id', auth()->id())
-            ->latest()
+        $user = auth()->user();
+        $userId = $user->id;
+
+        // === Cek keanggotaan minimal 6 bulan ===
+        $masaKeanggotaan = $user->created_at->diffInMonths(now());
+        $bolehPinjam = $masaKeanggotaan >= 6;
+        $sisaBulan = max(0, 6 - $masaKeanggotaan);
+
+        // Ambil pinjaman terbaru user
+        $pinjaman = Pinjaman::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
             ->first();
 
-        // Kirim ke view
-        return view('user.pinjaman.create', compact('pinjaman'));
+        // Ambil pengaturan tenor
+        $settings = PinjamanSetting::orderBy('tenor', 'asc')->get();
+
+        // Jika belum pernah pinjam → langsung tampilkan halaman kosong
+        if (!$pinjaman) {
+            return view('user.pinjaman.create', [
+                'pinjaman' => null,
+                'settings' => $settings,
+                'angsuran' => collect(),
+                'bolehPinjam' => $bolehPinjam,
+                'sisaBulan' => $sisaBulan
+            ]);
+        }
+
+        // Jika status pending → tinggal tunggu persetujuan
+        if ($pinjaman->status === 'pending') {
+            return view('user.pinjaman.create', [
+                'pinjaman' => $pinjaman,
+                'settings' => $settings,
+                'angsuran' => collect(),
+                'bolehPinjam' => $bolehPinjam,
+                'sisaBulan' => $sisaBulan
+            ]);
+        }
+
+        // Jika sudah disetujui → cek angsuran
+        if ($pinjaman->status === 'disetujui') {
+
+            $angsuran = Angsuran::where('pinjaman_id', $pinjaman->id)
+                ->orderBy('bulan_ke', 'asc')
+                ->get();
+
+            $masihBelumLunas = $angsuran->contains('status', 'belum_lunas');
+
+            // Jika masih ada angsuran yang belum lunas → tidak bisa ajukan lagi
+            if ($masihBelumLunas) {
+                return view('user.pinjaman.create', [
+                    'pinjaman' => $pinjaman,
+                    'settings' => $settings,
+                    'angsuran' => $angsuran,
+                    'bolehPinjam' => $bolehPinjam,
+                    'sisaBulan' => $sisaBulan
+                ]);
+            }
+
+            // Jika semua lunas → boleh ajukan lagi
+            return view('user.pinjaman.create', [
+                'pinjaman' => null,
+                'settings' => $settings,
+                'angsuran' => collect(),
+                'bolehPinjam' => $bolehPinjam,
+                'sisaBulan' => $sisaBulan
+            ]);
+        }
+
+        // Jika status lain (ditolak, dsb.)
+        return view('user.pinjaman.create', [
+            'pinjaman' => $pinjaman,
+            'settings' => $settings,
+            'bolehPinjam' => $bolehPinjam,
+            'sisaBulan' => $sisaBulan
+        ]);
     }
+
+
+    private function formPengajuanBaru($settings)
+    {
+        return view('user.pinjaman.create', [
+            'pinjaman' => null,
+            'settings' => $settings,
+            'angsuran' => collect(),
+            'bolehAjukan' => true,
+        ]);
+    }
+
 
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $userId = $user->id;
+
+        // ==============================
+        // 1. CEK MASA KEANGGOTAAN 6 BULAN
+        // ==============================
+        $minimalJoinDate = now()->subMonths(6);
+
+        if ($user->created_at > $minimalJoinDate) {
+            return back()->with('error', 'Anda belum mencapai masa keanggotaan 6 bulan untuk mengajukan pinjaman.');
+        }
+
+        // ==============================
+        // 2. CEK PINJAMAN AKTIF
+        // ==============================
+        $pinjaman = Pinjaman::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($pinjaman && $pinjaman->status === 'disetujui') {
+
+            $angsuran = Angsuran::where('pinjaman_id', $pinjaman->id)->get();
+
+            $semuaLunas = $angsuran->every(function ($a) {
+                return trim(strtolower($a->status)) === 'lunas';
+            });
+
+            if (!$semuaLunas) {
+                return back()->with('error', 'Angsuran sebelumnya belum lunas.');
+            }
+        }
+
+        // ==============================
+        // 3. VALIDASI INPUT
+        // ==============================
         $request->validate([
             'nominal' => 'required|numeric|min:100000',
+            'tenor' => 'required|numeric',
+            'bunga' => 'required|numeric',
         ]);
 
-        // Simpan atau update pinjaman user
-        $pinjaman = Pinjaman::updateOrCreate(
-            ['user_id' => auth()->id(), 'status' => 'pending'],
-            ['nominal' => $request->nominal]
-        );
+        // ==============================
+        // 4. SIMPAN PENGAJUAN PINJAMAN
+        // ==============================
+        Pinjaman::create([
+            'user_id' => $userId,
+            'nominal' => $request->nominal,
+            'tenor' => $request->tenor,
+            'bunga' => $request->bunga,
+            'status' => 'pending'
+        ]);
 
-        return redirect()->route('user.pinjaman.create')->with('success', 'Nominal pinjaman tersimpan.');
+        return redirect()->route('user.pinjaman.create')
+            ->with('success', 'Pengajuan pinjaman berhasil dikirim!');
     }
 
 
-    public function download($id)
-    {
-        $pinjaman = Pinjaman::with('user')->findOrFail($id);
-        $user = Auth::user();
 
-        $pdf = Pdf::loadView('dokumen.SuratPinjaman', [
-            'user' => $user,
-            'pinjaman' => $pinjaman,
-            'tanggal' => now()->translatedFormat('d F Y'),
-        ])->setPaper('a4', 'portrait');
-
-        return $pdf->download('Surat_Pinjaman_' . $pinjaman->user->nama . '.pdf');
-    }
-
-    public function uploadForm($id)
-    {
-        $pinjaman = Pinjaman::findOrFail($id);
-        return view('user.pinjaman.upload', compact('pinjaman'));
-    }
 
     public function upload(Request $request, $id)
     {
@@ -126,31 +233,108 @@ class PinjamanAnggotaController extends Controller
         ]);
 
         $pinjaman = Pinjaman::findOrFail($id);
+        $user = auth()->user();
 
-        // Proses upload file
-        if ($request->hasFile('dokumen_pinjaman')) {
-            $files = [];
-            foreach ($request->file('dokumen_pinjaman') as $file) {
-                $path = $file->store('dokumen_pinjaman', 'public');
-                $files[] = $path;
-            }
-
-            $pinjaman->update([
-                'dokumen_pinjaman' => json_encode($files),
-                'status' => 'pending', // ✅ ubah status agar muncul di pengurus
-            ]);
+        if (!$request->hasFile('dokumen_pinjaman')) {
+            return back()->with('error', 'Tidak ada dokumen yang di-upload.');
         }
 
-        return back()->with('success', 'Surat pinjaman berhasil diupload.');
+        $files = $request->file('dokumen_pinjaman');
+
+        if (count($files) < 2) {
+            return back()->with('error', 'Harap upload 2 dokumen PDF (Dokumen Pinjaman & Dokumen Verifikasi).');
+        }
+
+        // FIX: gunakan timestamp berbeda agar tidak bentrok
+        $timestamp = now()->timestamp;
+
+        // =======================
+        // Simpan Dokumen 1 (dokumen_pinjaman)
+        // =======================
+        $dokPinName = "dokumen_pinjaman_{$pinjaman->id}_{$timestamp}.pdf";
+        $dokumenPinjaman = $files[0]->storeAs(
+            "dokumen_pinjaman/{$user->id}",
+            $dokPinName,
+            'public'
+        );
+
+        // =======================
+        // Simpan Dokumen 2 (dokumen_verifikasi)
+        // =======================
+        // timestamp ditambah sedikit agar beda nama file
+        $timestamp2 = $timestamp + 1;
+
+        $dokVerName = "dokumen_verifikasi_{$pinjaman->id}_{$timestamp2}.pdf";
+        $dokumenVerifikasi = $files[1]->storeAs(
+            "dokumen_pinjaman/{$user->id}",
+            $dokVerName,
+            'public'
+        );
+
+        // SIMPAN KE DATABASE
+        $pinjaman->dokumen_pinjaman = $dokumenPinjaman;
+        $pinjaman->dokumen_verifikasi = $dokumenVerifikasi;
+        $pinjaman->status = 'pending';
+        $pinjaman->save();
+
+        return back()->with('success', '2 dokumen berhasil di-upload. Menunggu verifikasi pengurus.');
     }
 
 
-    public function hapusDokumen($id)
-    {
-        $dokumen = DokumenPinjaman::findOrFail($id);
-        Storage::disk('public')->delete($dokumen->file_path);
-        $dokumen->delete();
 
-        return back()->with('success', 'Dokumen berhasil dihapus.');
-    }
+
+    // public function download($id)
+    // {
+    //     $pinjaman = Pinjaman::with('user')->findOrFail($id);
+    //     $user = Auth::user();
+
+    //     $pdf = Pdf::loadView('dokumen.SuratPinjaman', [
+    //         'user' => $user,
+    //         'pinjaman' => $pinjaman,
+    //         'tanggal' => now()->translatedFormat('d F Y'),
+    //     ])->setPaper('a4', 'portrait');
+
+    //     return $pdf->download('Surat_Pinjaman_' . $pinjaman->user->nama . '.pdf');
+    // }
+
+    // public function uploadForm($id)
+    // {
+    //     $pinjaman = Pinjaman::findOrFail($id);
+    //     return view('user.pinjaman.upload', compact('pinjaman'));
+    // }
+
+    // public function upload(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'dokumen_pinjaman.*' => 'required|mimes:pdf|max:2048',
+    //     ]);
+
+    //     $pinjaman = Pinjaman::findOrFail($id);
+
+    //     // Proses upload file
+    //     if ($request->hasFile('dokumen_pinjaman')) {
+    //         $files = [];
+    //         foreach ($request->file('dokumen_pinjaman') as $file) {
+    //             $path = $file->store('dokumen_pinjaman', 'public');
+    //             $files[] = $path;
+    //         }
+
+    //         $pinjaman->update([
+    //             'dokumen_pinjaman' => json_encode($files),
+    //             'status' => 'pending', // ✅ ubah status agar muncul di pengurus
+    //         ]);
+    //     }
+
+    //     return back()->with('success', 'Surat pinjaman berhasil diupload.');
+    // }
+
+
+    // public function hapusDokumen($id)
+    // {
+    //     $dokumen = DokumenPinjaman::findOrFail($id);
+    //     Storage::disk('public')->delete($dokumen->file_path);
+    //     $dokumen->delete();
+
+    //     return back()->with('success', 'Dokumen berhasil dihapus.');
+    // }
 }

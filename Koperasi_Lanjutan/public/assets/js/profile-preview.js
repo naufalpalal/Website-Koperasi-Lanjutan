@@ -10,12 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     photoPreview.src = e.target.result;
-                    if(defaultAvatar) defaultAvatar.style.display = 'none';
+                    photoPreview.classList.remove('hidden');
+                    if(defaultAvatar) defaultAvatar.classList.add('hidden');
                 }
                 reader.readAsDataURL(file);
             } else {
                 photoPreview.src = photoPreview.getAttribute('data-original') || '';
-                if(defaultAvatar) defaultAvatar.style.display = 'block';
+                if(defaultAvatar) defaultAvatar.classList.remove('hidden');
             }
         });
     }

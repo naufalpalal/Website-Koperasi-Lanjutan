@@ -12,20 +12,20 @@ use Carbon\Carbon;
 class SimpananSukarelaController extends Controller
 {
     public function index()
-{
-    // ambil bulan dan tahun sekarang
-    $bulanSekarang = Carbon::now()->month;
-    $tahunSekarang = Carbon::now()->year;
+    {
+        // ambil bulan dan tahun sekarang
+        $bulanSekarang = Carbon::now()->month;
+        $tahunSekarang = Carbon::now()->year;
 
-    // ambil data simpanan berdasarkan bulan & tahun saat ini
-    $simpanan = SimpananSukarela::with('user')
-        ->where('bulan', $bulanSekarang)
-        ->where('tahun', $tahunSekarang)
-        ->latest()
-        ->paginate(10);
+        // ambil data simpanan berdasarkan bulan & tahun saat ini
+        $simpanan = MasterSimpananSukarela::with('user')
+            ->where('bulan', $bulanSekarang)
+            ->where('tahun', $tahunSekarang)
+            ->latest()
+            ->paginate(10);
 
-    return view('pengurus.simpanan.sukarela.index', compact('simpanan', 'bulanSekarang', 'tahunSekarang'));
-}
+        return view('pengurus.simpanan.sukarela.index', compact('simpanan', 'bulanSekarang', 'tahunSekarang'));
+    }
 
     public function create()
     {
@@ -76,90 +76,90 @@ class SimpananSukarelaController extends Controller
         return redirect()->back()->with('success', 'Pengajuan simpanan ditolak.');
     }
 
-   public function generate(Request $request)
-{
-    $request->validate([
-        'bulan' => 'required|numeric|min:1|max:12',
-        'tahun' => 'required|numeric|min:2000',
-    ]);
+    public function generate(Request $request)
+    {
+        $request->validate([
+            'bulan' => 'required|numeric|min:1|max:12',
+            'tahun' => 'required|numeric|min:2000',
+        ]);
 
-    $bulan = $request->bulan;
-    $tahun = $request->tahun;
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
 
-    $anggota = User::get();
+        $anggota = User::get();
 
-    foreach ($anggota as $a) {
-        $master = MasterSimpananSukarela::where('users_id', $a->id)
-            ->where('status', 'Disetujui')
-            ->latest()
-            ->first();
+        foreach ($anggota as $a) {
+            $master = MasterSimpananSukarela::where('users_id', $a->id)
+                ->where('status', 'Disetujui')
+                ->latest()
+                ->first();
 
-        $nominal = $master->nilai ?? 0;
+            $nominal = $master->nilai ?? 0;
 
-        $cek = SimpananSukarela::where('users_id', $a->id)
-            ->where('tahun', $tahun)
-            ->where('bulan', $bulan)
-            ->first();
+            $cek = SimpananSukarela::where('users_id', $a->id)
+                ->where('tahun', $tahun)
+                ->where('bulan', $bulan)
+                ->first();
 
-        if (!$cek) {
-            SimpananSukarela::create([
-                'nilai' => $nominal,
-                'tahun' => $tahun,
-                'bulan' => $bulan,
-                'status' => 'Diajukan',
-                'users_id' => $a->id,
-            ]);
+            if (!$cek) {
+                SimpananSukarela::create([
+                    'nilai' => $nominal,
+                    'tahun' => $tahun,
+                    'bulan' => $bulan,
+                    'status' => 'Diajukan',
+                    'users_id' => $a->id,
+                ]);
+            }
         }
-    }
 
-    return back()->with('success', 'Simpanan sukarela berhasil digenerate.');
-}
+        return back()->with('success', 'Simpanan sukarela berhasil digenerate.');
+    }
 
 
     public function riwayat(Request $request)
-{
-    // Ambil parameter dari request (jika ada)
-    $id     = $request->input('id');     // ID anggota (optional)
-    $bulan  = $request->input('bulan');  // Bulan filter (optional)
-    $tahun  = $request->input('tahun');  // Tahun filter (optional)
-    $nilai  = $request->input('nilai');  // Nilai filter (optional)
+    {
+        // Ambil parameter dari request (jika ada)
+        $id = $request->input('id');     // ID anggota (optional)
+        $bulan = $request->input('bulan');  // Bulan filter (optional)
+        $tahun = $request->input('tahun');  // Tahun filter (optional)
+        $nilai = $request->input('nilai');  // Nilai filter (optional)
 
-    // Buat query dasar
-    $query = SimpananSukarela::with('user');
+        // Buat query dasar
+        $query = SimpananSukarela::with('user');
 
-    // Filter per anggota jika ID ada
-    $anggota = null;
-    if ($id) {
-        $query->where('users_id', $id);
+        // Filter per anggota jika ID ada
+        $anggota = null;
+        if ($id) {
+            $query->where('users_id', $id);
+        }
+
+        // Filter bulan
+        if ($bulan) {
+            $query->where('bulan', $bulan);
+        }
+
+        // Filter tahun
+        if ($tahun) {
+            $query->where('tahun', $tahun);
+        }
+
+        // Filter berdasarkan nilai (jika user ingin mencari nominal tertentu)
+        if ($nilai) {
+            $query->where('nilai', $nilai);
+        }
+
+        // Ambil data riwayat dengan urutan terbaru
+        $riwayat = $query->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->paginate(10);
+
+
+        $totalSimpanan = $riwayat->sum('nilai');
+
+
+        // Kirim ke view
+        return view('pengurus.simpanan.sukarela.riwayat', compact('riwayat', 'anggota', 'bulan', 'tahun', 'nilai', 'id', 'totalSimpanan'));
     }
-
-    // Filter bulan
-    if ($bulan) {
-        $query->where('bulan', $bulan);
-    }
-
-    // Filter tahun
-    if ($tahun) {
-        $query->where('tahun', $tahun);
-    }
-
-    // Filter berdasarkan nilai (jika user ingin mencari nominal tertentu)
-    if ($nilai) {
-        $query->where('nilai', $nilai);
-    }
-
-    // Ambil data riwayat dengan urutan terbaru
-    $riwayat = $query->orderBy('tahun', 'desc')
-                     ->orderBy('bulan', 'desc')
-                     ->paginate(10);
-
-
-    $totalSimpanan = $riwayat->sum('nilai');
-
-
-    // Kirim ke view
-    return view('pengurus.simpanan.sukarela.riwayat', compact('riwayat', 'anggota', 'bulan', 'tahun', 'nilai', 'id', 'totalSimpanan'));
-}
 
 
 

@@ -4,29 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Daftar Anggota Koperasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 
 <body class="bg-[#428dff] flex items-center justify-center min-h-screen">
 
-    <div class="relative w-full max-w-xl flex flex-col items-center justify-center min-h-screen px-2">
-        <!-- Logo di luar card -->
-        <img src="{{ asset('assets/favicon.png') }}" alt="Logo" class="w-20 h-20 mb-6">
+    <div class="relative w-full max-w-3xl mx-auto px-2 py-6">
 
-        <div class="relative z-10 w-full">
-            @props(['isRegister' => false])
+        @props(['isRegister' => true])
 
-            <!-- Card dengan tema gelap -->
-            <div class="rounded-2xl shadow-2xl w-full {{ $isRegister ? 'max-w-4xl' : 'max-w-md' }} mx-auto overflow-hidden bg-white text-gray-900">
-                <div class="w-full px-6 py-6">
-                    {{ $slot }}
+        <!-- Card utama -->
+        <div class="rounded-2xl shadow-2xl w-full mx-auto overflow-auto bg-white text-gray-900 max-h-[90vh]">
+            <div class="w-full px-6 py-4">
+
+                <!-- Logo di atas form -->
+                <div class="flex justify-center">
+                    <img src="{{ asset('assets/favicon.png') }}" alt="Logo" class="w-20 h-20">
                 </div>
-            </div>
 
+                <!-- Slot konten (form pendaftaran atau login) -->
+                {{ $slot }}
+
+            </div>
         </div>
+
     </div>
+
 </body>
 <script src="{{ asset('assets/js/register.js') }}"></script>
+
 </html>

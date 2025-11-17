@@ -109,10 +109,9 @@
                 @endphp
 
                 <img src="{{ $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
-                    alt="{{ $pengurus->nama }}" class="h-10 w-10 rounded-full mr-3">
+                    alt="{{ $pengurus->nama }}" class="h-10 w-10 rounded-full object-cover object-center mr-3">
 
                 <div>
-                    <span class="font-semibold">{{ $pengurus->nama }}</span>
                     <!-- Teks selamat datang & role spesifik -->
                     <p class="text-sm text-gray-400">
                         Selamat datang

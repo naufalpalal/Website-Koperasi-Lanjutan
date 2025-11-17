@@ -13,13 +13,13 @@
 
             {{-- Error --}}
             @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded">
-                <ul class="list-disc list-inside text-sm">
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+                <div class="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
             {{-- Form --}}
@@ -45,28 +45,35 @@
                     <div>
                         {{-- Nama --}}
                         <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap <span
+                                    class="text-red-500">*</span></label>
                             <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" required>
+                                class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                                required>
                         </div>
 
                         {{-- NIP / Username --}}
-                        <div class="mb-4" id="field_nip_username" style="display: none;">
-                            <label for="nip_username" class="block text-sm font-medium text-gray-700" id="label_nip_username">NIP</label>
+                        <div class="mb-4" id="field_nip_username">
+                            <label for="nip_username" class="block text-sm font-medium text-gray-700"
+                                id="label_nip_username">NIP</label>
                             <input type="text" id="nip_username" name="nip_username" value="{{ old('nip_username') }}"
                                 class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
                         </div>
 
+
                         {{-- No HP --}}
                         <div class="mb-4">
-                            <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP / WhatsApp <span class="text-red-500">*</span></label>
+                            <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP / WhatsApp
+                                <span class="text-red-500">*</span></label>
                             <input type="text" id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}"
-                                class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" required>
+                                class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                                required>
                         </div>
 
                         {{-- Tombol Kirim OTP --}}
                         <div class="mb-4">
-                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition">
+                            <button type="button"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition">
                                 Kirim OTP
                             </button>
                         </div>
@@ -79,14 +86,17 @@
 
                         {{-- Tempat dan Tanggal Lahir --}}
                         <div class="mb-4">
-                            <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
+                            <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat
+                                Lahir</label>
                             <input type="text" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
                                 class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
                         </div>
 
                         <div class="mb-4">
-                            <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                            <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal
+                                Lahir</label>
+                            <input type="date" id="tanggal_lahir" name="tanggal_lahir"
+                                value="{{ old('tanggal_lahir') }}"
                                 class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
                         </div>
                     </div>
@@ -95,7 +105,8 @@
                     <div>
                         {{-- Alamat Rumah --}}
                         <div class="mb-4">
-                            <label for="alamat_rumah" class="block text-sm font-medium text-gray-700">Alamat Rumah</label>
+                            <label for="alamat_rumah" class="block text-sm font-medium text-gray-700">Alamat
+                                Rumah</label>
                             <textarea id="alamat_rumah" name="alamat_rumah" rows="3"
                                 class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">{{ old('alamat_rumah') }}</textarea>
                         </div>
@@ -110,15 +121,28 @@
                         {{-- Password --}}
                         <div class="mb-4">
                             <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                            <input type="password" id="password" name="password" required
-                                class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                            <div class="relative mt-1">
+                                <input type="password" id="password" name="password" required
+                                    class="block w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                <button type="button" onclick="togglePassword('password', this)"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
 
                         {{-- Konfirmasi Password --}}
                         <div class="mb-4">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
-                            <input type="password" id="password_confirmation" name="password_confirmation" required
-                                class="mt-1 block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                            <label for="password_confirmation"
+                                class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
+                            <div class="relative mt-1">
+                                <input type="password" id="password_confirmation" name="password_confirmation" required
+                                    class="block w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                <button type="button" onclick="togglePassword('password_confirmation', this)"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -126,7 +150,8 @@
 
                 {{-- Tombol Aksi --}}
                 <div class="flex justify-end gap-3 mt-6">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg shadow transition">
+                    <button type="submit"
+                        class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg shadow transition">
                         Daftar
                     </button>
                     <a href="{{ route('login') }}"
@@ -138,4 +163,5 @@
         </div>
     </div>
 
+<script src="{{ asset('assets/js/show-password.js') }}"></script>
 </x-guest-layout>
