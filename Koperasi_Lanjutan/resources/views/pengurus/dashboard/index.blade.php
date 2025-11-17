@@ -46,7 +46,7 @@
 					</svg>
 				</div>
 				<div>
-					<div class="text-sm text-gray-500">Total Pinjaman</div>
+					<div class="text-sm text-gray-500">Total Pinjaman Masuk</div>
 					<div class="text-2xl font-semibold text-gray-800">
 						Rp {{ number_format($totalPinjaman, 0, ',', '.') }}
 					</div>
@@ -64,7 +64,7 @@
 					</svg>
 				</div>
 				<div>
-					<div class="text-sm text-gray-500">Total Simpanan</div>
+					<div class="text-sm text-gray-500">Total Simpanan Masuk</div>
 					<div class="text-2xl font-semibold text-gray-800">
 						Rp {{ number_format($totalSimpanan, 0, ',', '.') }}
 					</div>

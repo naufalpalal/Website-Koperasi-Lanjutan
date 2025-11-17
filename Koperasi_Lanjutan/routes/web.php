@@ -308,6 +308,7 @@ Route::middleware('role.pengurus:bendahara,superadmin,ketua')->group(function ()
         Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
         Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
         Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
+        Route::get('/download', [SimpananSukarelaController::class, 'downloadExcel'])->name('pengurus.simpanan.sukarela.download');
     });
 });
 

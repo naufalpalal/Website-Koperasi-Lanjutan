@@ -5,7 +5,8 @@
         <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Riwayat Simpanan Sukarela</h2>
         {{-- Form Filter --}}
         <form action="{{ route('pengurus.simpanan.sukarela.riwayat') }}" method="GET">
-            <div
+            @csrf
+            {{-- <div
                 class="bg-gradient-to-br rounded-lg shadow-md p-4 flex flex-col items-center justify-center mb-4 w-full sm:w-auto">
                 <h3 class="text-base font-semibold text-center">
                     Total Simpanan:
@@ -13,7 +14,7 @@
                         Rp {{ number_format($totalSimpanan, 0, ',', '.') }}
                     </span>
                 </h3>
-            </div>
+            </div> --}}
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-4 rounded-lg shadow-sm">
                 {{-- Filter Anggota (ID) --}}
@@ -75,9 +76,7 @@
                         <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">No</th>
                         <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">Nama Anggota</th>
                         <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">Bulan</th>
-                        <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">Tahun</th>
-                        <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">Tanggal Simpan</th>
-                        <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">Jumlah</th>
+                        <th class="px-3 py-2 text-left text-xs sm:text-sm font-semibold">Nominal</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">

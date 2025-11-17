@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('pengajuan_angsuran', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pinjaman_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pinjaman_id')->constrained('pinjaman')->onDelete('cascade');
             $table->json('angsuran_ids'); // list angsuran yang dipilih
             $table->string('bukti_transfer');
             $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Pengurus;
 use App\Models\User;
 use App\Models\User\MasterSimpananSukarela;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,7 +10,7 @@ uses(RefreshDatabase::class);
 
 it('pengurus dapat menyetujui pengajuan simpanan sukarela', function () {
     // Arrange
-    $pengurus = User::factory()->create(['role' => 'pengurus']);
+    $pengurus = Pengurus::factory()->create(['role' => 'bendahara']);
 
     // Buat data pengajuan simpanan sukarela
     $pengajuan = MasterSimpananSukarela::factory()->create([
@@ -30,7 +31,7 @@ it('pengurus dapat menyetujui pengajuan simpanan sukarela', function () {
 
 it('pengurus dapat menolak pengajuan simpanan sukarela', function () {
     // Arrange
-    $pengurus = User::factory()->create(['role' => 'pengurus']);
+    $pengurus = Pengurus::factory()->create(['role' => 'bendahara']);
 
     // Buat data pengajuan simpanan sukarela
     $pengajuan = MasterSimpananSukarela::factory()->create([

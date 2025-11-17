@@ -18,7 +18,7 @@ class SimpananSukarelaController extends Controller
         $tahunSekarang = Carbon::now()->year;
 
         // ambil data simpanan berdasarkan bulan & tahun saat ini
-        $simpanan = MasterSimpananSukarela::with('user')
+        $simpanan = SimpananSukarela::with('user')
             ->where('bulan', $bulanSekarang)
             ->where('tahun', $tahunSekarang)
             ->latest()
@@ -160,6 +160,64 @@ class SimpananSukarelaController extends Controller
         // Kirim ke view
         return view('pengurus.simpanan.sukarela.riwayat', compact('riwayat', 'anggota', 'bulan', 'tahun', 'nilai', 'id', 'totalSimpanan'));
     }
+
+
+    public function downloadExcel()
+    {
+        $sukarela = SimpananSukarela::with('user')->get();
+
+        $filename = 'laporan_simpanan_sukarela' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->stream(function () use ($sukarela) {
+
+            // Bersihkan output buffer agar tidak merusak CSV
+            if (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            $handle = fopen('php://output', 'w');
+
+            // Tambahkan UTF-8 BOM agar excel tidak berantakan
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header kolom
+            // Header CSV
+            fputcsv($handle, [
+                'Nama Anggota',
+                'Bulan',
+                'Tahun',
+                'Nominal',
+                'Status',
+                'Tanggal Pengajuan',
+                'Tanggal Disetujui'
+            ]);
+
+            // Isi data CSV
+            foreach ($sukarela as $p) {
+                fputcsv($handle, [
+                    $p->user->nama ?? '-',
+                    $p->bulan,
+                    $p->tahun,
+                    $p->nominal,
+                    ucfirst($p->status ?? '-'),
+                    $p->created_at?->format('d-m-Y H:i') ?? '-',
+                    $p->tanggal_disetujui?->format('d-m-Y H:i') ?? '-',
+                ]);
+            }
+
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
 
 
 

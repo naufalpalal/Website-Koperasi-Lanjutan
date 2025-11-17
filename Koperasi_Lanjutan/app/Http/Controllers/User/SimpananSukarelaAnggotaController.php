@@ -14,19 +14,40 @@ class SimpananSukarelaAnggotaController extends Controller
     {
         $user = Auth::user();
 
-        // Total saldo hanya dari status "Dibayar"
+        // Total saldo yang statusnya berhasil/dibayar
         $totalSaldo = SimpananSukarela::where('users_id', $user->id)
             ->where('status', 'Dibayar')
             ->sum('nilai');
 
-        // Status bulan ini (sudah setor / belum / diajukan / libur)
+        // Status bulan ini
         $bulanIni = SimpananSukarela::where('users_id', $user->id)
             ->where('tahun', now()->year)
             ->where('bulan', now()->month)
             ->first();
 
-        return view('user.simpanan.sukarela.index', compact('totalSaldo', 'bulanIni'));
+        // Statistik tambahan untuk dashboard
+        $countBerhasil = SimpananSukarela::where('users_id', $user->id)
+            ->where('status', 'Dibayar')
+            ->count();
+
+        $countPending = SimpananSukarela::where('users_id', $user->id)
+            ->where('status', 'Pending')
+            ->count();
+
+        $countGagal = SimpananSukarela::where('users_id', $user->id)
+            ->where('status', 'Gagal')
+            ->count();
+
+        return view('user.simpanan.sukarela.index', compact(
+            'totalSaldo',
+            'bulanIni',
+            'countBerhasil',
+            'countPending',
+            'countGagal',
+            'user'
+        ));
     }
+
 
     // Riwayat simpanan sukarela user
     public function riwayat()

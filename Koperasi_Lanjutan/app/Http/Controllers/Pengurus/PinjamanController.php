@@ -125,7 +125,8 @@ class PinjamanController extends Controller
             // Generate angsuran
             $tanggalPersetujuan = now();
             for ($i = 1; $i <= $tenor; $i++) {
-                $jatuhTempo = $tanggalPersetujuan->copy()->addMonths($i - 1);
+                $jatuhTempo = $tanggalPersetujuan->copy()->addMonths($i);
+
 
                 Angsuran::create([
                     'pinjaman_id' => $pinjaman->id,
