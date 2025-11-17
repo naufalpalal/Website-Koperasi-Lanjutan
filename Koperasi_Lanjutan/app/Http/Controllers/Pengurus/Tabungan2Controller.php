@@ -76,8 +76,8 @@ class Tabungan2Controller extends Controller
     {
         $request->validate([
             'users_id' => 'required|exists:users,id',
-            'tanggal'  => 'required|date|after_or_equal:2000-01-01|before_or_equal:' . now()->format('Y-m-d'),
-            'nilai'    => 'required|numeric|min:1000',
+            'tanggal' => 'required|date|after_or_equal:2000-01-01|before_or_equal:' . now()->format('Y-m-d'),
+            'nilai' => 'required|numeric|min:1000',
         ], [
             'tanggal.required' => 'Tanggal harus diisi.',
             'tanggal.date' => 'Format tanggal tidak valid.',
@@ -94,12 +94,12 @@ class Tabungan2Controller extends Controller
         }
 
         Tabungan::create([
-            'users_id'        => $request->users_id,
-            'pengurus_id'     => Auth::guard('pengurus')->id(),
-            'tanggal'         => $request->tanggal,
-            'nilai'           => $request->nilai,
-            'status'          => 'diterima',
-            'bukti_transfer'  => null,
+            'users_id' => $request->users_id,
+            'pengurus_id' => Auth::guard('pengurus')->id(),
+            'tanggal' => $request->tanggal,
+            'nilai' => $request->nilai,
+            'status' => 'diterima',
+            'bukti_transfer' => null,
         ]);
 
         return redirect()
@@ -131,17 +131,17 @@ class Tabungan2Controller extends Controller
     {
         $request->validate([
             'users_id' => 'required|exists:users,id',
-            'tanggal'  => 'required|date|before_or_equal:today',
-            'debit'    => 'required|numeric|min:100',
+            'tanggal' => 'required|date|before_or_equal:today',
+            'debit' => 'required|numeric|min:100',
         ], [
             'users_id.required' => 'User tidak ditemukan.',
-            'users_id.exists'   => 'Data user tidak valid.',
-            'tanggal.required'  => 'Tanggal harus diisi.',
-            'tanggal.date'      => 'Tanggal tidak sesuai.',
+            'users_id.exists' => 'Data user tidak valid.',
+            'tanggal.required' => 'Tanggal harus diisi.',
+            'tanggal.date' => 'Tanggal tidak sesuai.',
             'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
-            'debit.required'    => 'Nominal harus diisi.',
-            'debit.numeric'     => 'Nominal harus berupa angka.',
-            'debit.min'         => 'Nominal minimal 100.',
+            'debit.required' => 'Nominal harus diisi.',
+            'debit.numeric' => 'Nominal harus berupa angka.',
+            'debit.min' => 'Nominal minimal 100.',
         ]);
 
         $user = User::findOrFail($request->users_id);
@@ -152,12 +152,12 @@ class Tabungan2Controller extends Controller
         }
 
         Tabungan::create([
-            'users_id'   => $user->id,
-            'pengurus_id'=> Auth::guard('pengurus')->id(),
-            'tanggal'    => $request->tanggal,
-            'nilai'      => 0,
-            'debit'      => $request->debit,
-            'status'     => 'dipotong',
+            'users_id' => $user->id,
+            'pengurus_id' => Auth::guard('pengurus')->id(),
+            'tanggal' => $request->tanggal,
+            'nilai' => 0,
+            'debit' => $request->debit,
+            'status' => 'dipotong',
         ]);
 
         return back()->with('success', 'Debit berhasil dilakukan dan saldo telah diperbarui.');
@@ -187,25 +187,25 @@ class Tabungan2Controller extends Controller
     {
         $request->validate([
             'users_id' => 'required|exists:users,id',
-            'tanggal'  => 'required|date|before_or_equal:today',
-            'nilai'    => 'required|numeric|min:100',
+            'tanggal' => 'required|date|before_or_equal:today',
+            'nilai' => 'required|numeric|min:100',
         ], [
             'users_id.required' => 'User tidak ditemukan.',
-            'users_id.exists'   => 'Data user tidak valid.',
-            'tanggal.required'  => 'Tanggal harus diisi.',
-            'tanggal.date'      => 'Format tanggal tidak valid.',
+            'users_id.exists' => 'Data user tidak valid.',
+            'tanggal.required' => 'Tanggal harus diisi.',
+            'tanggal.date' => 'Format tanggal tidak valid.',
             'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
-            'nilai.required'    => 'Nominal harus diisi.',
-            'nilai.numeric'     => 'Nominal harus berupa angka.',
-            'nilai.min'         => 'Nominal minimal Rp 100.',
+            'nilai.required' => 'Nominal harus diisi.',
+            'nilai.numeric' => 'Nominal harus berupa angka.',
+            'nilai.min' => 'Nominal minimal Rp 100.',
         ]);
 
         Tabungan::create([
-            'users_id'       => $request->users_id,
-            'pengurus_id'    => Auth::guard('pengurus')->id(),
-            'tanggal'        => $request->tanggal,
-            'nilai'          => $request->nilai,
-            'status'         => 'diterima',
+            'users_id' => $request->users_id,
+            'pengurus_id' => Auth::guard('pengurus')->id(),
+            'tanggal' => $request->tanggal,
+            'nilai' => $request->nilai,
+            'status' => 'diterima',
             'bukti_transfer' => null,
         ]);
 
@@ -221,7 +221,7 @@ class Tabungan2Controller extends Controller
     {
         $user = User::findOrFail($id);
         $tanggal = $request->input('tanggal');
-        $status  = $request->input('status');
+        $status = $request->input('status');
 
         $query = Tabungan::where('users_id', $id);
 
@@ -246,7 +246,64 @@ class Tabungan2Controller extends Controller
         $totalSaldo = $totalKredit - $totalDebit;
 
         return view('pengurus.simpanan.tabungan.detail', compact(
-            'user', 'tabungans', 'totalSaldo', 'tanggal', 'status'
+            'user',
+            'tabungans',
+            'totalSaldo',
+            'tanggal',
+            'status'
         ));
+    }
+
+    public function downloadExcel()
+    {
+        // Ambil semua tabungan
+        $tabungan = Tabungan::with('user')->get();
+
+        // Kelompokkan berdasarkan user_id
+        $grouped = $tabungan->groupBy('users_id')->map(function ($items) {
+            return [
+                'nama' => $items->first()->user->nama ?? '-',
+                'total_nilai' => $items->sum('nilai'),
+                'total_debit' => $items->sum('debit'),
+                'first_tanggal' => $items->first()->tanggal,
+                'last_tanggal' => $items->last()->tanggal,
+                'created_at' => $items->first()->created_at,
+            ];
+        });
+
+        $filename = 'rekap_tabungan_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        return response()->stream(function () use ($grouped) {
+            $handle = fopen('php://output', 'w');
+
+            // Header CSV
+            fputcsv($handle, [
+                'Nama Anggota',
+                'Total Nilai',
+                'Total Debit',
+                'Tanggal Pertama',
+                'Tanggal Terakhir',
+                'Tanggal Input Pertama'
+            ]);
+
+            // Isi CSV per user
+            foreach ($grouped as $row) {
+                fputcsv($handle, [
+                    $row['nama'],
+                    $row['total_nilai'],
+                    $row['total_debit'],
+                    $row['first_tanggal'],
+                    $row['last_tanggal'],
+                    $row['created_at'],
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
     }
 }

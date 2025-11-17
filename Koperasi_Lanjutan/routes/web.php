@@ -144,6 +144,8 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
 
         Route::get('/', [Tabungan2Controller::class, 'index'])
             ->name('pengurus.tabungan.index');
+        Route::get('/pengurus/tabungan/download-excel', [Tabungan2Controller::class, 'downloadExcel'])
+            ->name('pengurus.tabungan.download.excel');
 
         Route::get('/{id}', [Tabungan2Controller::class, 'detail'])
             ->name('pengurus.tabungan.detail');

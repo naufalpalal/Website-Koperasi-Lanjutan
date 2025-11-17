@@ -170,7 +170,7 @@ class PengurusSimpananWajibController extends Controller
 
     public function downloadExcel()
     {
-        $simpanan = \App\Models\Pengurus\SimpananWajib::with('user')->get();
+        $simpanan = SimpananWajib::with('user')->get();
 
         $filename = 'laporan_simpanan_wajib_' . date('Y-m-d_H-i-s') . '.csv';
 
@@ -183,7 +183,7 @@ class PengurusSimpananWajibController extends Controller
             $handle = fopen('php://output', 'w');
 
             // Header kolom CSV
-            fputcsv($handle, ['Nama Anggota', 'Nominal', 'Bulan', 'Tahun', 'Status']);
+            fputcsv($handle, ['Nama Anggota', 'Nominal', 'Bulan', 'Tahun', 'Status', 'Tanggal Dibuat', 'Terakhir Diupdate']);
 
             // Data isi CSV
             foreach ($simpanan as $s) {
@@ -193,6 +193,8 @@ class PengurusSimpananWajibController extends Controller
                     $s->bulan,
                     $s->tahun,
                     ucfirst($s->status),
+                    $s->created_at ? $s->created_at->format('d-m-Y H:i:s') : '-',
+                    $s->updated_at ? $s->updated_at->format('d-m-Y H:i:s') : '-',
                 ]);
             }
 

@@ -9,7 +9,8 @@
             Detail Tabungan: {{ $user->nama }}
         </h2>
         <a href="{{ route('pengurus.tabungan.index') }}" 
-           class="text-blue-600 hover:text-blue-800 text-sm text-left sm:text-right">← Kembali ke Daftar</a>
+           class="text-blue-600 hover:text-blue-800 text-sm text-left sm:text-right">← Kembali ke Daftar
+        </a>
     </div>
 
     {{-- Total saldo --}}
