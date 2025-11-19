@@ -308,7 +308,28 @@
                     <td>
                         <div class="signature-title">Mengetahui<br>Bendahara Koperasi</div>
                         <div class="signature-name">
-                            ({{ $identitas->nama_bendahara_koperasi ?? 'Erlina Kusumawati, S.ST.' }})</div>
+                            @php
+                                $rawBendahara = $identitas->nama_bendahara_koperasi ?? '';
+                                $namaFix = $rawBendahara; // Default awal
+
+                                // 1. Cek apakah formatnya JSON Array (kurung siku ["A", "B"])
+                                $cekJson = json_decode($rawBendahara, true);
+
+                                if (json_last_error() === JSON_ERROR_NONE && is_array($cekJson) && count($cekJson) > 0) {
+                                    // Jika Array, ambil urutan pertama
+                                    $namaFix = $cekJson[0];
+                                }
+                                // 2. Cek apakah formatnya String dipisah koma ("Dimas JP, Nila")
+                                elseif (str_contains($rawBendahara, ',')) {
+                                    // Pecah berdasarkan koma, ambil bagian pertama
+                                    $pecah = explode(',', $rawBendahara);
+                                    $namaFix = trim($pecah[0]); // trim() untuk hapus spasi berlebih
+                                }
+                            @endphp
+
+                            {{-- Tampilkan Hasil --}}
+                            ({{ $namaFix }})
+                        </div>
                     </td>
                     <td>
                         <div class="signature-title">Disetujui oleh<br>Ketua Koperasi</div>

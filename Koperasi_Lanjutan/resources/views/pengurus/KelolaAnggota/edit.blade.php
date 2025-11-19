@@ -54,7 +54,7 @@
                                 <span>Nama <span class="text-red-500 ml-1">*</span></span>
                             </label>
                             <input type="text" id="nama" name="nama" value="{{ old('nama', $anggota->nama) }}" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                          @error('nama') border-red-500 @enderror"
+                                                                          @error('nama') border-red-500 @enderror"
                                 placeholder="Nama lengkap">
                             @error('nama')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -75,7 +75,7 @@
                             </label>
                             <input type="tel" id="no_telepon" name="no_telepon"
                                 value="{{ old('no_telepon', $anggota->no_telepon) }}" inputmode="tel" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                          @error('no_telepon') border-red-500 @enderror"
+                                                                          @error('no_telepon') border-red-500 @enderror"
                                 placeholder="08xx-xxxx-xxxx" />
                             @error('no_telepon')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -141,7 +141,8 @@
                                 <span>NIP</span>
                             </label>
                             <input type="text" id="nip" name="nip" value="{{ old('nip', $anggota->nip) }}" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                          @error('nip') border-red-500 @enderror" placeholder="NIP / NIK">
+                                                                          @error('nip') border-red-500 @enderror"
+                                placeholder="NIP / NIK">
                             @error('nip')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -163,7 +164,7 @@
                             </label>
                             <input type="text" id="tempat_lahir" name="tempat_lahir"
                                 value="{{ old('tempat_lahir', $anggota->tempat_lahir) }}" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                          @error('tempat_lahir') border-red-500 @enderror"
+                                                                          @error('tempat_lahir') border-red-500 @enderror"
                                 placeholder="Kota / Kabupaten">
                             @error('tempat_lahir')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -182,8 +183,9 @@
                                 <span>Tanggal Lahir</span>
                             </label>
                             <input type="date" id="tanggal_lahir" name="tanggal_lahir"
-                                value="{{ old('tanggal_lahir', $anggota->tanggal_lahir) }}" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                          @error('tanggal_lahir') border-red-500 @enderror">
+                                value="{{ old('tanggal_lahir', $anggota->tanggal_lahir) }}"
+                                class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
+                                                                          @error('tanggal_lahir') border-red-500 @enderror">
                             @error('tanggal_lahir')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -199,8 +201,9 @@
                                 </span>
                                 <span>Alamat Rumah</span>
                             </label>
-                            <textarea id="alamat_rumah" name="alamat_rumah" rows="3" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                             @error('alamat_rumah') border-red-500 @enderror"
+                            <textarea id="alamat_rumah" name="alamat_rumah" rows="3"
+                                class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
+                                                                             @error('alamat_rumah') border-red-500 @enderror"
                                 placeholder="Alamat lengkap">{{ old('alamat_rumah', $anggota->alamat_rumah) }}</textarea>
                             @error('alamat_rumah')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -219,7 +222,7 @@
                                 <span>Unit Kerja</span>
                             </label>
                             <textarea id="unit_kerja" name="unit_kerja" rows="2" class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none 
-                                                             @error('unit_kerja') border-red-500 @enderror"
+                                                                             @error('unit_kerja') border-red-500 @enderror"
                                 placeholder="Unit / Bagian">{{ old('unit_kerja', $anggota->unit_kerja) }}</textarea>
                             @error('unit_kerja')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -243,7 +246,95 @@
                         </div>
                     </div>
                 </div>
+                {{-- Dokumen Anggota --}}
+                <div class="mt-8 pt-8 border-t border-gray-200">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-purple-50 text-purple-600 shadow">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+                                <path d="M14 2v6h6" fill="#fff" />
+                                <path d="M8 13h8M8 17h5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <h3 class="text-lg font-bold text-gray-800">Dokumen Anggota</h3>
+                    </div>
 
+                    @if(isset($anggota->dokumen))
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Dokumen Pendaftaran --}}
+                            @if($anggota->dokumen->dokumen_pendaftaran)
+                                <div
+                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-purple-300 transition">
+                                    <div class="flex items-center gap-3">
+                                        <span
+                                            class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 text-purple-600">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+                                                <path d="M14 2v6h6M10 12h4M10 16h2" stroke="#fff" stroke-width="1.5" />
+                                            </svg>
+                                        </span>
+                                        <div>
+                                            <p class="font-semibold text-gray-800 text-sm">Dokumen Pendaftaran</p>
+                                            <p class="text-xs text-gray-500">{{ basename($anggota->dokumen->dokumen_pendaftaran) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url('/pengurus/dokumen/lihat/' . $anggota->id . '/pendaftaran') }}" target="_blank"
+                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Lihat
+                                    </a>
+                                </div>
+                            @endif
+
+                            {{-- SK Tenaga Kerja --}}
+                            @if($anggota->dokumen->sk_tenaga_kerja)
+                                <div
+                                    class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-purple-300 transition">
+                                    <div class="flex items-center gap-3">
+                                        <span
+                                            class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 text-blue-600">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+                                                <path d="M14 2v6h6M10 12h4M10 16h2" stroke="#fff" stroke-width="1.5" />
+                                            </svg>
+                                        </span>
+                                        <div>
+                                            <p class="font-semibold text-gray-800 text-sm">SK Tenaga Kerja</p>
+                                            <p class="text-xs text-gray-500">{{ basename($anggota->dokumen->sk_tenaga_kerja) }}</p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url('/pengurus/dokumen/lihat/' . $anggota->id . '/sk') }}" target="_blank"
+                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Lihat
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @else
+                        <div class="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+                            <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="text-gray-500 font-medium">Belum ada dokumen yang diupload</p>
+                            <p class="text-gray-400 text-sm mt-1">Anggota dapat mengupload dokumen melalui portal anggota</p>
+                        </div>
+                    @endif
+                </div>
                 {{-- Tombol Aksi --}}
                 <div class="flex justify-end gap-3 mt-8"> <!-- tambah margin top -->
                     <button type="submit"

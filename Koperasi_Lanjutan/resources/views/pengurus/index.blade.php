@@ -31,6 +31,7 @@
     <script src="{{ asset('assets/js/dataanggota.js') }}"></script>
     <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
     <script src="{{ asset('assets/js/simpananwajib_search.js') }}"></script>
+    <script src="{{ asset('assets/js/bendahara-setting.js') }}"></script>
     @yield('scripts')
 </body>
 

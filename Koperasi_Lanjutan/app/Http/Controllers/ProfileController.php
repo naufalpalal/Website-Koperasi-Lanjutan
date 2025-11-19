@@ -81,51 +81,62 @@ class ProfileController extends Controller
     /**
      * Update gabungan: profil + password + foto.
      */
-   public function updateCombined(Request $request): RedirectResponse
-{
-    $user = auth()->user();
+    public function updateCombined(Request $request): RedirectResponse
+    {
+        $user = auth()->user();
 
-    // Validasi data dasar
-    $request->validate([
-        'nama'         => 'required|string|max:255',
-        'nip'          => 'required|string|max:20|unique:users,nip,' . $user->id,
-        'no_telepon'   => 'required|string|max:15|unique:users,no_telepon,' . $user->id,
-        'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'alamat_rumah' => 'nullable|string|max:500',
-        'password'     => 'nullable|string|min:8|confirmed',
-    ]);
+        // VALIDASI DINAMIS
+        $rules = [
+            'nama' => 'required|string|max:255',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'alamat_rumah' => 'nullable|string|max:500',
+            'password' => 'nullable|string|min:8|confirmed',
+        ];
 
-    // === Upload Foto Baru (jika ada) ===
-    if ($request->hasFile('photo')) {
-        // Hapus foto lama jika ada dan file eksis
-        if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
-            Storage::disk('public')->delete($user->photo_path);
+        // Validasi nip hanya jika DIUBAH oleh user
+        if ($request->nip !== $user->nip) {
+            $rules['nip'] = 'required|string|max:20|unique:users,nip';
+        } else {
+            $rules['nip'] = 'required|string|max:20';
         }
 
-        // Simpan foto baru ke storage/app/public/profile-photos
-        $path = $request->file('photo')->store('profile-photos', 'public');
+        // Validasi no telepon hanya jika DIUBAH oleh user
+        if ($request->no_telepon !== $user->no_telepon) {
+            $rules['no_telepon'] = 'required|string|max:15|unique:users,no_telepon';
+        } else {
+            $rules['no_telepon'] = 'required|string|max:15';
+        }
 
-        // Simpan path baru ke kolom photo_path
-        $user->photo_path = $path;
+        // Jalankan validasi
+        $validated = $request->validate($rules);
+
+        // === Upload Foto Baru ===
+        if ($request->hasFile('photo')) {
+            if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
+                Storage::disk('public')->delete($user->photo_path);
+            }
+
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $user->photo_path = $path;
+        }
+
+        // === Update Password Jika Ada ===
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // === Update Data Profil ===
+        $user->nama = $validated['nama'];
+        $user->nip = $validated['nip'];
+        $user->no_telepon = $validated['no_telepon'];
+        $user->alamat_rumah = $validated['alamat_rumah'] ?? $user->alamat_rumah;
+
+        $user->save();
+
+        return redirect()
+            ->route('profile.edit')
+            ->with('status', 'Profil atau Password Berhasil Diperbarui');
     }
 
-    // === Update Password (jika diisi) ===
-    if ($request->filled('password')) {
-        $user->password = Hash::make($request->password);
-    }
-
-    // === Update Data Profil Lain ===
-    $user->nama         = $request->nama;
-    $user->nip          = $request->nip;
-    $user->no_telepon   = $request->no_telepon;
-    $user->alamat_rumah = $request->alamat_rumah;
-
-    // Simpan semua perubahan
-    $user->save();
-
-    return redirect()
-        ->route('profile.edit')
-        ->with('status', 'Profil atau Password Berhasil Diperbarui');
-}
 
 }

@@ -156,38 +156,53 @@
 
         <!-- TANDA TANGAN SEJAJAR -->
         <!-- Bagian tanda tangan -->
-        <table style="width:100%; margin-top:60px; text-align:center;">
+        <!-- SPASI BESAR ANTARA ISI SURAT DAN TTD -->
+        <div style="height: 80px;"></div>
+
+        <!-- BARIS 1: PEMOHON DI KANAN -->
+        <table style="width:100%; border-collapse:collapse;">
             <tr>
-                {{-- Kolom Wadir, hanya untuk internal --}}
+                <td style="width:33%;"></td>
+                <td style="width:33%;"></td>
+                <td style="width:33%; text-align:center;">
+                    Banyuwangi, {{ \Carbon\Carbon::parse($tanggal_permohonan)->format('d F Y') }}<br>
+                    Pemohon
+                    <div style="height:90px;"></div>
+                    <strong><u>{{ $user->nama }}</u></strong>
+                </td>
+            </tr>
+        </table>
+
+        <!-- SPASI ANTARA PEMOHON & WADIR/BENDAHARA -->
+        <div style="height: 40px;"></div>
+
+        <!-- BARIS 2: WADIR & BENDAHARA -->
+        <!-- BARIS 2: WADIR & BENDAHARA -->
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                {{-- WADIR --}}
                 @if($user->nip)
-                    <td>
+                    <td style="width:50%; text-align:center; vertical-align: top;">
                         Mengetahui,<br>
                         Wadir II Bidang Umum & Keuangan
-                        <br><br><br><br><br>
+                        <div style="height:90px;"></div>
                         <strong><u>{{ $identitas->nama_wadir }}</u></strong>
                     </td>
                 @endif
 
-                {{-- Kolom Bendahara Gaji --}}
-                <td>
+                {{-- BENDAHARA – POSISI DI KANAN --}}
+                <td style="width:50%; text-align:center; vertical-align: top;">
                     Menyetujui,<br>
                     Bendahara Gaji
                     @if($user->nip)
                         <br>Politeknik Negeri Banyuwangi
                     @endif
-                    <br><br><br><br><br>
+                    <div style="height:90px;"></div>
                     <strong><u>{{ $identitas->bendahara_gaji }}</u></strong>
-                </td>
-
-                {{-- Kolom Pemohon --}}
-                <td>
-                    Banyuwangi, {{ \Carbon\Carbon::parse($tanggal_permohonan)->format('d F Y') }}<br>
-                    Pemohon
-                    <br><br><br><br><br>
-                    <strong><u>{{ $user->nama }}</u></strong>
                 </td>
             </tr>
         </table>
+
 
     </div>
 </body>
