@@ -189,8 +189,8 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.pinjaman.pengajuan');
         Route::get('/pemotongan', [AngsuranController::class, 'periodePotongan'])
             ->name('pengurus.pinjaman.pemotongan');
-         Route::get('/download', [PinjamanController::class, 'downloadExcel'])
-         ->name('pengurus.pinjaman.download');
+        Route::get('/download', [PinjamanController::class, 'downloadExcel'])
+            ->name('pengurus.pinjaman.download');
         Route::post('/{id}/approve', [PinjamanController::class, 'approve'])
             ->name('pengurus.pinjaman.approve');
         Route::post('/{id}/reject', [PinjamanController::class, 'reject'])
@@ -262,8 +262,14 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             Route::delete('/{id}', [KelolaAnggotController::class, 'destroy'])
                 ->name('pengurus.anggota.destroy');
 
-            Route::patch('/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
+            Route::post('/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
                 ->name('pengurus.anggota.toggleStatus');
+
+            Route::put('/pengurus/anggota/{id}/restore', [KelolaAnggotController::class, 'restore'])
+                ->name('pengurus.anggota.restore');
+
+            
+
         });
 });
 

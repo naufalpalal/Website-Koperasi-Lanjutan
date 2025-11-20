@@ -44,6 +44,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+    'terakhir_tidak_aktif' => 'datetime', // <-- tambahkan ini
+];
+
     // RELATIONSHIPS
 
     public function simpananWajib()

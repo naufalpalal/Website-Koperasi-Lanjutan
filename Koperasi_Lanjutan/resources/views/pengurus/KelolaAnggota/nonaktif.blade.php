@@ -53,6 +53,7 @@
                             <th class="px-6 py-4 text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Alamat</th>
                             <th class="px-6 py-4 text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Tempat, Tgl Lahir</th>
                             <th class="px-6 py-4 text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Unit Kerja</th>
+                            <th class="px-6 py-4 text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Aksi</th>
                             <th class="px-6 py-4 text-xs font-medium text-gray-600 uppercase tracking-wider text-center whitespace-nowrap">Status</th>
                         </tr>
                     </thead>
@@ -70,10 +71,28 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 max-w-xs truncate" title="{{ $a->unit_kerja ?? '-' }}">{{ $a->unit_kerja ?? '-' }}</td>
+                                {{-- Tombol Aktifkan Kembali --}}
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
-                                    <span class="inline-block bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">
-                                        Tidak Aktif
-                                    </span>
+                                    <form action="{{ route('pengurus.anggota.restore', $a->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit"
+                                            class="flex justify-center items-center gap-1 bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-md text-sm shadow w-full mt-1">
+                                            Aktifkan Kembali
+                                        </button>
+                                    </form>
+                                </td>
+                                {{-- Status --}}
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    @if($a->status == 'aktif')
+                                        <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                            Aktif
+                                        </span>
+                                    @else
+                                        <span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                            Tidak Aktif
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

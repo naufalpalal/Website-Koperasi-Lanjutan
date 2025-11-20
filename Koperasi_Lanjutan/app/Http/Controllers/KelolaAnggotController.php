@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -111,6 +112,8 @@ class KelolaAnggotController extends Controller
             'tanggal_lahir' => 'nullable|date',
             'alamat_rumah' => 'nullable|string|max:255',
             'unit_kerja' => 'nullable|string|max:255',
+            'dokumen_pendaftaran' => 'nullable|file|mimes:pdf,jpg,jpeg,png',
+            'sk_tenaga_kerja' => 'nullable|file|mimes:pdf,jpg,jpeg,png',
 
             // simpanan
             'simpanan_pokok' => 'required|numeric|min:10000',
@@ -119,22 +122,67 @@ class KelolaAnggotController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $request) {
 
-                // 🔹 Buat user baru
-                $user = User::create([
-                    'nama' => $validated['nama'],
-                    'no_telepon' => $validated['no_telepon'],
-                    'password' => isset($validated['password'])
-                        ? bcrypt($validated['password'])
-                        : bcrypt('default123'), // password default
-                    'nip' => $validated['nip'] ?? null,
-                    'tempat_lahir' => $validated['tempat_lahir'] ?? null,
-                    'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-                    'alamat_rumah' => $validated['alamat_rumah'] ?? null,
-                    'unit_kerja' => $validated['unit_kerja'] ?? null,
-                    'status' => 'aktif',
-                ]);
+                // Cek apakah user dengan no_telepon sama sudah ada
+                $user = User::where('no_telepon', $validated['no_telepon'])->first();
+
+                if ($user) {
+                    // Jika ada dan statusnya nonaktif → set ulang menjadi pending untuk verifikasi
+                    if ($user->status === 'tidak aktif' || $user->status === 'ditolak') {
+                        $user->update([
+                            'nama' => $validated['nama'],
+                            'nip' => $validated['nip'] ?? null,
+                            'tempat_lahir' => $validated['tempat_lahir'] ?? null,
+                            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+                            'alamat_rumah' => $validated['alamat_rumah'] ?? null,
+                            'unit_kerja' => $validated['unit_kerja'] ?? null,
+                            'password' => isset($validated['password']) ? bcrypt($validated['password']) : $user->password,
+                            'status' => 'pending',
+                        ]);
+                    } else {
+                        throw new \Exception('Anggota dengan nomor telepon ini sudah terdaftar dan aktif.');
+                    }
+                } else {
+                    // Buat anggota baru
+                    $user = User::create([
+                        'nama' => $validated['nama'],
+                        'no_telepon' => $validated['no_telepon'],
+                        'password' => isset($validated['password']) ? bcrypt($validated['password']) : bcrypt('default123'),
+                        'nip' => $validated['nip'] ?? null,
+                        'tempat_lahir' => $validated['tempat_lahir'] ?? null,
+                        'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+                        'alamat_rumah' => $validated['alamat_rumah'] ?? null,
+                        'unit_kerja' => $validated['unit_kerja'] ?? null,
+                        'status' => 'pending',
+                    ]);
+                }
+
+
+                // 🔹 Upload Dokumen
+                $dokumenPendaftaran = null;
+                $skTenagaKerja = null;
+
+                if ($request->hasFile('dokumen_pendaftaran')) {
+                    $file = $request->file('dokumen_pendaftaran');
+                    $dokumenPendaftaran = 'dokumen_pendaftaran_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    Storage::putFileAs('private', $file, $dokumenPendaftaran);
+                }
+
+                if ($request->hasFile('sk_tenaga_kerja')) {
+                    $file = $request->file('sk_tenaga_kerja');
+                    $skTenagaKerja = 'sk_tenaga_kerja_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    Storage::putFileAs('private', $file, $skTenagaKerja);
+                }
+
+                // 🔹 Simpan ke tabel Dokumen
+                if ($dokumenPendaftaran || $skTenagaKerja) {
+                    \App\Models\Dokumen::create([
+                        'user_id' => $user->id,
+                        'dokumen_pendaftaran' => $dokumenPendaftaran,
+                        'sk_tenaga_kerja' => $skTenagaKerja,
+                    ]);
+                }
 
                 // 🔹 Simpanan Pokok (dibuat saat awal masuk koperasi)
                 SimpananPokok::create([
@@ -152,7 +200,7 @@ class KelolaAnggotController extends Controller
                     'nilai' => $validated['simpanan_wajib'],
                     'tahun' => now()->year,
                     'bulan' => now()->month,
-                    'status' => 'Diajukan',
+                    'status' => 'Dibayar',
                 ]);
 
                 // 🔹 Simpanan Sukarela (awal)
@@ -164,6 +212,7 @@ class KelolaAnggotController extends Controller
                     'status' => 'Disetujui',
                 ]);
             });
+
             // ✅ Return HARUS di luar DB::transaction
             return redirect()->route('pengurus.anggota.index')
                 ->with('success', 'Anggota berhasil ditambahkan beserta simpanannya');
@@ -330,6 +379,7 @@ class KelolaAnggotController extends Controller
             fputcsv($handle, [
                 'Nama Anggota',
                 'Status',
+                'Terakhir Tidak Aktif', // Tambahan kolom
                 'Total Simpanan Pokok',
                 'Total Simpanan Wajib',
                 'Total Simpanan Sukarela',
@@ -357,6 +407,7 @@ class KelolaAnggotController extends Controller
                 fputcsv($handle, [
                     $a->nama,
                     ucfirst($a->status),
+                    $a->terakhir_tidak_aktif ? $a->terakhir_tidak_aktif->format('d-m-Y H:i') : '-',
                     $simpananPokok,
                     $simpananWajib,
                     $simpananSukarela,
@@ -375,26 +426,54 @@ class KelolaAnggotController extends Controller
 
     public function nonaktif(Request $request)
     {
+        // Ambil data anggota yang statusnya tidak aktif
         $query = \App\Models\User::where('status', 'tidak aktif');
 
+        // Search
         if ($request->has('q') && $request->q != '') {
             $query->where('nama', 'like', '%' . $request->q . '%');
         }
 
-        $anggota = $query->orderBy('nama', 'asc')->paginate(5)->withQueryString();
+        // Urutkan berdasarkan kapan terakhir di-update (tanggal dinonaktifkan)
+        $anggota = $query->orderBy('updated_at', 'desc')
+            ->paginate(5)
+            ->withQueryString();
 
         return view('pengurus.KelolaAnggota.nonaktif', compact('anggota'));
     }
 
-    public function toggleStatus($id)
+    public function restore($id)
+    {
+        $anggota = User::findOrFail($id);
+
+        // Ubah status jadi aktif
+        $anggota->update([
+            'status' => 'aktif',
+        ]);
+
+        return redirect()->back()->with('success', 'Anggota berhasil dipulihkan.');
+    }
+
+    public function toggleStatus(Request $request, $id)
     {
         $anggota = \App\Models\User::findOrFail($id);
 
-        // Toggle status
-        $anggota->status = $anggota->status === 'aktif' ? 'tidak aktif' : 'aktif';
+        // Validasi status
+        $request->validate([
+            'status' => 'required|in:aktif,tidak aktif',
+        ]);
+
+        if ($request->status === 'tidak aktif') {
+            // Catat kapan dinonaktifkan
+            $anggota->terakhir_tidak_aktif = now();
+        }
+
+        // Update status sesuai nilai yang dikirim dari tombol
+        $anggota->status = $request->status;
         $anggota->save();
 
         return redirect()->back()->with('success', 'Status anggota berhasil diperbarui.');
+
     }
 
 
