@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Notifications\Messages\MailMessage;
+
 use App\Models\Dokumen;
 use App\Models\DokumenPinjaman;
 use App\Models\user\SimpananWajib;
@@ -14,11 +17,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    // atribut yang dapat di isi massal
     protected $fillable = [
         'nama',
         'email',
@@ -31,14 +30,10 @@ class User extends Authenticatable
         'alamat_rumah',
         'unit_kerja',
         'role',
-        'status',// aktif, non-aktif, pending
+        'status', // aktif, non-aktif, pending
     ];
 
-    /**
-     * Hidden attributes for serialization
-     *
-     * @var array<int, string>
-     */
+    // atribut yang disembunyikan
     protected $hidden = [
         'password',
         'remember_token',
@@ -87,7 +82,6 @@ class User extends Authenticatable
 
     public function totalSaldo()
     {
-        // Ambil semua tabungan dengan status diterima atau dipotong
         $tabungans = $this->tabungans()
             ->whereIn('status', ['diterima', 'dipotong'])
             ->get();
@@ -98,7 +92,6 @@ class User extends Authenticatable
         return $totalMasuk - $totalKeluar;
     }
 
-    // RELASI DOKUMEN (tanpa Media Library)
     public function dokumen()
     {
         return $this->hasOne(Dokumen::class, 'user_id');
@@ -107,5 +100,26 @@ class User extends Authenticatable
     public function dokumenpinjaman()
     {
         return $this->hasOne(DokumenPinjaman::class, 'user_id');
+    }
+
+    
+    //   Custom email untuk reset password 
+    protected static function booted()
+    {
+        ResetPassword::toMailUsing(function ($notifiable, $token) {
+            $user = $notifiable;
+            $url = url(route('forgot-password.form', [
+                'token' => $token,
+                'email' => $user->email,
+                'nip'   => $user->nip,
+            ], false));
+
+            return (new MailMessage)
+                ->subject('Reset Password Akun Koperasi')
+                ->greeting('Halo ' . $user->nama . ',')
+                ->line('Kami menerima permintaan reset password untuk akun Anda.')
+                ->action('Reset Password', $url)
+                ->line('Jika Anda tidak meminta reset password, abaikan email ini.');
+        });
     }
 }

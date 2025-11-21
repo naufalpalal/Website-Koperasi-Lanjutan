@@ -51,7 +51,7 @@
 
         <!-- Forgot Password & Register -->
         <div class="flex justify-between text-sm">
-            <a href="{{ route('password.request') }}" class="text-blue-500 hover:underline">Forgot password?</a>
+            <a href="{{ route('forgot-password') }}" class="text-blue-500 hover:underline">Lupa Password?</a>
             <a href="{{ route('register') }}" class="text-blue-500 hover:underline">Register</a>
             <a href="{{ route('pengurus.login') }}" class="text-blue-500 hover:underline">LOGIN PENGURUS</a>
         </div>
