@@ -446,13 +446,32 @@ class KelolaAnggotController extends Controller
     {
         $anggota = User::findOrFail($id);
 
-        // Ubah status jadi aktif
+        // 🔹 KODE ASLI ANDA — TIDAK DIUBAH
         $anggota->update([
             'status' => 'aktif',
         ]);
 
-        return redirect()->back()->with('success', 'Anggota berhasil dipulihkan.');
+        // ======================================================
+        // 🔵 TAMBAHAN: Reset Simpanan Pokok
+        // ======================================================
+
+        // 1. Hapus simpanan pokok lama
+        \App\Models\SimpananPokok::where('users_id', $id)->delete();
+
+        // 2. Buat ulang simpanan pokok baru (pengurus akan isi nilai nanti)
+        \App\Models\SimpananPokok::create([
+            'users_id' => $id,
+            'nilai' => null,          // masih kosong, karena belum setor
+            'tahun' => date('Y'),     // wajib, karena kolom NOT NULL
+            'bulan' => date('m'),     // wajib, karena kolom NOT NULL
+            'status' => 'Belum Dibayar' // sesuai enum tabel
+        ]);
+
+        // ======================================================
+
+        return redirect()->back()->with('success', 'Anggota berhasil dipulihkan dan simpanan pokok berhasil direset.');
     }
+
 
     public function toggleStatus(Request $request, $id)
     {
