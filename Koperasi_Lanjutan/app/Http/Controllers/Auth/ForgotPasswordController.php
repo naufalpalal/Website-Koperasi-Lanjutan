@@ -119,7 +119,7 @@ class ForgotPasswordController extends Controller
     // TAMPILKAN FORM RESET PASSWORD
     public function showResetForm($token)
     {
-        return view('auth.reset-password', [
+        return view('auth.forgot-password', [
             'token' => $token,
             'nip' => request()->query('nip')
         ]);
