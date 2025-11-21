@@ -220,7 +220,6 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             Route::post('/pengajuan/{id}/tolak', [PengajuanAngsuranController::class, 'tolakPengajuan'])
                 ->name('pengurus.angsuran.tolak');
         });
-
     });
     // ============================
     // KELOLA ANGGOTA
@@ -267,9 +266,6 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
 
             Route::put('/pengurus/anggota/{id}/restore', [KelolaAnggotController::class, 'restore'])
                 ->name('pengurus.anggota.restore');
-
-            
-
         });
 });
 
@@ -355,7 +351,6 @@ Route::middleware(['auth:web'])->group(function () {
     // routes/web.php
     Route::get('/anggota/pinjaman/dokumen/{tipe}', [PinjamanDokumenController::class, 'generate'])
         ->name('anggota.pinjaman.download');
-
 });
 
 Route::middleware(['auth:web'])->get('/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
