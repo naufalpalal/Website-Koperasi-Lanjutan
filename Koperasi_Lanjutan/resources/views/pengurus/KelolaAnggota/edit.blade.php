@@ -96,7 +96,7 @@
                                 <span>Simpanan Pokok</span>
                             </label>
                             <input type="number" id="simpanan_pokok" name="simpanan_pokok"
-                                value="{{ old('simpanan_pokok', $anggota->simpanan_pokok ?? 50000) }}" min="0" step="1000"
+                               value="{{ old('simpanan_pokok', $simpananPokok->nilai ?? 0) }}" min="0" step="1000"
                                 inputmode="numeric"
                                 class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
                         </div>
@@ -105,7 +105,7 @@
                             <label for="simpanan_wajib" class="flex items-center gap-3 font-semibold text-gray-700">
                                 <span>Simpanan Wajib</span>
                             </label>
-                            <input type="number" id="simpanan_wajib" name="simpanan_wajib"
+                            <input type="number" readonly id="simpanan_wajib" name="simpanan_wajib"
                                 value="{{ old('simpanan_wajib', $totalSimpananWajib ?? 0) }}" min="0" step="1000"
                                 inputmode="numeric"
                                 class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
@@ -122,7 +122,7 @@
                                 </span>
                                 <span>Simpanan Sukarela (Terakhir)</span>
                             </label>
-                            <input type="number" id="simpanan_sukarela" name="simpanan_sukarela"
+                            <input type="number" readonly id="simpanan_sukarela" name="simpanan_sukarela"
                                 value="{{ old('simpanan_sukarela', $totalSimpananSukarela ?? 0) }}" min="0" step="1000"
                                 inputmode="numeric"
                                 class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
@@ -239,7 +239,7 @@
                                 </span>
                                 <span>Total Pinjaman</span>
                             </label>
-                            <input type="number" id="total_pinjaman" name="total_pinjaman"
+                            <input type="number" readonly id="total_pinjaman" name="total_pinjaman"
                                 value="{{ old('total_pinjaman', $totalPinjaman ?? 0) }}" min="0" step="1000"
                                 inputmode="numeric"
                                 class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />

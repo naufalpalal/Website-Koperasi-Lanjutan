@@ -154,7 +154,7 @@ class KelolaAnggotController extends Controller
                         'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
                         'alamat_rumah' => $validated['alamat_rumah'] ?? null,
                         'unit_kerja' => $validated['unit_kerja'] ?? null,
-                        'status' => 'pending',
+                        'status' => 'aktif',
                     ]);
                 }
 
@@ -461,7 +461,7 @@ class KelolaAnggotController extends Controller
         // 2. Buat ulang simpanan pokok baru (pengurus akan isi nilai nanti)
         \App\Models\SimpananPokok::create([
             'users_id' => $id,
-            'nilai' => null,          // masih kosong, karena belum setor
+            'nilai' => 0,          // masih kosong, karena belum setor
             'tahun' => date('Y'),     // wajib, karena kolom NOT NULL
             'bulan' => date('m'),     // wajib, karena kolom NOT NULL
             'status' => 'Belum Dibayar' // sesuai enum tabel
