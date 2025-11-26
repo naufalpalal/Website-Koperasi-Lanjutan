@@ -26,6 +26,7 @@ class UserFactory extends Factory
             'tanggal_lahir' => $this->faker->date('Y-m-d', '2000-01-01'),
             'alamat_rumah' => $this->faker->address(),
             'unit_kerja' => $this->faker->randomElement(['Keuangan', 'HRD', 'IT', 'Produksi']),
+            // 'role' => $this->faker->randomElement(['pengurus', 'anggota']),
             'status' => $this->faker->randomElement(['pending', 'aktif', 'ditolak']),
             'email' => $this->faker->unique()->safeEmail(),
         ];
@@ -34,20 +35,22 @@ class UserFactory extends Factory
     /**
      * State khusus untuk status aktif.
      */
-    public function aktif(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'status' => 'aktif',
-        ]);
-    }
+    // public function anggota(): static
+    // {
+    //     return $this->state(fn (array $attributes) => [
+    //         'role' => 'anggota',
+    //         'status' => 'aktif',
+    //     ]);
+    // }
 
-    /**
-     * State khusus untuk status pending.
-     */
-    public function pending(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'status' => 'pending',
-        ]);
-    }
+    // /**
+    //  * State khusus untuk role pengurus.
+    //  */
+    // public function pengurus(): static
+    // {
+    //     return $this->state(fn (array $attributes) => [
+    //         'role' => 'pengurus',
+    //         'status' => 'aktif',
+    //     ]);
+    // }
 }
