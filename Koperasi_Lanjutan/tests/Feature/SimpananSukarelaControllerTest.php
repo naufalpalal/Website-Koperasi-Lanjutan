@@ -1,21 +1,30 @@
 <?php
 
+use App\Models\Pengurus;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User\MasterSimpananSukarela;
 
 uses(RefreshDatabase::class);
 
-it('pengurus dapat mengakses halaman index', function () {
-    // Buat akun dengan role pengurus
-    $pengurus = User::factory()->create([
-        'role' => 'pengurus',
+it('pengurus dapat menyetujui pengajuan simpanan sukarela', function () {
+    // Arrange
+    $pengurus = Pengurus::factory()->create(['role' => 'bendahara']);
+
+    $pengajuan = MasterSimpananSukarela::factory()->create([
+        'status' => 'Pending',
     ]);
 
-    // Login sebagai pengurus
-    $response = $this->actingAs($pengurus)->get('/simpanan-sukarela');
+    // Act
+    $response = $this->actingAs($pengurus, 'pengurus')
+                     ->post("/pengurus/simpanan-sukarela/approve/{$pengajuan->id}");
 
-    // Pastikan halaman dapat diakses
-    $response->assertStatus(200);
+    // Assert
+    $response->assertStatus(302);
+    $this->assertDatabaseHas('master_simpanan_sukarela', [
+        'id' => $pengajuan->id,
+        'status' => 'Disetujui',
+    ]);
 });
 
 it('anggota tidak dapat mengakses halaman pengurus', function () {
@@ -42,7 +51,7 @@ it('guest (belum login) akan diarahkan ke halaman login', function () {
 
 it('pengurus dapat mengenerate simpanan sukarela', function () {
     // Buat akun pengurus
-    $pengurus = User::factory()->create(['role' => 'pengurus']);
+    $pengurus = Pengurus::factory()->create(['role' => 'bendahara']);
 
     // Login dan kirim request POST dengan data bulan dan tahun
     $response = $this->actingAs($pengurus)->post('/simpanan-sukarela/generate', [
@@ -56,7 +65,7 @@ it('pengurus dapat mengenerate simpanan sukarela', function () {
 });
 
 it('pengurus dapat menceklist dan menyimpan data simpanan sukarela', function () {
-    $pengurus = User::factory()->create(['role' => 'pengurus']);
+    $pengurus = Pengurus::factory()->create(['role' => 'bendahara']);
 
     // Simulasi data simpanan yang akan di-checklist dan disimpan
     $data = [

@@ -189,8 +189,8 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.pinjaman.pengajuan');
         Route::get('/pemotongan', [AngsuranController::class, 'periodePotongan'])
             ->name('pengurus.pinjaman.pemotongan');
-         Route::get('/download', [PinjamanController::class, 'downloadExcel'])
-         ->name('pengurus.pinjaman.download');
+        Route::get('/download', [PinjamanController::class, 'downloadExcel'])
+            ->name('pengurus.pinjaman.download');
         Route::post('/{id}/approve', [PinjamanController::class, 'approve'])
             ->name('pengurus.pinjaman.approve');
         Route::post('/{id}/reject', [PinjamanController::class, 'reject'])
@@ -298,18 +298,16 @@ Route::prefix('pengurus/simpanan-wajib')->group(function () {
 
 
 // ROLE: bendahara, superadmin, ketua
-Route::middleware('role.pengurus:bendahara,superadmin,ketua')->group(function () {
-    Route::prefix('simpanan-sukarela')->group(function () {
-        Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
-        Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
-        Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
-        Route::post('/update', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
-        Route::get('/riwayat', [SimpananSukarelaController::class, 'riwayat'])->name('pengurus.simpanan.sukarela.riwayat');
-        Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
-        Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
-        Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
-        Route::get('/download', [SimpananSukarelaController::class, 'downloadExcel'])->name('pengurus.simpanan.sukarela.download');
-    });
+Route::prefix('pengurus/simpanan-sukarela')->group(function () {
+    Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
+    Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
+    Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
+    Route::post('/update', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
+    Route::get('/riwayat', [SimpananSukarelaController::class, 'riwayat'])->name('pengurus.simpanan.sukarela.riwayat');
+    Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
+    Route::post('/approve/{id}', [SimpananSukarelaController::class, 'approve'])->name('pengurus.simpanan.sukarela.approve');
+    Route::post('/reject/{id}', [SimpananSukarelaController::class, 'reject'])->name('pengurus.simpanan.sukarela.reject');
+    Route::get('/download', [SimpananSukarelaController::class, 'downloadExcel'])->name('pengurus.simpanan.sukarela.download');
 });
 
 
