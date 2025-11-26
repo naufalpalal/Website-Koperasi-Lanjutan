@@ -56,7 +56,7 @@
 
         <!-- Forgot Password -->
         <div class="flex justify-end text-xs sm:text-sm">
-            <a href="{{ route('password.request') }}" class="text-blue-500 hover:underline">
+            <a href="{{ route('forgot-password') }}" class="text-blue-500 hover:underline">
                 Lupa password?
             </a>
         </div>

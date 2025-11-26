@@ -6,24 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     /**
-     * Run the migrations.
+     * Menjalankan migrasi.
      */
     public function up(): void
     {
         Schema::create('pengajuan_angsuran', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pinjaman_id')->constrained('pinjaman')->onDelete('cascade');
-            $table->json('angsuran_ids'); // list angsuran yang dipilih
+
+            // PERBAIKAN
+            $table->foreignId('pinjaman_id')
+                ->constrained('pinjaman')
+                ->onDelete('cascade');
+
+            $table->json('angsuran_ids');
             $table->string('bukti_transfer');
             $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->timestamps();
         });
-
     }
 
     /**
-     * Reverse the migrations.
+     * Membatalkan migrasi.
      */
     public function down(): void
     {

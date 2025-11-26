@@ -86,7 +86,7 @@
         </div>
 
         <!-- Info Card -->
-        <a href="{{ route('user.simpanan.tabungan.index') }}" class="block">
+        <a href="{{ route('tabungan.history') }}" class="block">
             <div class="w-full mx-auto mb-8">
                 <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
                     <div class="flex items-center justify-between">

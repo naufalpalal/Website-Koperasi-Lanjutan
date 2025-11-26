@@ -28,11 +28,12 @@ class UserFactory extends Factory
             'unit_kerja' => $this->faker->randomElement(['Keuangan', 'HRD', 'IT', 'Produksi']),
             // 'role' => $this->faker->randomElement(['pengurus', 'anggota']),
             'status' => $this->faker->randomElement(['pending', 'aktif', 'ditolak']),
+            'email' => $this->faker->unique()->safeEmail(),
         ];
     }
 
     /**
-     * State khusus untuk role anggota.
+     * State khusus untuk status aktif.
      */
     // public function anggota(): static
     // {

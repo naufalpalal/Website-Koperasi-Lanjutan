@@ -18,7 +18,7 @@ use App\Http\Controllers\Pengurus\Tabungan2Controller;
 use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
 use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
 use App\Http\Controllers\TabunganController;
-use App\Http\Controllers\PasswordResetRequestController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\filedokumen;
 use App\Http\Controllers\Pengurus\PinjamanController;
@@ -220,7 +220,6 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             Route::post('/pengajuan/{id}/tolak', [PengajuanAngsuranController::class, 'tolakPengajuan'])
                 ->name('pengurus.angsuran.tolak');
         });
-
     });
     // ============================
     // KELOLA ANGGOTA
@@ -262,15 +261,18 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             Route::delete('/{id}', [KelolaAnggotController::class, 'destroy'])
                 ->name('pengurus.anggota.destroy');
 
-            Route::patch('/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
+            Route::post('/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
                 ->name('pengurus.anggota.toggleStatus');
+
+            Route::put('/pengurus/anggota/{id}/restore', [KelolaAnggotController::class, 'restore'])
+                ->name('pengurus.anggota.restore');
         });
 });
 
 
 // Tabungan Anggota
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/tabungan', [TabunganController::class, 'index'])->name('tabungan.index');
+    Route::get('/tabungan', [TabunganController::class, 'index'])->name(name: 'tabungan.index');
     Route::post('/tabungan/store', [TabunganController::class, 'store'])->name('tabungan.store');
     Route::get('/tabungan/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
 });
@@ -329,12 +331,12 @@ Route::middleware(['logout.if.authenticated'])->group(function () {
     // Register
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
-    // Forgot password + OTP
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
-    })->name('password.request');
-    Route::post('/forgot-password/send-otp', [PasswordResetRequestController::class, 'sendOtp'])->name('password.sendOtp');
-    Route::post('/forgot-password/verify-otp', [PasswordResetRequestController::class, 'verifyOtp'])->name('password.verifyOtp');
+    // Forgot password 
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('forgot-password');
+    Route::post('/forgot-password/send', [ForgotPasswordController::class, 'sendResetLink'])->name('forgot-password.send');
+
+    Route::get('/forgot-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('forgot-password.form');
+    Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->name('forgot-password.reset');
 });
 
 
@@ -347,7 +349,6 @@ Route::middleware(['auth:web'])->group(function () {
     // routes/web.php
     Route::get('/anggota/pinjaman/dokumen/{tipe}', [PinjamanDokumenController::class, 'generate'])
         ->name('anggota.pinjaman.download');
-
 });
 
 Route::middleware(['auth:web'])->get('/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])

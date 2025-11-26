@@ -2,119 +2,102 @@
     <div class="max-w-lg mx-auto mt-10">
         <h2 class="text-3xl font-semibold mb-2 text-center">Lupa Password</h2>
         <p class="mb-6 text-center text-gray-600">
-            Masukkan <span class="font-semibold">NIP</span> dan <span class="font-semibold">Email</span> Anda untuk menerima kode OTP.
+            Masukkan <span class="font-semibold">NIP</span> dan <span class="font-semibold">Email</span> Anda untuk menerima link reset password.
         </p>
 
-        <!-- Step 1: Kirim OTP -->
-        <div id="step1">
-            <form id="requestOtpForm" class="space-y-5" novalidate>
-                @csrf
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
-                        <i class="fa-solid fa-id-card"></i>
-                    </span>
-                    <input id="nip" name="nip" type="text" required
-                        class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-0"
-                        placeholder="Masukkan NIP">
-                </div>
+        {{-- HALAMAN KIRIM LINK RESET --}}
+        
+        @if (!isset($token))
+        <form id="sendLinkForm" class="space-y-5" novalidate>
+            @csrf
 
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
-                        <i class="fa-solid fa-envelope"></i>
-                    </span>
-                    <input id="email" name="email" type="email" required
-                        class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-0"
-                        placeholder="Masukkan Email aktif">
-                </div>
+            <!-- NIP -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </span>
+                <input id="nip" name="nip" type="text" required
+                    class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white"
+                    placeholder="Masukkan NIP Anda">
+            </div>
 
-                <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium py-3 rounded-lg transition">
-                    Kirim Kode OTP ke Email
-                </button>
+            <!-- EMAIL (untuk kirim link, tidak disimpan di DB) -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
+                    <i class="fa-solid fa-envelope"></i>
+                </span>
+                <input id="email" name="email" type="email" required
+                    class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white"
+                    placeholder="Masukkan Email aktif">
+            </div>
 
-                <div class="text-center mt-4">
-                    <a href="{{ route('login') }}" class="text-blue-500 hover:underline text-sm">
-                        Kembali ke Login
-                    </a>
-                </div>
-            </form>
-        </div>
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium py-3 rounded-lg transition">
+                Kirim Link Reset ke Email
+            </button>
 
-        <!-- Step 2: Verifikasi OTP -->
-        <div id="step2" class="hidden mt-6">
-            <form id="verifyOtpForm" class="space-y-5" novalidate>
-                @csrf
-                <h3 class="text-xl font-semibold text-center">Verifikasi OTP</h3>
-                <p class="text-center mb-3">
-                    Kode OTP telah dikirim ke email: <span id="userEmail" class="font-semibold text-blue-600"></span>
-                </p>
+            <div class="text-center mt-4">
+                <a href="{{ route('login') }}" class="text-blue-500 hover:underline text-sm">
+                    Kembali ke Login
+                </a>
+            </div>
+        </form>
 
-                <input id="otp" name="otp" type="text" maxlength="6" required
-                    class="w-full text-center text-lg font-mono pl-3 pr-3 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-0"
-                    placeholder="Masukkan 6 digit OTP">
+        {{-- ===================== --}}
+        {{-- HALAMAN RESET PASSWORD --}}
+        {{-- ===================== --}}
+        @else
+        <form id="resetPasswordForm" class="space-y-5" novalidate>
+            @csrf
 
-                <button type="submit"
-                    class="w-full bg-green-600 hover:bg-green-700 text-white text-lg font-medium py-3 rounded-lg transition">
-                    Verifikasi OTP
-                </button>
+            <input type="hidden" name="token" value="{{ $token }}">
+            <input type="hidden" id="nip" name="nip" value="{{ request('nip') }}">
 
-                <button type="button" id="backToStep1"
-                    class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium py-2 rounded-lg transition">
-                    Kembali
-                </button>
-            </form>
-        </div>
+            <!-- NIP (disabled agar tidak diedit, tapi nilai tetap dikirim dari hidden input di atas) -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </span>
+                <input type="text" value="{{ request('nip') }}" disabled
+                    class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-100 text-gray-700">
+            </div>
 
-        <!-- Step 3: Reset Password -->
-        <div id="step3" class="hidden mt-6">
-            <form id="resetPasswordForm" class="space-y-5" novalidate>
-                @csrf
-                <h3 class="text-xl font-semibold text-center">Reset Password</h3>
+            <!-- PASSWORD -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input id="password" name="password" type="password" required
+                    class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white"
+                    placeholder="Password baru">
+            </div>
 
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
-                        <i class="fa-solid fa-lock"></i>
-                    </span>
-                    <input id="password" name="password" type="password" required
-                        class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-0"
-                        placeholder="Password baru">
-                </div>
+            <!-- CONFIRM PASSWORD -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input id="password_confirmation" name="password_confirmation" type="password" required
+                    class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white"
+                    placeholder="Konfirmasi password baru">
+            </div>
 
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-lg">
-                        <i class="fa-solid fa-lock"></i>
-                    </span>
-                    <input id="password_confirmation" name="password_confirmation" type="password" required
-                        class="w-full pl-12 pr-3 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-0"
-                        placeholder="Konfirmasi password baru">
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-purple-600 hover:bg-purple-700 text-white text-lg font-medium py-3 rounded-lg transition">
-                    Reset Password
-                </button>
-            </form>
-        </div>
+            <button type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 text-white text-lg font-medium py-3 rounded-lg transition">
+                Ganti Password
+            </button>
+        </form>
+        @endif
     </div>
 
-    <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        let currentNip = '', currentEmail = '', resetToken = '';
-
-        function showStep(n) {
-            ['step1', 'step2', 'step3'].forEach((id, i) =>
-                document.getElementById(id).classList.toggle('hidden', n !== i + 1)
-            );
-        }
-
         function alertMsg(type, text) {
             Swal.fire({
                 icon: type,
                 title: type === 'success' ? 'Berhasil' : 'Gagal',
                 text: text,
-                confirmButtonColor: type === 'error' ? '#d33' : '#3085d6',
                 timer: 2500,
                 showConfirmButton: false
             });
@@ -128,91 +111,110 @@
             });
         }
 
-        // STEP 1: Kirim OTP
-        document.getElementById('requestOtpForm').addEventListener('submit', async e => {
-            e.preventDefault();
-            const nip = document.getElementById('nip').value.trim();
-            const email = document.getElementById('email').value.trim();
-            if (!nip || !email) return alertMsg('error', 'Isi NIP dan Email terlebih dahulu.');
+        // ------------------------------
+        // KIRIM LINK RESET PASSWORD
+        // ------------------------------
+        const sendLinkForm = document.getElementById('sendLinkForm');
+        if (sendLinkForm) {
+            sendLinkForm.addEventListener('submit', async e => {
+                e.preventDefault();
 
-            currentNip = nip;
-            currentEmail = email;
-            showLoading('Mengirim kode OTP...');
+                const nip = document.getElementById('nip').value.trim();
+                const email = document.getElementById('email').value.trim();
 
-            const res = await fetch("{{ route('password.sendOtp') }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ nip, email })
+                if (!nip || !email)
+                    return alertMsg('error', 'NIP dan Email harus diisi.');
+
+                showLoading('Mengirim link reset...');
+
+                try {
+                    const res = await fetch("{{ route('forgot-password.send') }}", {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ nip, email })
+                    });
+
+                    let data;
+                    try {
+                        data = await res.json();
+                    } catch (e) {
+                        Swal.close();
+                        return alertMsg('error', 'Terjadi kesalahan saat memproses respons dari server.');
+                    }
+
+                    Swal.close();
+
+                    if (res.ok && data.success) {
+                        alertMsg('success', data.message);
+                    } else {
+                        alertMsg('error', data.message || 'Terjadi kesalahan saat mengirim link reset password.');
+                    }
+                } catch (error) {
+                    Swal.close();
+                    console.error('Error:', error);
+                    alertMsg('error', 'Terjadi kesalahan koneksi. Pastikan koneksi internet Anda stabil.');
+                }
             });
+        }
 
-            const data = await res.json();
-            Swal.close();
+        // ------------------------------
+        // RESET PASSWORD
+        // ------------------------------
+        const resetForm = document.getElementById('resetPasswordForm');
+        if (resetForm) {
+            resetForm.addEventListener('submit', async e => {
+                e.preventDefault();
 
-            if (res.ok && data.status) {
-                alertMsg('success', data.message || 'Kode OTP telah dikirim ke email.');
-                document.getElementById('userEmail').textContent = currentEmail;
-                showStep(2);
-            } else {
-                alertMsg('error', data.message || 'Gagal mengirim OTP.');
-            }
-        });
+                const nip = document.getElementById('nip').value.trim();
+                const password = document.getElementById('password').value;
+                const confirm = document.getElementById('password_confirmation').value;
+                const token = document.querySelector('input[name="token"]').value;
 
-        // STEP 2: Verifikasi OTP
-        document.getElementById('verifyOtpForm').addEventListener('submit', async e => {
-            e.preventDefault();
-            const otp = document.getElementById('otp').value.trim();
-            if (!otp) return alertMsg('error', 'Masukkan OTP terlebih dahulu.');
+                if (!nip || !password || !confirm)
+                    return alertMsg('error', 'Semua kolom wajib diisi.');
 
-            showLoading('Memverifikasi kode OTP...');
-            const res = await fetch("{{ route('password.verifyOtp') }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ nip: currentNip, email: currentEmail, otp })
+                if (password !== confirm)
+                    return alertMsg('error', 'Konfirmasi password tidak sama.');
+
+                showLoading('Menyimpan password baru...');
+
+                try {
+                    const res = await fetch("{{ route('forgot-password.reset') }}", {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ nip, password, password_confirmation: confirm, token })
+                    });
+
+                    let data;
+                    try {
+                        data = await res.json();
+                    } catch (e) {
+                        Swal.close();
+                        return alertMsg('error', 'Terjadi kesalahan saat memproses respons dari server.');
+                    }
+
+                    Swal.close();
+
+                    if (res.ok && data.success) {
+                        alertMsg('success', data.message);
+                        setTimeout(() => window.location.href = "{{ route('login') }}", 1800);
+                    } else {
+                        alertMsg('error', data.message || 'Terjadi kesalahan saat mereset password.');
+                    }
+                } catch (error) {
+                    Swal.close();
+                    console.error('Error:', error);
+                    alertMsg('error', 'Terjadi kesalahan koneksi. Pastikan koneksi internet Anda stabil.');
+                }
             });
-
-            const data = await res.json();
-            Swal.close();
-
-            if (res.ok && data.status) {
-                alertMsg('success', data.message || 'OTP valid.');
-                resetToken = data.reset_token;
-                showStep(3);
-            } else {
-                alertMsg('error', data.message || 'OTP salah atau kadaluarsa.');
-            }
-        });
-
-        // STEP 3: Reset Password
-        document.getElementById('resetPasswordForm').addEventListener('submit', async e => {
-            e.preventDefault();
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('password_confirmation').value;
-            if (!password || password !== confirm) return alertMsg('error', 'Password tidak sama.');
-
-            showLoading('Menyimpan password baru...');
-            const res = await fetch("{{ route('password.request') }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({
-                    nip: currentNip,
-                    email: currentEmail,
-                    reset_token: resetToken,
-                    password,
-                    password_confirmation: confirm
-                })
-            });
-
-            const data = await res.json();
-            Swal.close();
-
-            if (res.ok && data.status) {
-                alertMsg('success', data.message || 'Password berhasil direset.');
-                setTimeout(() => window.location.href = "{{ route('login') }}", 1800);
-            } else {
-                alertMsg('error', data.message || 'Gagal mereset password.');
-            }
-        });
-
-        document.getElementById('backToStep1').addEventListener('click', () => showStep(1));
+        }
     </script>
 </x-guest-layout>

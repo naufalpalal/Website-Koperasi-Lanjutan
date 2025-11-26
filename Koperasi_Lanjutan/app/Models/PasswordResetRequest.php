@@ -13,17 +13,19 @@ class PasswordResetRequest extends Model
 
     protected $fillable = [
         'user_id',
+        'email',
+        'token_hash',
         'otp_hash',
-        'password',
+        'reset_token',
         'status',
         'expires_at',
         'used_at',
         'ip',
     ];
 
-    protected $dates = [
-        'expires_at',
-        'used_at',
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'used_at' => 'datetime',
     ];
 
     public function user()
