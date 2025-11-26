@@ -96,7 +96,7 @@
                                 <span>Simpanan Pokok</span>
                             </label>
                             <input type="number" id="simpanan_pokok" name="simpanan_pokok"
-                               value="{{ old('simpanan_pokok', $simpananPokok->nilai ?? 0) }}" min="0" step="1000"
+                               value="{{ old('simpanan_pokok', $totalSimpananPokok ?? 0) }}" min="0" step="1000"
                                 inputmode="numeric"
                                 class="mt-2 block w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
                         </div>

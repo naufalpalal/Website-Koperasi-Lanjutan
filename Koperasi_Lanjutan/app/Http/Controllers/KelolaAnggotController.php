@@ -229,11 +229,12 @@ class KelolaAnggotController extends Controller
     public function edit($id)
     {
         $anggota = User::findOrFail($id);
+        $totalSimpananPokok = $anggota->simpananPokok()->where('status', 'Dibayar')->sum('nilai');
         $totalSimpananWajib = $anggota->simpananWajib()->where('status', 'Dibayar')->sum('nilai');
         $totalSimpananSukarela = $anggota->simpananSukarela()->where('status', 'Dibayar')->sum('nilai');
         $totalPinjaman = $anggota->pinjaman()->sum('nominal');
 
-        return view('pengurus.KelolaAnggota.edit', compact('anggota', 'totalSimpananWajib', 'totalSimpananSukarela', 'totalPinjaman'));
+        return view('pengurus.KelolaAnggota.edit', compact('anggota', 'totalSimpananPokok', 'totalSimpananWajib', 'totalSimpananSukarela', 'totalPinjaman'));
     }
 
     // Update data anggota
@@ -446,30 +447,24 @@ class KelolaAnggotController extends Controller
     {
         $anggota = User::findOrFail($id);
 
-        // 🔹 KODE ASLI ANDA — TIDAK DIUBAH
         $anggota->update([
             'status' => 'aktif',
         ]);
 
-        // ======================================================
-        // 🔵 TAMBAHAN: Reset Simpanan Pokok
-        // ======================================================
+        // 🔹 Reset Simpanan Pokok hanya jika belum ada bulan ini
+        $latestPokok = SimpananPokok::where('users_id', $id)->latest('id')->first();
+        if ($latestPokok) {
+            SimpananPokok::where('users_id', $id)->update([
+                'nilai' => 0,
+                'status' => 'Dibayar'
+            ]);
+        }
 
-        // 1. Hapus simpanan pokok lama
-        \App\Models\SimpananPokok::where('users_id', $id)->delete();
+        // Reset Simpanan Wajib & Sukarela
+        SimpananWajib::where('users_id', $id)->delete();
+        SimpananSukarela::where('users_id', $id)->delete();
 
-        // 2. Buat ulang simpanan pokok baru (pengurus akan isi nilai nanti)
-        \App\Models\SimpananPokok::create([
-            'users_id' => $id,
-            'nilai' => 0,          // masih kosong, karena belum setor
-            'tahun' => date('Y'),     // wajib, karena kolom NOT NULL
-            'bulan' => date('m'),     // wajib, karena kolom NOT NULL
-            'status' => 'Belum Dibayar' // sesuai enum tabel
-        ]);
-
-        // ======================================================
-
-        return redirect()->back()->with('success', 'Anggota berhasil dipulihkan dan simpanan pokok berhasil direset.');
+        return redirect()->back()->with('success', 'Anggota berhasil dipulihkan.');
     }
 
 
@@ -494,7 +489,5 @@ class KelolaAnggotController extends Controller
         return redirect()->back()->with('success', 'Status anggota berhasil diperbarui.');
 
     }
-
-
 
 }
