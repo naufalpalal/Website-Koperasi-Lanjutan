@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Pengurus\PinjamanSetting;
 use App\Models\Pengurus\Angsuran;
+use Carbon\Carbon;
 
 class PinjamanAnggotaController extends Controller
 {
@@ -79,9 +80,23 @@ class PinjamanAnggotaController extends Controller
         $userId = $user->id;
 
         // === Cek keanggotaan minimal 6 bulan ===
-        $masaKeanggotaan = $user->created_at->diffInMonths(now());
+        // Ambil bulan masuk dari user
+        $bulanMasuk = $user->bulan_masuk;
+
+        // Jika bulan_masuk kosong, anggap belum memenuhi syarat
+        if (!$bulanMasuk) {
+            $masaKeanggotaan = 0;
+        } else {
+            // Parse ke Carbon (auto: YYYY-MM, YYYY-MM-DD, dll)
+            $tanggalMasuk = Carbon::parse($bulanMasuk);
+
+            // Hitung selisih bulan sampai sekarang
+            $masaKeanggotaan = $tanggalMasuk->diffInMonths(now());
+        }
+
         $bolehPinjam = $masaKeanggotaan >= 6;
         $sisaBulan = max(0, 6 - $masaKeanggotaan);
+
 
         // Ambil pinjaman terbaru user
         $pinjaman = Pinjaman::where('user_id', $userId)
