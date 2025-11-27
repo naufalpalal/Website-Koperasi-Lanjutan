@@ -206,66 +206,111 @@ class PinjamanAnggotaController extends Controller
         ]);
     }
 
-
+// Ganti dengan path model Angsuran Anda
 
     public function store(Request $request)
     {
         $user = auth()->user();
         $userId = $user->id;
 
-        // ==============================
-        // 1. CEK MASA KEANGGOTAAN 6 BULAN
-        // ==============================
-        $minimalJoinDate = now()->subMonths(6);
+        // --- HELPER: Konversi Bulan (Diperlukan untuk konsistensi dengan create()) ---
+        $convertBulanIndonesia = function ($bulanTahun) {
+            $bulan = [
+                'Januari' => 'January',
+                'Februari' => 'February',
+                'Maret' => 'March',
+                'April' => 'April',
+                'Mei' => 'May',
+                'Juni' => 'June',
+                'Juli' => 'July',
+                'Agustus' => 'August',
+                'September' => 'September',
+                'Oktober' => 'October',
+                'November' => 'November',
+                'Desember' => 'December',
+            ];
 
-        if ($user->created_at > $minimalJoinDate) {
-            return back()->with('error', 'Anda belum mencapai masa keanggotaan 6 bulan untuk mengajukan pinjaman.');
+            // Jika format input tidak sesuai "NamaBulan Tahun" (misal: "Januari 2023"), tangani
+            if (!str_contains($bulanTahun, ' ')) {
+                return null; // Tidak bisa diproses
+            }
+
+            [$namaBulan, $tahun] = explode(' ', $bulanTahun);
+            $bulanInggris = $bulan[$namaBulan] ?? null;
+
+            return "$bulanInggris $tahun";
+        };
+
+        // ===========================================
+        // 1. CEK MASA KEANGGOTAAN MINIMAL 6 BULAN
+        //    (Menggunakan logika 'bulan_masuk' dari method create)
+        // ===========================================
+        $bulanMasuk = $user->bulan_masuk;
+        $masaKeanggotaan = 0;
+
+        if ($bulanMasuk) {
+            $tanggalMasuk = Carbon::parse($convertBulanIndonesia($bulanMasuk));
+            $masaKeanggotaan = $tanggalMasuk->diffInMonths(now());
         }
 
-        // ==============================
-        // 2. CEK PINJAMAN AKTIF
-        // ==============================
-        $pinjaman = Pinjaman::where('user_id', $userId)
+        if ($masaKeanggotaan < 6) {
+            $sisaBulan = 6 - $masaKeanggotaan;
+            return back()->with('error', "Anda belum mencapai masa keanggotaan minimal 6 bulan. Sisa $sisaBulan bulan lagi.");
+        }
+
+        // ===========================================
+        // 2. CEK PINJAMAN AKTIF/PENDING
+        // ===========================================
+        $pinjamanTerbaru = Pinjaman::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->first();
 
-        if ($pinjaman && $pinjaman->status === 'disetujui') {
+        if ($pinjamanTerbaru) {
 
-            $angsuran = Angsuran::where('pinjaman_id', $pinjaman->id)->get();
+            // A. Cek Pinjaman Status 'pending'
+            if ($pinjamanTerbaru->status === 'pending') {
+                return back()->with('error', 'Anda sudah memiliki pengajuan pinjaman yang sedang menunggu persetujuan (status: pending).');
+            }
 
-            $semuaLunas = $angsuran->every(function ($a) {
-                return trim(strtolower($a->status)) === 'lunas';
-            });
+            // B. Cek Pinjaman Status 'disetujui' (apakah angsuran sudah lunas semua)
+            if ($pinjamanTerbaru->status === 'disetujui') {
 
-            if (!$semuaLunas) {
-                return back()->with('error', 'Angsuran sebelumnya belum lunas.');
+                $angsuran = Angsuran::where('pinjaman_id', $pinjamanTerbaru->id)->get();
+
+                // Cek apakah ada angsuran yang statusnya BUKAN 'lunas' (case insensitive)
+                $masihBelumLunas = $angsuran->contains(function ($a) {
+                    return trim(strtolower($a->status)) !== 'lunas';
+                });
+
+                if ($masihBelumLunas) {
+                    return back()->with('error', 'Anda masih memiliki pinjaman yang angsurannya belum lunas.');
+                }
             }
         }
 
-        // ==============================
-        // 3. VALIDASI INPUT
-        // ==============================
-        $request->validate([
+        // ===========================================
+        // 3. VALIDASI INPUT (Hanya menambahkan penanganan error)
+        // ===========================================
+        $validatedData = $request->validate([
             'nominal' => 'required|numeric|min:100000',
-            'tenor' => 'required|numeric',
-            'bunga' => 'required|numeric',
+            'tenor' => 'required|numeric|integer|min:1', // Menambahkan validasi integer dan min:1
+            'bunga' => 'required|numeric|min:0',         // Menambahkan validasi min:0
         ]);
 
-        // ==============================
+        // ===========================================
         // 4. SIMPAN PENGAJUAN PINJAMAN
-        // ==============================
+        // ===========================================
         Pinjaman::create([
             'user_id' => $userId,
-            'nominal' => $request->nominal,
-            'tenor' => $request->tenor,
-            'bunga' => $request->bunga,
+            'nominal' => $validatedData['nominal'],
+            'tenor' => $validatedData['tenor'],
+            'bunga' => $validatedData['bunga'],
             'status' => 'pending'
         ]);
 
         return redirect()->route('user.pinjaman.create')
-            ->with('success', 'Pengajuan pinjaman berhasil dikirim!');
+            ->with('success', 'Pengajuan pinjaman berhasil dikirim dan sedang menunggu persetujuan!');
     }
-
 
 
 
