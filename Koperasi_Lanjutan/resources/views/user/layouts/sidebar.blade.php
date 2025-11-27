@@ -81,18 +81,17 @@
                 </form>
             </nav>
         </div>
-        <!-- Footer -->
+        <!-- Footer
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">
                 <img src="{{ Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/default-avatar.png') }}"
                     alt="{{ Auth::user()->nama }}" class="h-10 w-10 rounded-full object-cover object-center mr-3">
                 <div>
-                    <!-- Teks selamat datang & role -->
                     <p class="text-sm text-gray-400">Selamat datang {{ Auth::user()->nama }} {{ Auth::user()->role }}
                     </p>
                 </div>
             </a>
-        </div>
+        </div> -->
     </div>
 </aside>
 

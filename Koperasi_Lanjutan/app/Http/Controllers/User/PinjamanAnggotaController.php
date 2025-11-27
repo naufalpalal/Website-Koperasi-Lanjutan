@@ -83,12 +83,40 @@ class PinjamanAnggotaController extends Controller
         // Ambil bulan masuk dari user
         $bulanMasuk = $user->bulan_masuk;
 
+
+        // Helper: konversi nama bulan Indonesia → Inggris
+        $convertBulanIndonesia = function ($bulanTahun) {
+            $bulan = [
+                'Januari' => 'January',
+                'Februari' => 'February',
+                'Maret' => 'March',
+                'April' => 'April',
+                'Mei' => 'May',
+                'Juni' => 'June',
+                'Juli' => 'July',
+                'Agustus' => 'August',
+                'September' => 'September',
+                'Oktober' => 'October',
+                'November' => 'November',
+                'Desember' => 'December',
+            ];
+
+            // Pisahkan nama bulan dan tahun
+            [$namaBulan, $tahun] = explode(' ', $bulanTahun);
+
+            // Ganti ke bahasa Inggris
+            $bulanInggris = $bulan[$namaBulan] ?? null;
+
+            // Kembalikan string yang bisa diparse Carbon
+            return "$bulanInggris $tahun";
+        };
+
         // Jika bulan_masuk kosong, anggap belum memenuhi syarat
         if (!$bulanMasuk) {
             $masaKeanggotaan = 0;
         } else {
             // Parse ke Carbon (auto: YYYY-MM, YYYY-MM-DD, dll)
-            $tanggalMasuk = Carbon::parse($bulanMasuk);
+            $tanggalMasuk = Carbon::parse($convertBulanIndonesia($bulanMasuk));
 
             // Hitung selisih bulan sampai sekarang
             $masaKeanggotaan = $tanggalMasuk->diffInMonths(now());
