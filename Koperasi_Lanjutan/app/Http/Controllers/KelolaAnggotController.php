@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\MasterSimpananPokok;
 use App\Models\Pengurus\Angsuran;
 use App\Models\Pengurus\MasterSimpananWajib;
 use App\Models\Pengurus\SimpananSukarela;
@@ -53,7 +54,8 @@ class KelolaAnggotController extends Controller
     // Tampilkan form tambah anggota
     public function create()
     {
-        return view('Pengurus.KelolaAnggota.create');
+        $simpananPokok = MasterSimpananPokok::latest()->first();
+        return view('Pengurus.KelolaAnggota.create', compact('simpananPokok'));
     }
 
     public function verifikasi()
@@ -68,21 +70,25 @@ class KelolaAnggotController extends Controller
     }
 
     // Setujui anggota
-    public function approve($id)
-    {
-        $anggota = User::findOrFail($id);
+  public function approve($id)
+{
+    $anggota = User::findOrFail($id);
 
-        // Ubah status menjadi 'aktif'
-        $anggota->update([
-            'status' => 'aktif',
-        ]);
+    $anggota->update(['status' => 'aktif']);
 
-        // (Opsional) Kirim notifikasi atau buat log
-        // Notification::send($anggota, new AnggotaApprovedNotification());
+    // Buat Simpanan Pokok saat anggota disetujui
+    SimpananPokok::create([
+        'users_id' => $anggota->id,
+        'nilai' => MasterSimpananPokok::latest()->first()->nilai ?? 0,
+        'tahun' => now()->year,
+        'bulan' => now()->month,
+        'status' => 'Dibayar',
+    ]);
 
-        return redirect()->route('pengurus.anggota.verifikasi')
-            ->with('success', "Anggota {$anggota->nama} berhasil disetujui dan diaktifkan.");
-    }
+    return redirect()->route('pengurus.anggota.verifikasi')
+        ->with('success', "Anggota {$anggota->nama} berhasil disetujui dan diaktifkan.");
+}
+
 
     // Tolak anggota
     public function reject($id)

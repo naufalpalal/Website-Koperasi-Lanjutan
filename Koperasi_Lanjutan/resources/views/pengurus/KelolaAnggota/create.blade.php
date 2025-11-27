@@ -152,7 +152,7 @@
                             <div class="space-y-3">
                                 <div class="flex items-center">
                                     <span class="w-36 text-sm text-gray-600">Simpanan Pokok</span>
-                                    <input type="number" name="simpanan_pokok" value="{{ old('simpanan_pokok', 50000) }}"
+                                    <input type="number" name="simpanan_pokok" value="{{ old('simpanan_pokok', $simpananPokok->nilai) }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-1 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
                                 </div>
 

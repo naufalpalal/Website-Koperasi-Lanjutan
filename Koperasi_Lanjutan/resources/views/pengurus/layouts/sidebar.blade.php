@@ -88,6 +88,25 @@
                         class="flex items-center px-4 py-3 rounded-lg hover:bg-blue-700 transition">
                         Pinjaman
                     </a>
+                    <!-- <div x-data="{ openSimpanan: false }" class="space-y-1">
+                        <button @click="openSimpanan = !openSimpanan"
+                            class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-blue-700 transition">
+                            <span>setting</span>
+                            <svg :class="{ 'rotate-180': openSimpanan }" class="w-4 h-4 transform transition-transform"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 9l-7 7-7-7" stroke-width="2" />
+                            </svg>
+                        </button>
+                        <div x-show="openSimpanan" x-collapse class="ml-4 space-y-1">
+
+
+                            <a href="{{ route('pengurus.simpanan.wajib_2.edit') }}"
+                                class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                                edit nominal simpanan wajib
+                            </a>
+                        </div> 
+                    </div>-->
+
                 @endif
 
                 <!-- Hanya untuk ADMIN -->

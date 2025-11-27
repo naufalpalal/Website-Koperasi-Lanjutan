@@ -81,7 +81,7 @@
                 </form>
             </nav>
         </div>
-        <!-- Footer
+        <!-- Footer -->
         <div class="border-t border-gray-700 px-6 py-4 flex items-center">
             <a href="{{ route('profile.edit') }}" class="flex items-center">
                 <img src="{{ Auth::user()->photo_path ? asset('storage/' . Auth::user()->photo_path) : asset('assets/default-avatar.png') }}"
@@ -91,7 +91,7 @@
                     </p>
                 </div>
             </a>
-        </div> -->
+        </div>
     </div>
 </aside>
 
