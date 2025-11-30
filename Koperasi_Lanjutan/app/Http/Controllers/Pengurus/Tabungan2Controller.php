@@ -43,11 +43,20 @@ class Tabungan2Controller extends Controller
     public function approve($id)
     {
         $tabungan = Tabungan::findOrFail($id);
+
+        $pengurus = Auth::guard('pengurus')->user();
+        $anggota = $tabungan->user;
+
         $tabungan->update([
             'status' => 'diterima',
             'pengurus_id' => Auth::guard('pengurus')->id()
         ]);
 
+        $this->writeLog(
+            "Tanggal: {$tabungan->tanggal} | Nominal: {$tabungan->nilai} |" .
+            "NIP Anggota: {$anggota->nip} | Diterima Oleh: {$pengurus->nama} (ID: {$pengurus->id})"
+        );
+        
         return redirect()
             ->route('pengurus.tabungan.detail', $tabungan->users_id)
             ->with('success', 'Tabungan berhasil disetujui.');
@@ -253,7 +262,25 @@ class Tabungan2Controller extends Controller
             'status'
         ));
     }
+    private function writeLog($message)
+    {
+        // Folder log: storage/logs/tabungan/
+        $folderPath = storage_path('logs/tabungan');
 
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0777, true);
+        }
+
+        // Nama file per hari: YYYY-MM-DD.log
+        $filePath = $folderPath . '/' . date('Y-m-d') . '.log';
+
+        // Format log
+        $timestamp = date('[Y-m-d H:i:s]');
+        $logMessage = $timestamp . ' ' . $message . PHP_EOL;
+
+        // Append ke file
+        file_put_contents($filePath, $logMessage, FILE_APPEND);
+    }
     public function downloadExcel()
     {
         // Ambil semua tabungan
