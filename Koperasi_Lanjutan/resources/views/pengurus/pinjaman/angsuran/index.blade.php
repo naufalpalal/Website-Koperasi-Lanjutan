@@ -14,6 +14,7 @@
                         <th class="px-4 py-2 border">No</th>
                         <th class="px-4 py-2 border">Bulan Ke</th>
                         <th class="px-4 py-2 border">Jumlah Bayar</th>
+                        <th class="px-4 py-2 border">Diskon</th>
                         <th class="px-4 py-2 border">Tanggal Bayar</th>
                         <th class="px-4 py-2 border">Status</th>
                         <th class="px-4 py-2 border">Bayar</th>
@@ -25,6 +26,13 @@
                             <td class="px-4 py-2 border">{{ $index + 1 }}</td>
                             <td class="px-4 py-2 border">{{ $item->bulan_ke }}</td>
                             <td class="px-4 py-2 border">Rp {{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2 border">
+                                @if($item->diskon > 0)
+                                    <span class="text-green-600">Rp {{ number_format($item->diskon, 0, ',', '.') }}</span>
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td class="px-4 py-2 border">{{ $item->tanggal_bayar ?? '-' }}</td>
                             <td class="px-4 py-2 border">
                                 @if ($item->status == 'lunas')

@@ -425,4 +425,42 @@ class PinjamanAnggotaController extends Controller
 
     //     return back()->with('success', 'Dokumen berhasil dihapus.');
     // }
+    public function pilihAngsuran(Request $request, $id)
+    {
+        $request->validate([
+            'angsuran_ids' => 'required|array',
+            'angsuran_ids.*' => 'exists:angsuran_pinjaman,id',
+        ]);
+
+        $pinjaman = Pinjaman::findOrFail($id);
+        $angsuran = Angsuran::whereIn('id', $request->angsuran_ids)->get();
+
+        return view('user.pinjaman.transfer', compact('pinjaman', 'angsuran'));
+    }
+
+    public function bayarAngsuran(Request $request, $id)
+    {
+        $request->validate([
+            'angsuran_ids' => 'required|array',
+            'bukti_transfer' => 'required|image|max:2048',
+        ]);
+
+        $user = auth()->user();
+        $pinjaman = Pinjaman::findOrFail($id);
+
+        // Upload Bukti
+        $path = $request->file('bukti_transfer')->store('bukti_transfer_angsuran', 'public');
+
+        // Simpan Pengajuan
+        \App\Models\PengajuanAngsuran::create([
+            'user_id' => $user->id,
+            'pinjaman_id' => $pinjaman->id,
+            'angsuran_ids' => $request->angsuran_ids, // Casts array otomatis
+            'bukti_transfer' => $path,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('user.pinjaman.create')
+            ->with('success', 'Bukti transfer berhasil dikirim. Menunggu verifikasi admin.');
+    }
 }

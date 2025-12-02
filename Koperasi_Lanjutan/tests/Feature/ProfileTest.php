@@ -17,6 +17,7 @@ class ProfileTest extends TestCase
     public function test_user_dapat_mengakses_halaman_profile()
     {
         $user = User::factory()->create();
+                /** @var User $user */
 
         $response = $this->actingAs($user)->get('/profile');
 
@@ -34,6 +35,7 @@ class ProfileTest extends TestCase
             'email' => 'john@example.com',
         ]);
 
+        /** @var User $user */
         $response = $this->actingAs($user)->post('/profile', [
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
@@ -55,6 +57,7 @@ class ProfileTest extends TestCase
             'password' => Hash::make('oldpassword'),
         ]);
 
+        /** @var User $user */
         $response = $this->actingAs($user)->put('/password', [
             'current_password' => 'oldpassword',
             'password' => 'newpassword123',
@@ -76,6 +79,7 @@ class ProfileTest extends TestCase
             'password' => Hash::make('oldpassword'),
         ]);
 
+        /** @var User $user */
         $response = $this->actingAs($user)->put('/password', [
             'current_password' => 'wrongpassword',
             'password' => 'newpassword123',
@@ -94,6 +98,7 @@ class ProfileTest extends TestCase
             'password' => Hash::make('oldpassword'),
         ]);
 
+        /** @var User $user */
         $response = $this->actingAs($user)->put('/password', [
             'current_password' => 'oldpassword',
             'password' => 'newpassword123',

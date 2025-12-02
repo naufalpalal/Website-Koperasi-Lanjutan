@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Pengurus;
 use App\Http\Controllers\Controller;
 use App\Models\Pengurus\MasterSimpananWajib;
 use App\Models\Pengurus\SimpananWajib;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class MasterSimpananWajibController extends Controller

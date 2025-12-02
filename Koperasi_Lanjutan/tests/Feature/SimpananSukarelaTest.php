@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Pengurus\SimpananSukarela;
+use illuminate\Contracts\Auth\Authenticatable;
 
 class SimpananSukarelaTest extends TestCase
 {
