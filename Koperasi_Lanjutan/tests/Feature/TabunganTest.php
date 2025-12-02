@@ -157,8 +157,8 @@ class TabunganTest extends TestCase
             'nilai' => 200000,
         ]);
 
-        /** @var User $user */
-        $response = $this->actingAs($user)->get('/tabungan');
+        /** @var User $user1 */
+        $response = $this->actingAs($user1)->get('/tabungan');
 
         $response->assertStatus(200);
         $this->assertCount(1, $response->viewData('tabungans'));
