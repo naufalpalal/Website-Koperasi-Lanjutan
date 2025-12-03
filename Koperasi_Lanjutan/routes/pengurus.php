@@ -23,7 +23,7 @@ Route::prefix('pengurus')->name('pengurus.')->group(function () {
     // ============================
     // SIMPANAN WAJIB
     // ============================
-    Route::prefix('simpanan-wajib')->name('simpanan.wajib.')->group(function () {
+    Route::prefix('simpanan-wajib')->name('simpanan.wajib_2.')->group(function () {
         Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('dashboard');
         Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('index');
         Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('generate');

@@ -53,11 +53,11 @@ class FileDokumenController extends Controller
 
         // Hapus file lama jika ada
         if ($dokumen) {
-            if ($dokumen->dokumen_pendaftaran && file_exists(storage_path('app/private/' . $dokumen->dokumen_pendaftaran))) {
-                unlink(storage_path('app/private/' . $dokumen->dokumen_pendaftaran));
+            if ($dokumen->dokumen_pendaftaran && file_exists(storage_path('app/private/private/' . $dokumen->dokumen_pendaftaran))) {
+                unlink(storage_path('app/private/private/' . $dokumen->dokumen_pendaftaran));
             }
-            if ($dokumen->sk_tenaga_kerja && file_exists(storage_path('app/private/' . $dokumen->sk_tenaga_kerja))) {
-                unlink(storage_path('app/private/' . $dokumen->sk_tenaga_kerja));
+            if ($dokumen->sk_tenaga_kerja && file_exists(storage_path('app/private/private/' . $dokumen->sk_tenaga_kerja))) {
+                unlink(storage_path('app/private/private/' . $dokumen->sk_tenaga_kerja));
             }
         }
 
@@ -140,7 +140,7 @@ class FileDokumenController extends Controller
         }
 
         // Pastikan path tidak duplikat
-        $filePath = storage_path('app/private/' . $fileName);
+        $filePath = storage_path('app/private/private/' . $fileName);
 
         if (!file_exists($filePath)) {
             abort(404, 'File dokumen tidak ditemukan di server.');

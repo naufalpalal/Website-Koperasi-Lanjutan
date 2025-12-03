@@ -72,7 +72,7 @@
                                                         ✖ Tutup
                                                     </button>
                                                     <iframe
-                                                        src="{{ route('dokumen.lihat.pengurus', ['userId' => $a->id, 'jenis' => 'pendaftaran']) }}"
+                                                        src="{{ route('pengurus.dokumen.lihat.pengurus', ['userId' => $a->id, 'jenis' => 'pendaftaran']) }}"
                                                         class="w-full h-full"></iframe>
                                                 </div>
                                             </div>
@@ -98,7 +98,7 @@
                                                         ✖ Tutup
                                                     </button>
                                                     <iframe
-                                                        src="{{ route('dokumen.lihat.pengurus', ['userId' => $a->id, 'jenis' => 'sk']) }}"
+                                                        src="{{ route('pengurus.dokumen.lihat.pengurus', ['userId' => $a->id, 'jenis' => 'sk']) }}"
                                                         class="w-full h-full"></iframe>
                                                 </div>
                                             </div>
