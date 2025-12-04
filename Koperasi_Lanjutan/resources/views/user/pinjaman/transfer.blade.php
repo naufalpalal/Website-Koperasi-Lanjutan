@@ -53,7 +53,7 @@
         <hr class="my-6">
 
         {{-- Form upload --}}
-        <form action="{{ route('anggota.angsuran.bayar', $pinjaman->id) }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ route('user.pinjaman.angsuran.bayar', $pinjaman->id) }}" method="POST" enctype="multipart/form-data"
             class="space-y-4">
 
             @csrf

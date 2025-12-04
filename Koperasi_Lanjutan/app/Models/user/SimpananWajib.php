@@ -13,7 +13,7 @@ class SimpananWajib extends Model
     protected $table = 'simpanan_wajib';
 
     protected $fillable = [
-        'nilai', 'tahun', 'bulan', 'status', 'users_id', 'keterangan'
+        'nilai', 'tahun', 'bulan', 'status', 'users_id', 'pengurus_id', 'keterangan'
     ];
 
     public function user()
