@@ -162,7 +162,7 @@ class IdentitasKoperasiController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('settings.edit')->with('success', 'Data identitas dan struktur pengurus berhasil diperbarui.');
+            return redirect()->route('pengurus.settings.edit')->with('success', 'Data identitas dan struktur pengurus berhasil diperbarui.');
 
         } catch (\Exception $e) {
             DB::rollback();

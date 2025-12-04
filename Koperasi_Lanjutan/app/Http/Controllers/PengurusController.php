@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pengurus\SimpananWajib;
 use App\Models\Pengurus\SimpananSukarela;
+use App\Models\Tabungan;
 use App\Models\Pinjaman;
 
 
@@ -50,18 +51,39 @@ class PengurusController extends Controller
         // Total simpanan wajib dan sukarela
         $totalSimpananWajib = SimpananWajib::sum('nilai');
         $totalSimpananSukarela = SimpananSukarela::sum('nilai');
-        $totalSimpanan = $totalSimpananWajib + $totalSimpananSukarela;
+        $totalTabungan = Tabungan::sum('nilai');
+        $totalSimpanan = $totalSimpananWajib + $totalSimpananSukarela + $totalTabungan;
 
         // Total simpanan yang sudah dibayar
         $totalSimpananWajibDibayar = SimpananWajib::where('status', 'Dibayar')->sum('nilai');
         $totalSimpananSukarelaDibayar = SimpananSukarela::where('status', 'Dibayar')->sum('nilai');
-        $totalSimpananDibayar = $totalSimpananWajibDibayar + $totalSimpananSukarelaDibayar;
+        $totalTabunganDibayar = Tabungan::where('status', 'Dibayar')->sum('nilai');
+        $totalSimpananDibayar = $totalSimpananWajibDibayar + $totalSimpananSukarelaDibayar + $totalTabunganDibayar;
 
         // Total pinjaman (kalau modelnya ada)
         $totalPinjaman = Pinjaman::sum('nominal');
         $totalPinjamanDibayar = Pinjaman::where('status', 'Dibayar')->sum('nominal');
 
-        return view('pengurus.dashboard.index', compact('totalAnggota', 'totalSimpanan', 'totalPinjaman', 'totalSimpananDibayar', 'totalPinjamanDibayar'));
+        // Kirim semua variabel ke Blade
+        return view('pengurus.dashboard.index', [
+            'totalAnggota' => $totalAnggota,
+
+            // Simpanan total
+            'totalSimpanan' => $totalSimpanan,
+            'totalSimpananDibayar' => $totalSimpananDibayar,
+
+            // Rincian simpanan wajib & sukarela
+            'totalSimpananWajib' => $totalSimpananWajib,
+            'totalSimpananWajibDibayar' => $totalSimpananWajibDibayar,
+            'totalSimpananSukarela' => $totalSimpananSukarela,
+            'totalSimpananSukarelaDibayar' => $totalSimpananSukarelaDibayar,
+            'totalTabungan' => $totalTabungan,
+            'totalTabunganDibayar' => $totalTabunganDibayar,
+
+            // Pinjaman
+            'totalPinjaman' => $totalPinjaman,
+            'totalPinjamanDibayar' => $totalPinjamanDibayar,
+        ]);
     }
 
 }

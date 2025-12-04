@@ -6,7 +6,7 @@
 <div class="p-6 bg-white rounded-lg shadow-md">
 
     {{-- Judul --}}
-    <h2 class="text-2xl font-bold mb-6">Dashboard Simpanan Sukarela</h2>
+    <h2 class="text-2xl font-bold mb-6">Simpanan Sukarela</h2>
 
     {{-- Ringkasan Utama --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -50,7 +50,7 @@
 
     {{-- Status Bulan Ini --}}
     <div class="mb-6 p-4 bg-gray-50 border rounded">
-        <h3 class="text-xl font-semibold mb-3">x
+        <h3 class="text-xl font-semibold mb-3">
             Status Bulan Ini ({{ now()->format('m/Y') }})
         </h3>
 
