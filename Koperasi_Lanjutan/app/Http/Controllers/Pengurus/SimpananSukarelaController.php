@@ -86,34 +86,52 @@ class SimpananSukarelaController extends Controller
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
+        // Cek apakah bulan ini sudah digenerate sebelumnya
+        $sudahAda = SimpananSukarela::where('bulan', $bulan)
+            ->where('tahun', $tahun)
+            ->exists();
+
+        if ($sudahAda) {
+            return back()->with('error', "Data simpanan untuk bulan $bulan tahun $tahun sudah pernah digenerate!");
+        }
+
         $anggota = User::get();
+        $jumlahTergenerate = 0;
 
         foreach ($anggota as $a) {
+
+            // Ambil master khusus bulan & tahun ini
             $master = MasterSimpananSukarela::where('users_id', $a->id)
                 ->where('status', 'Disetujui')
-                ->latest()
+                ->where('bulan', $bulan)
+                ->where('tahun', $tahun)
                 ->first();
 
             $nominal = $master->nilai ?? 0;
 
-            $cek = SimpananSukarela::where('users_id', $a->id)
-                ->where('tahun', $tahun)
-                ->where('bulan', $bulan)
-                ->first();
-
-            if (!$cek) {
-                SimpananSukarela::create([
-                    'nilai' => $nominal,
-                    'tahun' => $tahun,
-                    'bulan' => $bulan,
-                    'status' => 'Diajukan',
-                    'users_id' => $a->id,
-                ]);
+            if ($nominal <= 0) {
+                continue;
             }
+
+            SimpananSukarela::create([
+                'nilai' => $nominal,
+                'tahun' => $tahun,
+                'bulan' => $bulan,
+                'status' => 'Diajukan',
+                'users_id' => $a->id,
+            ]);
+
+            $jumlahTergenerate++;
         }
 
-        return back()->with('success', 'Simpanan sukarela berhasil digenerate.');
+        if ($jumlahTergenerate === 0) {
+            return back()->with('error', "Tidak ada simpanan sukarela yang digenerate karena tidak ada pengajuan yang disetujui untuk bulan $bulan tahun $tahun.");
+        }
+
+        return back()->with('success', "Simpanan sukarela bulan $bulan tahun $tahun berhasil digenerate untuk $jumlahTergenerate anggota.");
     }
+
+
 
 
     public function riwayat(Request $request)

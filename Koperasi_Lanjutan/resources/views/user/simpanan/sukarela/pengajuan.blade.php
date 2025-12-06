@@ -19,7 +19,6 @@
             @endif
         </div>
 
-
         {{-- Form --}}
         <form action="{{ route('user.simpanan.sukarela.store') }}" method="POST" class="space-y-5">
             @csrf
@@ -32,18 +31,20 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {{-- Bulan --}}
                 <div>
                     <label for="bulan" class="block mb-1 text-sm font-semibold text-gray-700">Bulan Berlaku</label>
                     <select name="bulan" id="bulan"
                         class="w-full rounded-lg border-gray-300 shadow-sm focus:ring focus:ring-blue-200 focus:border-blue-500"
                         required>
                         @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}">{{ DateTime::createFromFormat('!m', $i)->format('F') }}
-                            </option>
+                            <option value="{{ $i }}">{{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}</option>
                         @endfor
                     </select>
                 </div>
 
+                {{-- Tahun --}}
                 <div>
                     <label for="tahun" class="block mb-1 text-sm font-semibold text-gray-700">Tahun Berlaku</label>
                     <select name="tahun" id="tahun"
@@ -54,6 +55,7 @@
                         @endfor
                     </select>
                 </div>
+
             </div>
 
             <button type="submit"
@@ -62,4 +64,47 @@
             </button>
         </form>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+    const bulanSelect  = document.getElementById("bulan");
+    const tahunSelect  = document.getElementById("tahun");
+
+    const currentMonth = {{ now()->month }};
+    const currentYear  = {{ now()->year }};
+
+    function filterBulan() {
+        const selectedYear = parseInt(tahunSelect.value);
+
+        [...bulanSelect.options].forEach(opt => {
+            const monthVal = parseInt(opt.value);
+
+            if (selectedYear === currentYear) {
+                // Sembunyikan bulan <= bulan sekarang
+                opt.hidden = monthVal <= currentMonth;
+            } else {
+                opt.hidden = false;
+            }
+        });
+
+        // Cari bulan valid
+        const firstVisible = [...bulanSelect.options].find(o => o.hidden === false);
+
+        // ❗ Jika TIDAK ada bulan valid (misal sekarang Desember)
+        if (!firstVisible) {
+            tahunSelect.value = currentYear + 1; // Auto ganti tahun depan
+            filterBulan(); // Ulangi filter
+            bulanSelect.value = 1; // Set ke Januari
+            return;
+        }
+
+        bulanSelect.value = firstVisible.value;
+    }
+
+    tahunSelect.addEventListener("change", filterBulan);
+
+    // Eksekusi saat awal load
+    filterBulan();
+</script>
 @endsection

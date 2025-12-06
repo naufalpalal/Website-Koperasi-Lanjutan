@@ -46,9 +46,11 @@
 
 
             <div class="flex justify-end gap-3 pt-3 border-t">
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button type="submit"
+                    class="btn btn-primary">
                     Generate
                 </button>
+
 
                 <label for="modal-periode"
                     class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 cursor-pointer">
