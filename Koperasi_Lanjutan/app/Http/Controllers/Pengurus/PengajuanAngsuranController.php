@@ -26,7 +26,8 @@ class PengajuanAngsuranController extends Controller
         $pengajuan->update(['status' => 'disetujui']);
 
         // Ubah status angsuran yang dipilih menjadi lunas
-        $angsuranIds = json_decode($pengajuan->angsuran_ids, true);
+        // Note: angsuran_ids sudah di-cast ke array di Model
+        $angsuranIds = $pengajuan->angsuran_ids;
 
         AngsuranPinjaman::whereIn('id', $angsuranIds)
             ->update(['status' => 'lunas', 'tanggal_bayar' => now()]);

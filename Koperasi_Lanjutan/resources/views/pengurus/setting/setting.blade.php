@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <form action="{{ route('settings.update') }}" method="POST">
+        <form action="{{ route('pengurus.settings.update') }}" method="POST">
             @csrf
             @method('PUT')
 

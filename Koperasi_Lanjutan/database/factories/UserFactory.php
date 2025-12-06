@@ -25,6 +25,7 @@ class UserFactory extends Factory
             'tempat_lahir' => $this->faker->city(),
             'tanggal_lahir' => $this->faker->date('Y-m-d', '2000-01-01'),
             'alamat_rumah' => $this->faker->address(),
+            'bulan_masuk' => $this->faker->randomElement(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']) . ' ' . $this->faker->numberBetween(2018, 2024),
             'unit_kerja' => $this->faker->randomElement(['Keuangan', 'HRD', 'IT', 'Produksi']),
             // 'role' => $this->faker->randomElement(['pengurus', 'anggota']),
             'status' => $this->faker->randomElement(['pending', 'aktif', 'ditolak']),

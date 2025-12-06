@@ -141,6 +141,7 @@
                                 <th class="p-2 border">Bulan Ke</th>
                                 <th class="p-2 border">Jatuh Tempo</th>
                                 <th class="p-2 border">Angsuran</th>
+                                <th class="p-2 border">Diskon</th>
                                 <th class="p-2 border">Status</th>
                             </tr>
                         </thead>
@@ -160,6 +161,14 @@
 
                                     <td class="p-2 border text-right">
                                         Rp{{ number_format($row->jumlah_bayar, 0, ',', '.') }}
+                                    </td>
+
+                                    <td class="p-2 border text-right">
+                                        @if($row->diskon > 0)
+                                            <span class="text-green-600">Rp{{ number_format($row->diskon, 0, ',', '.') }}</span>
+                                        @else
+                                            -
+                                        @endif
                                     </td>
 
                                     <td class="p-2 border text-center">

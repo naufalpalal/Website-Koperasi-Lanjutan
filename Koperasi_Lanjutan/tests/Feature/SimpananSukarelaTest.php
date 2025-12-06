@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Pengurus\SimpananSukarela;
+use illuminate\Contracts\Auth\Authenticatable;
 
 class SimpananSukarelaTest extends TestCase
 {
@@ -121,8 +122,7 @@ class SimpananSukarelaTest extends TestCase
             'status' => 'Dibayar',
         ]);
 
-        // Controller mencari status 'Pending', tapi di database hanya ada 'Diajukan'
-        // Karena controller mencari 'Pending', countPending akan 0
+        // Test menggunakan status 'Diajukan' yang sesuai dengan enum di database
         SimpananSukarela::factory()->count(1)->create([
             'users_id' => $user->id,
             'status' => 'Diajukan',
@@ -132,9 +132,11 @@ class SimpananSukarelaTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals(2, $response->viewData('countBerhasil'));
-        // Controller mencari 'Pending' yang tidak ada, jadi akan 0
+        // Controller mencari 'Pending' yang tidak ada di enum database
+        // Enum hanya punya: 'Diajukan', 'Dibayar'
+        // Jadi countPending akan selalu 0
         $this->assertEquals(0, $response->viewData('countPending'));
-        // Controller mencari 'Gagal' yang tidak ada, jadi akan 0
+        // Controller mencari 'Gagal' yang juga tidak ada di enum
         $this->assertEquals(0, $response->viewData('countGagal'));
     }
 }

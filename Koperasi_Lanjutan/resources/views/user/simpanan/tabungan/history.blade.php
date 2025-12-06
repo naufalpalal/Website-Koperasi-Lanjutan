@@ -63,7 +63,7 @@
                         <th class="px-4 py-2 text-left whitespace-nowrap">No</th>
                         <th class="px-4 py-2 text-left whitespace-nowrap">Tanggal</th>
                         <th class="px-4 py-2 text-left whitespace-nowrap">Keterangan</th>
-                        <th class="px-4 py-2 text-left whitespace-nowrap">Jumlah</th>
+                        <th class="px-4 py-2 text-left whitespace-nowrap">Nilai Transaksi</th>
                         <th class="px-4 py-2 text-left whitespace-nowrap">Status</th>
                     </tr>
                 </thead>

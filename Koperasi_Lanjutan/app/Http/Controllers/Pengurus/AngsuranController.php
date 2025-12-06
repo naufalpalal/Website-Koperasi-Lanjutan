@@ -23,10 +23,20 @@ class AngsuranController extends Controller
     {
         $request->validate([
             'status' => 'required|in:lunas,belum lunas',
+            'diskon' => 'nullable|numeric|min:0',
         ]);
 
         $angsuran = Angsuran::findOrFail($id);
         $angsuran->status = $request->status;
+        
+        // Jika status lunas, simpan diskon (jika ada)
+        if ($request->status === 'lunas') {
+            $angsuran->diskon = $request->diskon ?? 0;
+        } else {
+            // Jika dikembalikan ke belum lunas, reset diskon
+            $angsuran->diskon = 0;
+        }
+
         $angsuran->save();
 
         return back()->with('success', 'Status angsuran diperbarui');

@@ -126,6 +126,7 @@ class ForgotPasswordTest extends TestCase
             'password' => Hash::make('oldpass123'),
         ]);
 
+
         $tokenPlain = Str::random(64);
         $tokenHash = Hash::make($tokenPlain);
 
