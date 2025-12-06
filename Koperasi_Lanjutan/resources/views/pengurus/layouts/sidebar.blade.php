@@ -146,6 +146,7 @@
                         $pengurus = Auth::guard('pengurus')->user();
                     @endphp
 
+                    @if($pengurus)
                     <img src="{{ $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
                         alt="{{ $pengurus->nama }}" class="h-10 w-10 rounded-full object-cover object-center mr-3">
 
@@ -166,6 +167,7 @@
                             @endif
                         </p>
                     </div>
+                    @endif
                 </a>
             </div>
 

@@ -25,8 +25,7 @@ class SimpananWajibTest extends TestCase
      */
     public function test_pengurus_dapat_generate_simpanan_wajib()
     {
-        $this->markTestSkipped('Requires model investigation');
-
+        $this->markTestSkipped('Generate logic requires further investigation');
         $pengurus = $this->createPengurus();
         $user = User::factory()->create(['status' => 'aktif']);
 

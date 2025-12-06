@@ -45,7 +45,7 @@ class KelolaAnggotController extends Controller
             $anggota = $query->orderBy('nama', 'asc')->get();
         } else {
             // Normal: pakai pagination
-            $anggota = $query->orderBy('nama', 'asc')->paginate(5)->withQueryString();
+            $anggota = $query->orderBy('nama', 'asc')->paginate(5);
         }
 
         return view('pengurus.KelolaAnggota.index', compact('anggota', 'search'));
@@ -70,24 +70,24 @@ class KelolaAnggotController extends Controller
     }
 
     // Setujui anggota
-  public function approve($id)
-{
-    $anggota = User::findOrFail($id);
+    public function approve($id)
+    {
+        $anggota = User::findOrFail($id);
 
-    $anggota->update(['status' => 'aktif']);
+        $anggota->update(['status' => 'aktif']);
 
-    // Buat Simpanan Pokok saat anggota disetujui
-    SimpananPokok::create([
-        'users_id' => $anggota->id,
-        'nilai' => MasterSimpananPokok::latest()->first()->nilai ?? 0,
-        'tahun' => now()->year,
-        'bulan' => now()->month,
-        'status' => 'Dibayar',
-    ]);
+        // Buat Simpanan Pokok saat anggota disetujui
+        SimpananPokok::create([
+            'users_id' => $anggota->id,
+            'nilai' => MasterSimpananPokok::latest()->first()->nilai ?? 0,
+            'tahun' => now()->year,
+            'bulan' => now()->month,
+            'status' => 'Dibayar',
+        ]);
 
-    return redirect()->route('pengurus.anggota.verifikasi')
-        ->with('success', "Anggota {$anggota->nama} berhasil disetujui dan diaktifkan.");
-}
+        return redirect()->route('pengurus.anggota.verifikasi')
+            ->with('success', "Anggota {$anggota->nama} berhasil disetujui dan diaktifkan.");
+    }
 
 
     // Tolak anggota
@@ -96,7 +96,7 @@ class KelolaAnggotController extends Controller
         $anggota = User::findOrFail($id);
 
         // Ubah status menjadi 'ditolak'
-        $anggota->delete();
+        $anggota->update(['status' => 'ditolak']);
 
         // (Opsional) Hapus dokumen pendaftaran jika perlu
         // Storage::delete($anggota->dokumen_path);
