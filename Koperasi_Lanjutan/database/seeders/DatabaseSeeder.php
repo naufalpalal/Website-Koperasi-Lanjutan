@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nama' => 'Admin Utama',
                 'password' => Hash::make('password'), // Ganti dengan password yang kuat!
-                'nip' => '199001012020011001',
+                'nip' => '1122334455',
                 'tempat_lahir' => 'Jakarta',
                 'tanggal_lahir' => Carbon::parse('1990-01-01'),
                 'alamat_rumah' => 'Jl. Merdeka No. 10, Jakarta Pusat',
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nama' => 'Budi Santoso',
                 'password' => Hash::make('ketua123'),
-                'nip' => '198505152010052002',
+                'nip' => '1234567890',
                 'tempat_lahir' => 'Bandung',
                 'tanggal_lahir' => Carbon::parse('1985-05-15'),
                 'alamat_rumah' => 'Jl. Pelajar Pejuang 45 No. 5, Bandung',
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nama' => 'Siti Aminah',
                 'password' => Hash::make('bendahara123'),
-                'nip' => '199210202018092003',
+                'nip' => '1122334466',
                 'tempat_lahir' => 'Surabaya',
                 'tanggal_lahir' => Carbon::parse('1992-10-20'),
                 'alamat_rumah' => 'Jl. Pahlawan No. 7, Surabaya',
@@ -84,7 +84,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nama' => 'Joko Susilo',
                 'password' => Hash::make('sekretaris123'),
-                'nip' => '198807252015071004',
+                'nip' => '112233445577',
                 'tempat_lahir' => 'Yogyakarta',
                 'tanggal_lahir' => Carbon::parse('1988-07-25'),
                 'alamat_rumah' => 'Jl. Malioboro No. 3, Yogyakarta',

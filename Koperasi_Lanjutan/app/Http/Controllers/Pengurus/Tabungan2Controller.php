@@ -68,10 +68,19 @@ class Tabungan2Controller extends Controller
     public function reject($id)
     {
         $tabungan = Tabungan::findOrFail($id);
+        $pengurus = Auth::guard('pengurus')->user();
+        $anggota = $tabungan->user;
+        
         $tabungan->update([
             'status' => 'ditolak',
             'pengurus_id' => Auth::guard('pengurus')->id()
         ]);
+
+        // CATAT LOG
+        $this->writeLog(
+            "Tanggal: {$tabungan->tanggal} | Nominal: {$tabungan->nilai} |" .
+            "NIP Anggota: {$anggota->nip} | Ditolak Oleh: {$pengurus->nama} (ID: {$pengurus->id})"
+        );
 
         return redirect()
             ->route('pengurus.tabungan.detail', $tabungan->users_id)
@@ -333,4 +342,87 @@ class Tabungan2Controller extends Controller
             fclose($handle);
         }, 200, $headers);
     }
+
+    public function potongSemua()
+    {
+        $users = User::with('tabungans')->get();
+        $pengurus = Auth::guard('pengurus')->user();
+
+        $rekap = []; // untuk keperluan export nanti
+
+        foreach ($users as $user) {
+
+            $totalSaldo = $user->totalSaldo();
+
+            if ($totalSaldo <= 0) {
+                continue; // skip jika saldo kosong
+            }
+
+            // Buat transaksi pemotongan
+            Tabungan::create([
+                'users_id' => $user->id,
+                'pengurus_id' => $pengurus->id,
+                'tanggal' => now()->format('Y-m-d'),
+                'nilai' => 0,
+                'debit' => $totalSaldo,
+                'status' => 'dipotong',
+            ]);
+
+            // Simpan untuk rekap download
+            $rekap[] = [
+                'nama' => $user->nama,
+                'saldo_dipotong' => $totalSaldo,
+                'tanggal' => now()->format('Y-m-d H:i:s'),
+                'dipotong_oleh' => $pengurus->nama
+            ];
+        }
+
+        // Simpan session untuk file Excel
+        session(['rekap_potongan' => $rekap]);
+
+        return redirect()
+            ->route('pengurus.tabungan.potong_semua.download')
+            ->with('success', 'Semua tabungan berhasil dipotong.');
+    }
+
+    public function downloadPotonganExcel()
+    {
+        $rekap = session('rekap_potongan');
+
+        if (!$rekap) {
+            return back()->with('error', 'Tidak ada data pemotongan.');
+        }
+
+        $filename = 'rekap_pemotongan_massal_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        return response()->stream(function () use ($rekap) {
+
+            $handle = fopen('php://output', 'w');
+
+            // Header CSV
+            fputcsv($handle, [
+                'Nama Anggota',
+                'Saldo Dipotong',
+                'Tanggal',
+                'Diproses Oleh'
+            ]);
+
+            foreach ($rekap as $row) {
+                fputcsv($handle, [
+                    $row['nama'],
+                    $row['saldo_dipotong'],
+                    $row['tanggal'],
+                    $row['dipotong_oleh']
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
 }

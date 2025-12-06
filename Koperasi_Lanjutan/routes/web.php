@@ -171,6 +171,12 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
         Route::post('/debit/store', [Tabungan2Controller::class, 'storeDebit'])
             ->name('pengurus.tabungan.debit.store');
 
+        Route::get('/potong-semua', [Tabungan2Controller::class, 'potongSemua'])
+            ->name('pengurus.tabungan.potong_semua');
+
+        Route::get('/potong-semua/download', [Tabungan2Controller::class, 'downloadPotonganExcel'])
+            ->name('pengurus.tabungan.potong_semua.download');
+
         // Approve / Reject
         Route::put('/{id}/terima', [Tabungan2Controller::class, 'approve'])
             ->name('pengurus.tabungan.terima');
