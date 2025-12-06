@@ -111,9 +111,16 @@
 
                 <!-- Hanya untuk ADMIN -->
                 @if(auth('pengurus')->check() && auth('pengurus')->user()->role === 'superadmin')
-                    <a href="{{ route('settings.edit') }}"
+                    <a href="{{ route('pengurus.settings.edit') }}"
                         class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                         Pengaturan Koperasi
+                    </a>
+                @endif
+
+                 @if(auth('pengurus')->check() && in_array(auth('pengurus')->user()->role, ['bendahara', 'superadmin', 'ketua']))
+                    <a href="{{ route('pengurus.settings.edit') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+                        Laporan Simpan Pinjam
                     </a>
                 @endif
 

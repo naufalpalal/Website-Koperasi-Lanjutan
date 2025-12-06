@@ -147,6 +147,23 @@ class PinjamanController extends Controller
         }
     }
 
+    public function reject(Request $request, $id)
+    {
+        $pinjaman = Pinjaman::findOrFail($id);
+
+        // Validasi status
+        if ($pinjaman->status !== 'pending') {
+            return back()->with('error', 'Pinjaman tidak dapat ditolak karena status bukan pending.');
+        }
+
+        $pinjaman->update([
+            'status' => 'ditolak',
+            'keterangan' => $request->input('alasan', 'Ditolak oleh pengurus'),
+        ]);
+
+        return back()->with('success', 'Pinjaman berhasil ditolak.');
+    }
+
     public function downloadExcel()
     {
         $pinjaman = Pinjaman::with('user')->get();

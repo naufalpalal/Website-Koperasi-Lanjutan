@@ -1,40 +1,12 @@
 <?php
 
-use App\Http\Controllers\Pengurus\PengajuanAngsuranController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\RolePengurusMiddleware;
-use App\Models\PengajuanAngsuran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-// Controllers
-use App\Http\Controllers\KelolaAnggotController;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\User\SimpananWajibController;
-use App\Http\Controllers\Pengurus\SimpananSukarelaController;
-use App\Http\Controllers\Pengurus\PengurusSimpananWajibController;
-use App\Http\Controllers\Pengurus\MasterSimpananWajibController;
-use App\Http\Controllers\Pengurus\Tabungan2Controller;
-use App\Http\Controllers\User\SimpananSukarelaAnggotaController;
-use App\Http\Controllers\User\PengajuanSukarelaAnggotaController;
-use App\Http\Controllers\TabunganController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\filedokumen;
-use App\Http\Controllers\Pengurus\PinjamanController;
-use App\Http\Controllers\Pengurus\AngsuranController;
-use App\Http\Controllers\User\PinjamanAnggotaController;
-use App\Http\Controllers\IdentitasKoperasiController;
-use App\Http\Controllers\PengurusController;
-use App\Http\Controllers\PinjamanDokumenController;
-use App\Http\Controllers\Pengurus\PinjamanSettingController;
-use App\Http\Controllers\User\AngsuranAnggotaController;
 
-
-// Registrasi Middleware
-Route::aliasMiddleware('role.pengurus', RolePengurusMiddleware::class);
-
+// ==================================
 // Halaman Utama & Logout
+// ==================================
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -46,65 +18,23 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
+// ==================================
+// Include Routes dari File Terpisah
+// ==================================
 
+// Auth Routes (login, register, forgot-password) - Guest Only
+require __DIR__ . '/auth.php';
 
-
-
-// Profile User (Auth wajib)
-Route::middleware(['auth:pengurus,web'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
-    Route::put('/profile-combined', [ProfileController::class, 'updateCombined'])->name('profile.update-combined');
-});
-
-
-// Laporan (Pengurus)
-Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.laporan.index');
-
-
-// Pinjaman (Anggota)
-Route::middleware(['auth:web'])->prefix('anggota')->group(function () {
-    Route::get('/pinjaman/create', [PinjamanAnggotaController::class, 'create'])->name('user.pinjaman.create');
-    Route::post('/pinjaman/store', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
-    Route::post('/pinjaman/{id}/upload', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
-    // Pilih bulan angsuran
-    // Route::get(
-    //     '/angsuran/{pinjaman}',
-    //     [AngsuranAnggotaController::class, 'index']
-    // )->name('anggota.angsuran.index');
-
-
-    Route::get(
-        '/angsuran/pilih/{pinjaman}',
-        [AngsuranAnggotaController::class, 'pilihBulan']
-    )->name('anggota.angsuran.pilih');
-
-    Route::post(
-        '/angsuran/bayar/{pinjaman}',
-        [AngsuranAnggotaController::class, 'bayar']
-    )->name('anggota.angsuran.bayar');
-    // Route::get('/pinjaman/download/{id}', [PinjamanAnggotaController::class, 'download'])->name('user.pinjaman.download');
-    // Route::get('/pinjaman/upload/{id}', [PinjamanAnggotaController::class, 'uploadForm'])->name('user.pinjaman.uploadForm');
-    // Route::post('/pinjaman/upload/{id}', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
-    // Route::delete('/pinjaman/dokumen/{id}', [PinjamanAnggotaController::class, 'hapusDokumen'])->name('user.pinjaman.hapusDokumen');
-});
-
-
-// Tabungan (Anggota)
-Route::middleware(['auth:web'])->prefix('user/simpanan')->as('user.simpanan.')->group(function () {
-    Route::resource('tabungan', TabunganController::class);
-    Route::post('/user/tabungan/store', [TabunganController::class, 'store'])->name('user.simpanan.tabungan.store');
-});
-
+// User/Anggota Routes - Authenticated Users Only
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
+    require __DIR__ . '/user.php';
 });
 
-Route::middleware(['auth:web'])->group(function () {
-    Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('user.simpanan.wajib.index');
+// Pengurus Routes - Authenticated Pengurus Only
+Route::middleware(['auth:pengurus'])->group(function () {
+    require __DIR__ . '/pengurus.php';
 });
+
 
 
 // Login & Register (Guest Area)
@@ -362,3 +292,5 @@ Route::middleware(['auth:web'])->get('/dokumen/lihat/{userId}/{jenis}', [filedok
 
 Route::middleware(['auth:pengurus'])->get('/pengurus/dokumen/lihat/{userId}/{jenis}', [filedokumen::class, 'lihatDokumen'])
     ->name('dokumen.lihat.pengurus');
+=======
+>>>>>>> 47370bd7daf51b0e7ef7b26d6a9e9a842cb0617b

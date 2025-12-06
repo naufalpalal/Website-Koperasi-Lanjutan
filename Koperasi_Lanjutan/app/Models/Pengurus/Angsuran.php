@@ -20,6 +20,7 @@ class Angsuran extends Model
         'tanggal_bayar',
         'status',
         'jenis_pembayaran',
+        'diskon',
     ];
 
     public function pinjaman()

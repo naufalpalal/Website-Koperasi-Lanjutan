@@ -106,16 +106,33 @@
 
                                 <td class="px-3 py-2 border text-center">
 
-                                    <form action="{{ route('pengurus.pinjaman.updateStatus', $a->id) }}" method="POST">
+                                    <form action="{{ route('pengurus.pinjaman.updateStatus', $a->id) }}" method="POST"
+                                        class="flex items-center justify-center gap-2">
                                         @csrf
                                         <input type="hidden" name="status"
                                             value="{{ $a->status === 'lunas' ? 'belum lunas' : 'lunas' }}">
 
+                                        @if ($a->status !== 'lunas')
+                                            <input type="number" name="diskon" placeholder="Diskon (Rp)"
+                                                class="w-24 text-xs border rounded px-2 py-1 focus:ring-blue-400 focus:border-blue-400"
+                                                min="0">
+                                        @else
+                                            <div class="text-xs text-gray-600 mr-2">
+                                                @if ($a->diskon > 0)
+                                                    <span class="text-green-600 font-semibold">Diskon:
+                                                        Rp{{ number_format($a->diskon, 0, ',', '.') }}</span>
+                                                @else
+                                                    -
+                                                @endif
+                                            </div>
+                                        @endif
+
                                         <button type="submit"
-                                            class="w-6 h-6 items-center justify-center rounded border 
-        text-white text-sm font-bold leading-none
-        {{ $a->status === 'lunas' ? 'bg-green-600 border-green-700' : 'bg-red-600 border-red-700' }}
-        transition">
+                                            class="w-8 h-8 flex items-center justify-center rounded border 
+                                            text-white text-sm font-bold leading-none shadow-sm
+                                            {{ $a->status === 'lunas' ? 'bg-green-600 border-green-700 hover:bg-green-700' : 'bg-red-600 border-red-700 hover:bg-red-700' }}
+                                            transition"
+                                            title="{{ $a->status === 'lunas' ? 'Batalkan Pelunasan' : 'Tandai Lunas' }}">
 
                                             @if ($a->status === 'lunas')
                                                 ✔

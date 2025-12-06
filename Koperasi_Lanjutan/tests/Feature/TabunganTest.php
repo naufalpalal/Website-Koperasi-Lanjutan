@@ -20,6 +20,7 @@ class TabunganTest extends TestCase
     {
         $user = User::factory()->create();
 
+        /** @var User $user */
         $response = $this->actingAs($user)->get('/tabungan');
 
         $response->assertStatus(200)
@@ -38,6 +39,7 @@ class TabunganTest extends TestCase
             'status' => 'diterima',
         ]);
 
+        /** @var User $user */
         $response = $this->actingAs($user)->get('/tabungan/history');
 
         $response->assertStatus(200)
@@ -54,6 +56,7 @@ class TabunganTest extends TestCase
         $user = User::factory()->create();
         $file = UploadedFile::fake()->image('bukti-transfer.jpg');
 
+        /** @var User $user */
         $response = $this->actingAs($user)->post('/tabungan/store', [
             'nilai' => 100000,
             'tanggal' => now()->format('Y-m-d'),
@@ -79,6 +82,7 @@ class TabunganTest extends TestCase
         $user = User::factory()->create();
         $file = UploadedFile::fake()->image('bukti-transfer.jpg');
 
+        /** @var User $user */
         $response = $this->actingAs($user)->post('/tabungan/store', [
             'nilai' => 50, // Kurang dari minimum 100
             'tanggal' => now()->format('Y-m-d'),
@@ -98,6 +102,7 @@ class TabunganTest extends TestCase
         $user = User::factory()->create();
         $file = UploadedFile::fake()->image('bukti-transfer.jpg');
 
+        /** @var User $user */
         $response = $this->actingAs($user)->post('/tabungan/store', [
             'nilai' => 100000,
             'tanggal' => now()->subDay()->format('Y-m-d'),
@@ -114,6 +119,7 @@ class TabunganTest extends TestCase
     {
         $user = User::factory()->create();
 
+        /** @var User $user */
         $response = $this->actingAs($user)->post('/tabungan/store', [
             'nilai' => 100000,
             'tanggal' => now()->format('Y-m-d'),
@@ -151,6 +157,7 @@ class TabunganTest extends TestCase
             'nilai' => 200000,
         ]);
 
+        /** @var User $user1 */
         $response = $this->actingAs($user1)->get('/tabungan');
 
         $response->assertStatus(200);

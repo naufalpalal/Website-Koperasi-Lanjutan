@@ -12,7 +12,8 @@ class TabunganController extends Controller
     // Menampilkan daftar tabungan user
     public function index(Request $request)
     {
-        $tabungans = Tabungan::where('users_id', auth()->id())
+        $user = Auth::user();
+        $tabungans = Tabungan::where('users_id', $user->id)
             ->orderBy('id', 'desc')
             ->take(5)
             ->get();
@@ -22,7 +23,6 @@ class TabunganController extends Controller
         $nilai = $request->input('nilai');
 
         // Hitung total tabungan juga di halaman index (optional)
-        $user = Auth::user();
         $totalTabungan = $user->totalSaldo();
 
         return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr', 'tanggal', 'nilai', 'totalTabungan'));
@@ -54,9 +54,9 @@ class TabunganController extends Controller
     public function create(Request $request)
     {
         $showQr = $request->has('show_qr');
-        $tabungans = Tabungan::where('users_id', auth()->id())->latest()->get();
-
         $user = Auth::user();
+        $tabungans = Tabungan::where('users_id', $user->id)->latest()->get();
+
         $totalTabungan = $user->totalSaldo();
 
         return view('user.simpanan.tabungan.index', compact('tabungans', 'showQr', 'totalTabungan'));
@@ -76,6 +76,8 @@ class TabunganController extends Controller
             'bukti_transfer.image' => 'Bukti transfer harus berupa file gambar (jpg/png).',
         ]);
 
+        $user = Auth::user();
+
         // Upload bukti transfer
         $namaFile = null;
         if ($request->hasFile('bukti_transfer')) {
@@ -85,7 +87,7 @@ class TabunganController extends Controller
         }
 
         Tabungan::create([
-            'users_id' => auth()->id(),
+            'users_id' => $user->id,
             'tanggal' => $request->tanggal,
             'nilai' => $request->nilai,
             'status' => 'pending',
