@@ -71,54 +71,6 @@ Route::middleware(['auth:pengurus,web'])->group(function () {
 });
 
 
-// ===============================
-// LAPORAN PENGURUS
-// ===============================
-Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.laporan.index');
-
-
-// ===============================
-// USER (ANGGOTA) PINJAMAN
-// ===============================
-Route::middleware(['auth:web'])->prefix('anggota')->group(function () {
-
-    // Pinjaman
-    Route::get('/pinjaman/create', [PinjamanAnggotaController::class, 'create'])->name('user.pinjaman.create');
-    Route::post('/pinjaman/store', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
-    Route::post('/pinjaman/{id}/upload', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
-
-    // Angsuran
-    Route::get('/angsuran/pilih/{pinjaman}', [AngsuranAnggotaController::class, 'pilihBulan'])->name('anggota.angsuran.pilih');
-    Route::post('/angsuran/bayar/{pinjaman}', [AngsuranAnggotaController::class, 'bayar'])->name('anggota.angsuran.bayar');
-});
-
-
-// ===============================
-// TABUNGAN ANGGOTA
-// ===============================
-Route::middleware(['auth:web'])->prefix('tabungan')->group(function () {
-    Route::get('/', [TabunganController::class, 'index'])->name('tabungan.index');
-    Route::post('/store', [TabunganController::class, 'store'])->name('tabungan.store');
-    Route::get('/history', [TabunganController::class, 'historyFull'])->name('tabungan.history');
-});
-
-
-// ===============================
-// DASHBOARD ANGGOTA
-// ===============================
-Route::middleware(['auth:web'])->group(function () {
-    Route::get('/dashboard', [UserController::class, 'dashboardUserView'])->name('user.dashboard.index');
-    Route::get('/anggota/dashboard', [UserController::class, 'dashboardnotverifikasi'])->name('guest.dashboard');
-});
-
-
-// ===============================
-// SIMPANAN WAJIB ANGGOTA
-// ===============================
-Route::middleware(['auth:web'])->group(function () {
-    Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('user.simpanan.wajib.index');
-});
-
 
 // ===============================
 // LOGIN & REGISTER (Guest Only)
@@ -157,6 +109,81 @@ Route::middleware(['auth:pengurus'])->get('/pengurus/dokumen/lihat/{userId}/{jen
 
 
 // ===============================
+// ROUTE ANGGOTA (USER)
+// ===============================
+Route::middleware(['auth:web'])->group(function () {
+
+    // -------------------------------
+    // DASHBOARD
+    // -------------------------------
+    Route::get('/dashboard', [UserController::class, 'dashboardUserView'])
+        ->name('user.dashboard.index');
+
+    Route::get('/anggota/dashboard', [UserController::class, 'dashboardnotverifikasi'])
+        ->name('guest.dashboard');
+
+
+    // -------------------------------
+    // PINJAMAN ANGGOTA
+    // -------------------------------
+    Route::prefix('anggota')->group(function () {
+
+        // Pinjaman
+        Route::get('/pinjaman/create', [PinjamanAnggotaController::class, 'create'])
+            ->name('user.pinjaman.create');
+
+        Route::post('/pinjaman/store', [PinjamanAnggotaController::class, 'store'])
+            ->name('user.pinjaman.store');
+
+        Route::post('/pinjaman/{id}/upload', [PinjamanAnggotaController::class, 'upload'])
+            ->name('user.pinjaman.upload');
+
+        // Angsuran
+        Route::get('/angsuran/pilih/{pinjaman}', [AngsuranAnggotaController::class, 'pilihBulan'])
+            ->name('anggota.angsuran.pilih');
+
+        Route::post('/angsuran/bayar/{pinjaman}', [AngsuranAnggotaController::class, 'bayar'])
+            ->name('anggota.angsuran.bayar');
+    });
+
+
+    // -------------------------------
+    // TABUNGAN ANGGOTA
+    // -------------------------------
+    Route::prefix('tabungan')->group(function () {
+        Route::get('/', [TabunganController::class, 'index'])
+            ->name('tabungan.index');
+
+        Route::post('/store', [TabunganController::class, 'store'])
+            ->name('tabungan.store');
+
+        Route::get('/history', [TabunganController::class, 'historyFull'])
+            ->name('tabungan.history');
+    });
+
+
+    // -------------------------------
+    // SIMPANAN WAJIB ANGGOTA
+    // -------------------------------
+    Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])
+        ->name('user.simpanan.wajib.index');
+
+
+    // -------------------------------
+    // SIMPANAN SUKARELA ANGGOTA
+    // -------------------------------
+    Route::prefix('simpanan-sukarela-anggota')->name('user.simpanan.sukarela.')->group(function () {
+        Route::get('/', [SimpananSukarelaAnggotaController::class, 'index'])->name('index');
+        Route::post('/ajukan', [PengajuanSukarelaAnggotaController::class, 'store'])->name('store');
+        Route::get('/pengajuan', [PengajuanSukarelaAnggotaController::class, 'create'])->name('pengajuan');
+        Route::get('/riwayat', [SimpananSukarelaAnggotaController::class, 'riwayat'])->name('riwayat');
+        Route::post('/toggle', [SimpananSukarelaAnggotaController::class, 'toggle'])->name('toggle');
+    });
+
+});
+
+
+// ===============================
 // LOGIN PENGURUS
 // ===============================
 Route::get('/pengurus/login', [PengurusController::class, 'showLoginForm'])->name('pengurus.login');
@@ -171,7 +198,7 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [PengurusController::class, 'dashboard'])->name('pengurus.dashboard.index');
-    
+
 
     // ============================
     // SIMPANAN WAJIB (merge duplikat)
@@ -269,6 +296,12 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             Route::post('/{id}/tolak', [PengajuanAngsuranController::class, 'tolakPengajuan'])->name('pengurus.angsuran.tolak');
         });
     });
+
+    // ===============================
+    // LAPORAN PENGURUS
+    // ===============================
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('pengurus.laporan.index');
+
 
 
 

@@ -68,13 +68,13 @@
                             </svg>
                         </button>
                         <div x-show="openSimpanan" x-collapse class="ml-4 space-y-1">
-                            <a href="{{ route('pengurus.simpanan.sukarela.index') }}"
-                                class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
-                                Simpanan Sukarela
-                            </a>
                             <a href="{{ route('pengurus.simpanan.wajib_2.dashboard') }}"
                                 class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                                 Simpanan Wajib
+                            </a>
+                             <a href="{{ route('pengurus.simpanan.sukarela.index') }}"
+                                class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                                Simpanan Sukarela
                             </a>
                             <a href="{{ route('pengurus.tabungan.index') }}"
                                 class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
