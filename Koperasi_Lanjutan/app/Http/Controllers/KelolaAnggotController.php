@@ -122,9 +122,8 @@ class KelolaAnggotController extends Controller
             'sk_tenaga_kerja' => 'nullable|file|mimes:pdf,jpg,jpeg,png',
 
             // simpanan
-            'simpanan_pokok' => 'required|numeric|min:10000',
+            
             'simpanan_wajib' => 'required|numeric|min:0',
-            'simpanan_sukarela' => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -190,10 +189,11 @@ class KelolaAnggotController extends Controller
                     ]);
                 }
 
-                // 🔹 Simpanan Pokok (dibuat saat awal masuk koperasi)
+                $nilaiPokok = $validated['simpanan_pokok'] ?? MasterSimpananPokok::latest()->first()->nilai ?? 0;
+
                 SimpananPokok::create([
                     'users_id' => $user->id,
-                    'nilai' => $validated['simpanan_pokok'],
+                    'nilai' => $nilaiPokok,
                     'tahun' => now()->year,
                     'bulan' => now()->month,
                     'status' => 'Dibayar',
@@ -209,14 +209,14 @@ class KelolaAnggotController extends Controller
                     'status' => 'Dibayar',
                 ]);
 
-                // 🔹 Simpanan Sukarela (awal)
-                MasterSimpananSukarela::create([
-                    'users_id' => $user->id,
-                    'nilai' => $validated['simpanan_sukarela'] ?? 0,
-                    'tahun' => now()->year,
-                    'bulan' => now()->month,
-                    'status' => 'Disetujui',
-                ]);
+                // // 🔹 Simpanan Sukarela (awal)
+                // MasterSimpananSukarela::create([
+                //     'users_id' => $user->id,
+                //     'nilai' => $validated['simpanan_sukarela'] ?? 0,
+                //     'tahun' => now()->year,
+                //     'bulan' => now()->month,
+                //     'status' => 'Disetujui',
+                // ]);
             });
 
             // ✅ Return HARUS di luar DB::transaction
@@ -457,14 +457,23 @@ class KelolaAnggotController extends Controller
             'status' => 'aktif',
         ]);
 
-        // 🔹 Reset Simpanan Pokok hanya jika belum ada bulan ini
+        // 🔹 Reset Simpanan Pokok: ambil dari Master jika sudah ada
         $latestPokok = SimpananPokok::where('users_id', $id)->latest('id')->first();
-        if ($latestPokok) {
-            SimpananPokok::where('users_id', $id)->update([
-                'nilai' => 0,
-                'status' => 'Dibayar'
-            ]);
-        }
+
+        // Hapus simpanan lama dulu (opsional tergantung aturan)
+        SimpananPokok::where('users_id', $id)->delete();
+
+        // Buat simpanan baru dengan nilai dari master
+        $nilaiMaster = MasterSimpananPokok::latest()->first()->nilai ?? 0;
+
+        SimpananPokok::create([
+            'users_id' => $id,
+            'nilai' => $nilaiMaster,
+            'tahun' => now()->year,
+            'bulan' => now()->month,
+            'status' => 'Dibayar'
+        ]);
+
 
         // Reset Simpanan Wajib & Sukarela
         SimpananWajib::where('users_id', $id)->delete();
