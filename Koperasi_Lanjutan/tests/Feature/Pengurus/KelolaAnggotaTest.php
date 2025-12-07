@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Pengurus;
+use App\Models\MasterSimpananPokok;
 
 class KelolaAnggotaTest extends TestCase
 {
@@ -23,15 +24,13 @@ class KelolaAnggotaTest extends TestCase
      */
     public function test_pengurus_dapat_mengakses_halaman_anggota()
     {
-        $this->markTestSkipped('Requires view investigation');
-
         $pengurus = $this->createPengurus();
 
         $response = $this->actingAs($pengurus, 'pengurus')
             ->get(route('pengurus.anggota.index'));
 
         $response->assertStatus(200)
-            ->assertViewIs('pengurus.anggota.index');
+            ->assertViewIs('pengurus.KelolaAnggota.index');
     }
 
     /**
@@ -74,8 +73,6 @@ class KelolaAnggotaTest extends TestCase
      */
     public function test_pengurus_dapat_menolak_anggota()
     {
-        $this->markTestSkipped('Requires status field investigation');
-
         $pengurus = $this->createPengurus();
 
         $user = User::factory()->create([
@@ -98,9 +95,14 @@ class KelolaAnggotaTest extends TestCase
      */
     public function test_pengurus_dapat_mengakses_form_tambah_anggota()
     {
-        $this->markTestSkipped('Requires form view investigation');
-
         $pengurus = $this->createPengurus();
+
+        MasterSimpananPokok::create([
+            'nilai' => 100000,
+            'tahun' => date('Y'),
+            'bulan' => date('n'),
+            'pengurus_id' => $pengurus->id,
+        ]);
 
         $response = $this->actingAs($pengurus, 'pengurus')
             ->get(route('pengurus.anggota.create'));
@@ -113,8 +115,6 @@ class KelolaAnggotaTest extends TestCase
      */
     public function test_pengurus_dapat_mengakses_form_edit_anggota()
     {
-        $this->markTestSkipped('Requires form view investigation');
-
         $pengurus = $this->createPengurus();
         $user = User::factory()->create();
 
@@ -142,8 +142,6 @@ class KelolaAnggotaTest extends TestCase
      */
     public function test_pengurus_dapat_toggle_status_anggota()
     {
-        $this->markTestSkipped('Requires toggle logic investigation');
-
         $pengurus = $this->createPengurus();
 
         $user = User::factory()->create([
@@ -152,9 +150,14 @@ class KelolaAnggotaTest extends TestCase
 
         $response = $this->actingAs($pengurus, 'pengurus')
             ->post(route('pengurus.anggota.toggleStatus', $user->id), [
-                'status' => 'tidak_aktif',
+                'status' => 'tidak aktif',
             ]);
 
         $response->assertRedirect();
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'status' => 'tidak aktif',
+        ]);
     }
 }

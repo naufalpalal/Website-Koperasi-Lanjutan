@@ -9,65 +9,78 @@ use Illuminate\Support\Facades\Auth;
 
 class SimpananSukarelaAnggotaController extends Controller
 {
-    // Halaman utama: total saldo + status bulan ini
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user();
+        $userId = Auth::id();
 
-        // Total saldo yang statusnya berhasil/dibayar
-        $totalSaldo = SimpananSukarela::where('users_id', $user->id)
-            ->where('status', 'Dibayar')
+        // Total saldo
+        $totalSaldo = SimpananSukarela::where('users_id', $userId)
             ->sum('nilai');
 
-        // Status bulan ini
-        $bulanIni = SimpananSukarela::where('users_id', $user->id)
-            ->where('tahun', now()->year)
-            ->where('bulan', now()->month)
-            ->first();
+        // List tahun
+        $tahunList = SimpananSukarela::where('users_id', $userId)
+            ->select('tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
 
-        // Statistik tambahan untuk dashboard
-        $countBerhasil = SimpananSukarela::where('users_id', $user->id)
-            ->where('status', 'Dibayar')
-            ->count();
-
-        $countPending = SimpananSukarela::where('users_id', $user->id)
-            ->where('status', 'Pending')
-            ->count();
-
-        $countGagal = SimpananSukarela::where('users_id', $user->id)
-            ->where('status', 'Gagal')
-            ->count();
-
-        return view('user.simpanan.sukarela.index', compact(
-            'totalSaldo',
-            'bulanIni',
-            'countBerhasil',
-            'countPending',
-            'countGagal',
-            'user'
-        ));
-    }
-
-
-    // Riwayat simpanan sukarela user
-    public function riwayat()
-    {
-        $user = Auth::user();
-
-        $riwayat = SimpananSukarela::where('users_id', $user->id)
+        // Data utama
+        $data = SimpananSukarela::where('users_id', $userId)
             ->orderBy('tahun', 'desc')
             ->orderBy('bulan', 'desc')
-            ->get();
+            ->paginate(10);
 
-        return view('user.simpanan.sukarela.riwayat', compact('riwayat'));
+        return view('user.simpanan.sukarela.index', [
+            'totalSaldo' => $totalSaldo,
+            'tahunList'  => $tahunList,
+            'data'       => $data
+        ]);
+    }
+
+    // ==============================
+    // RIWAYAT
+    // ==============================
+    public function riwayat(Request $request)
+    {
+        $userId = Auth::id();
+
+        $query = SimpananSukarela::where('users_id', $userId);
+
+        // Filter bulan & tahun
+        if ($request->filled('bulan')) {
+            $query->where('bulan', $request->bulan);
+        }
+
+        if ($request->filled('tahun')) {
+            $query->where('tahun', $request->tahun);
+        }
+
+        // Dropdown tahun
+        $tahunList = SimpananSukarela::where('users_id', $userId)
+            ->select('tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        // Data riwayat
+        $riwayat = $query->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->paginate(10)
+            ->withQueryString(); // supaya paginasi tetap membawa filter
+
+        return view('user.simpanan.sukarela.riwayat', [
+            'riwayat'    => $riwayat,
+            'tahunList'  => $tahunList,
+            'totalSaldo' => SimpananSukarela::where('users_id', $userId)->sum('nilai'),
+            'totalSudah' => SimpananSukarela::where('users_id', $userId)->where('status', 'sudah')->sum('nilai'),
+            'totalBelum' => SimpananSukarela::where('users_id', $userId)->where('status', 'belum')->sum('nilai'),
+        ]);
     }
 
     public function toggle(Request $request)
     {
-        $user = Auth::user();
-
-        // Tidak ada logika, hanya untuk frontend
-        // Data status simpanan bisa diambil dari $user dan dikirim ke frontend
+        // Kamu bisa tambahkan logika toggle di sini,
+        // misalnya update status simpanan.
 
         return back()->with('success', 'Status simpanan berhasil diperbarui.');
     }

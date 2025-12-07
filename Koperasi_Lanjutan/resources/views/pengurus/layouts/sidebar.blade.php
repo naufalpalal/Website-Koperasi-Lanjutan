@@ -68,13 +68,13 @@
                             </svg>
                         </button>
                         <div x-show="openSimpanan" x-collapse class="ml-4 space-y-1">
-                            <a href="{{ route('pengurus.simpanan.sukarela.index') }}"
-                                class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
-                                Simpanan Sukarela
-                            </a>
                             <a href="{{ route('pengurus.simpanan.wajib_2.dashboard') }}"
                                 class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
                                 Simpanan Wajib
+                            </a>
+                             <a href="{{ route('pengurus.simpanan.sukarela.index') }}"
+                                class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                                Simpanan Sukarela
                             </a>
                             <a href="{{ route('pengurus.tabungan.index') }}"
                                 class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
@@ -88,27 +88,7 @@
                         class="flex items-center px-4 py-3 rounded-lg hover:bg-blue-700 transition">
                         Pinjaman
                     </a>
-                    <!-- <div x-data="{ openSimpanan: false }" class="space-y-1">
-                        <button @click="openSimpanan = !openSimpanan"
-                            class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-blue-700 transition">
-                            <span>setting</span>
-                            <svg :class="{ 'rotate-180': openSimpanan }" class="w-4 h-4 transform transition-transform"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" stroke-width="2" />
-                            </svg>
-                        </button>
-                        <div x-show="openSimpanan" x-collapse class="ml-4 space-y-1">
-
-
-                            <a href="{{ route('pengurus.simpanan.wajib_2.edit') }}"
-                                class="block px-4 py-2 text-sm hover:bg-gray-700 rounded-lg">
-                                edit nominal simpanan wajib
-                            </a>
-                        </div> 
-                    </div>-->
-
                 @endif
-
                 <!-- Hanya untuk ADMIN -->
                 @if(auth('pengurus')->check() && auth('pengurus')->user()->role === 'superadmin')
                     <a href="{{ route('pengurus.settings.edit') }}"
@@ -116,16 +96,14 @@
                         Pengaturan Koperasi
                     </a>
                 @endif
-
-                 @if(auth('pengurus')->check() && in_array(auth('pengurus')->user()->role, ['bendahara', 'superadmin', 'ketua']))
-                    <a href="{{ route('pengurus.settings.edit') }}"
+                @if(auth('pengurus')->check() && in_array(auth('pengurus')->user()->role, ['bendahara', 'superadmin', 'ketua']))
+                    <a href="{{ route('pengurus.laporan.index') }}"
                         class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition">
                         Laporan Simpan Pinjam
                     </a>
                 @endif
 
             </nav>
-
             <!-- Logout -->
             <form method="POST" action="{{ route('pengurus.logout') }}" class="mt-6 px-4">
                 @csrf
@@ -146,26 +124,28 @@
                         $pengurus = Auth::guard('pengurus')->user();
                     @endphp
 
-                    <img src="{{ $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
-                        alt="{{ $pengurus->nama }}" class="h-10 w-10 rounded-full object-cover object-center mr-3">
+                    @if($pengurus)
+                        <img src="{{ $pengurus->photo_path ? asset('storage/' . $pengurus->photo_path) : asset('assets/default-avatar.png') }}"
+                            alt="{{ $pengurus->nama }}" class="h-10 w-10 rounded-full object-cover object-center mr-3">
 
-                    <div>
-                        <!-- Teks selamat datang & role spesifik -->
-                        <p class="text-sm text-gray-400">
-                            Selamat datang
-                            @if($pengurus->role == 'superadmin')
-                                Super Admin
-                            @elseif($pengurus->role == 'ketua')
-                                Ketua
-                            @elseif($pengurus->role == 'bendahara')
-                                Bendahara
-                            @elseif($pengurus->role == 'sekretaris')
-                                Sekretaris
-                            @else
-                                Pengurus
-                            @endif
-                        </p>
-                    </div>
+                        <div>
+                            <!-- Teks selamat datang & role spesifik -->
+                            <p class="text-sm text-gray-400">
+                                Selamat datang
+                                @if($pengurus->role == 'superadmin')
+                                    Super Admin
+                                @elseif($pengurus->role == 'ketua')
+                                    Ketua
+                                @elseif($pengurus->role == 'bendahara')
+                                    Bendahara
+                                @elseif($pengurus->role == 'sekretaris')
+                                    Sekretaris
+                                @else
+                                    Pengurus
+                                @endif
+                            </p>
+                        </div>
+                    @endif
                 </a>
             </div>
 

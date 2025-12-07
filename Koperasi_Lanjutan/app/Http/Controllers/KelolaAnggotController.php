@@ -45,7 +45,7 @@ class KelolaAnggotController extends Controller
             $anggota = $query->orderBy('nama', 'asc')->get();
         } else {
             // Normal: pakai pagination
-            $anggota = $query->orderBy('nama', 'asc')->paginate(5)->withQueryString();
+            $anggota = $query->orderBy('nama', 'asc')->paginate(5);
         }
 
         return view('pengurus.KelolaAnggota.index', compact('anggota', 'search'));
@@ -96,7 +96,7 @@ class KelolaAnggotController extends Controller
         $anggota = User::findOrFail($id);
 
         // Ubah status menjadi 'ditolak'
-        $anggota->delete();
+        $anggota->update(['status' => 'ditolak']);
 
         // (Opsional) Hapus dokumen pendaftaran jika perlu
         // Storage::delete($anggota->dokumen_path);

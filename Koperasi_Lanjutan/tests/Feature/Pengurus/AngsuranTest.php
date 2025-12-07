@@ -25,8 +25,6 @@ class AngsuranTest extends TestCase
      */
     public function test_pengurus_dapat_melihat_daftar_angsuran()
     {
-        $this->markTestSkipped('Requires view investigation');
-
         $pengurus = $this->createPengurus();
         $user = User::factory()->create();
 
@@ -82,8 +80,7 @@ class AngsuranTest extends TestCase
      */
     public function test_pengurus_dapat_melihat_halaman_pemotongan()
     {
-        $this->markTestSkipped('Requires view/route investigation');
-
+        $this->markTestSkipped('Route issue with pengurus settings');
         $pengurus = $this->createPengurus();
 
         $response = $this->actingAs($pengurus, 'pengurus')
@@ -98,8 +95,7 @@ class AngsuranTest extends TestCase
      */
     public function test_pengurus_dapat_filter_pemotongan_periode()
     {
-        $this->markTestSkipped('Requires route investigation');
-
+        $this->markTestSkipped('Route issue with pengurus settings');
         $pengurus = $this->createPengurus();
 
         $response = $this->actingAs($pengurus, 'pengurus')

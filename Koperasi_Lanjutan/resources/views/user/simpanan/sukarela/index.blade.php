@@ -1,103 +1,141 @@
 @extends('user.index')
 
-@section('title', 'Dashboard Simpanan Sukarela')
-
 @section('content')
-<div class="p-6 bg-white rounded-lg shadow-md">
 
-    {{-- Judul --}}
-    <h2 class="text-2xl font-bold mb-6">Simpanan Sukarela</h2>
+    {{-- ============================= --}}
+    {{-- CARD ATAS: INFO SIMPANAN --}}
+    {{-- ============================= --}}
+    <div class="p-6 bg-white rounded shadow mb-6">
 
-    {{-- Ringkasan Utama --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <h2 class="text-xl font-bold mb-4">Simpanan Sukarela</h2>
 
-        {{-- Total Saldo --}}
-        <div class="p-4 bg-blue-50 rounded border border-blue-200">
-            <p class="text-sm text-gray-600 font-semibold">Total Saldo Terbayar</p>
-            <p class="text-xl font-bold mt-1">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            {{-- Total Simpanan --}}
+            <div class="p-4 bg-blue-50 border border-blue-200 rounded">
+                <p class="text-sm text-gray-600">Total Simpanan</p>
+                <p class="text-2xl font-bold text-blue-700">
+                    Rp {{ number_format($totalSaldo ?? 0, 0, ',', '.') }}
+                </p>
+            </div>
         </div>
 
-        {{-- Total Pengajuan Berhasil --}}
-        <div class="p-4 bg-green-50 rounded border border-green-200">
-            <p class="text-sm text-gray-600 font-semibold">Pengajuan Berhasil</p>
-            <p class="text-xl font-bold mt-1">{{ $countBerhasil }} kali</p>
+        {{-- TOMBOL AKSI (nanti kamu custom sendiri) --}}
+        <div class="mt-5 flex gap-3">
+            <!-- Tombol Ajukan Perubahan Nominal -->
+            <a href="{{ route('user.simpanan.sukarela.pengajuan') }}"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition font-medium">
+                Ajukan Perubahan Nominal
+            </a>
+
+            <!-- Tombol Ajukan Libur -->
+            <a
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-medium">
+                Ajukan Libur
+            </a>
         </div>
 
-        {{-- Total Pengajuan Gagal --}}
-        <div class="p-4 bg-red-50 rounded border border-red-200">
-            <p class="text-sm text-gray-600 font-semibold">Pengajuan Ditolak / Gagal</p>
-            <p class="text-xl font-bold mt-1">{{ $countGagal }} kali</p>
-        </div>
 
     </div>
 
-    {{-- Status Simpanan Aktif --}}
-    {{-- <div class="mb-6">
-        <div class="p-4 rounded border 
-            {{ Auth::user()->is_simpanan_aktif ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300' }}">
-            
-            <p class="text-sm font-semibold">
-                Status Simpanan:
-            </p>
+    {{-- ============================= --}}
+    {{-- CARD BAWAH: RIWAYAT PEMOTONGAN --}}
+    {{-- ============================= --}}
+    <div class="p-6 bg-white rounded shadow">
 
-            @if(Auth::user()->is_simpanan_aktif)
-                <p class="text-lg font-bold text-green-700">Aktif</p>
-            @else
-                <p class="text-lg font-bold text-red-700">Tidak Aktif</p>
+        <h2 class="text-xl font-bold mb-4">Riwayat Pemotongan Simpanan Sukarela</h2>
+
+        {{-- FILTER --}}
+        <form method="GET" action="{{ route('user.simpanan.sukarela.index') }}"
+            class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            {{-- Filter Bulan --}}
+            <div>
+                <label class="block text-sm font-semibold mb-1">Bulan</label>
+                <select name="bulan" class="w-full border rounded p-2">
+                    <option value="">Semua</option>
+                    @foreach(range(1, 12) as $b)
+                        <option value="{{ $b }}" {{ (string) request('bulan') === (string) $b ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($b)->format('F') }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Filter Tahun --}}
+            <div>
+                <label class="block text-sm font-semibold mb-1">Tahun</label>
+                <select name="tahun" class="w-full border rounded p-2">
+                    <option value="">Semua</option>
+                    @foreach(($tahunList ?? []) as $th)
+                        <option value="{{ $th }}" {{ (string) request('tahun') === (string) $th ? 'selected' : '' }}>
+                            {{ $th }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Tombol --}}
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+                    Filter
+                </button>
+            </div>
+
+            <div class="flex items-end">
+                <a href="{{ route('user.simpanan.sukarela.index') }}"
+                    class="w-full p-2 text-center border rounded hover:bg-gray-100">
+                    Reset
+                </a>
+            </div>
+        </form>
+
+        {{-- TABEL RIWAYAT --}}
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 border text-left">Bulan</th>
+                        <th class="px-4 py-2 border text-left">Tahun</th>
+                        <th class="px-4 py-2 border text-right">Nominal</th>
+                        <th class="px-4 py-2 border text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($data as $item)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2 border">
+                                {{ \Carbon\Carbon::create()->month($item->bulan)->format('F') }}
+                            </td>
+                            <td class="px-4 py-2 border">{{ $item->tahun }}</td>
+                            <td class="px-4 py-2 border text-right">
+                                Rp {{ number_format($item->nilai, 0, ',', '.') }}
+                            </td>
+                            <td class="px-4 py-2 border">
+                                @php
+                                    $status = strtolower($item->status ?? '');
+                                @endphp
+                                <span
+                                    class="{{ $status === 'sudah' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold' }}">
+                                    {{ $status ? ucfirst($status) : 'Belum' }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-4">Belum ada riwayat pemotongan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- PAGINATION --}}
+        <div class="mt-4">
+            @if(method_exists($data, 'links'))
+                {{ $data->withQueryString()->links() }}
             @endif
         </div>
-    </div> --}}
-
-    {{-- Status Bulan Ini --}}
-    <div class="mb-6 p-4 bg-gray-50 border rounded">
-        <h3 class="text-xl font-semibold mb-3">
-            Status Bulan Ini ({{ now()->format('m/Y') }})
-        </h3>
-
-        @if($bulanIni)
-            <p>Status: 
-                <span class="font-bold 
-                    {{ $bulanIni->status == 'berhasil' ? 'text-green-600' : 'text-yellow-600' }}">
-                    {{ ucfirst($bulanIni->status) }}
-                </span>
-            </p>
-            <p>Nominal: <strong>Rp {{ number_format($bulanIni->nilai, 0, ',', '.') }}</strong></p>
-            <p>Terakhir update: {{ $bulanIni->updated_at->format('d M Y') }}</p>
-        @else
-            <p class="text-gray-600">Belum ada catatan untuk bulan ini.</p>
-        @endif
-    </div>
-
-    {{-- Tombol Aksi --}}
-    <div class="flex items-center gap-3">
-
-        <a href="{{ route('user.simpanan.sukarela.riwayat') }}"
-           class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-            Lihat Riwayat
-        </a>
-
-        <a href="{{ route('user.simpanan.sukarela.pengajuan') }}"
-           class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-            Ajukan Perubahan Nominal
-        </a>
-
-        {{-- Toggle Simpanan --}}
-        {{-- @if (Auth::user()->is_simpanan_aktif)
-            <a href="{{ route('user.simpanan.sukarela.libur') }}"
-               class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                Nonaktifkan Simpanan
-            </a>
-        @else
-            <form action="{{ route('simpanan.sukarela.toggle') }}" method="POST">
-                @csrf
-                <button type="submit"
-                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-                    Aktifkan Simpanan
-                </button>
-            </form>
-        @endif --}}
 
     </div>
 
-</div>
 @endsection

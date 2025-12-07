@@ -24,7 +24,7 @@ class TabunganTest extends TestCase
      */
     public function test_pengurus_dapat_mengakses_halaman_tabungan()
     {
-        $this->markTestSkipped('Requires view investigation');
+        $this->markTestSkipped('Route loading issue with role.pengurus middleware in test environment');
 
         $pengurus = $this->createPengurus();
 
@@ -32,7 +32,7 @@ class TabunganTest extends TestCase
             ->get(route('pengurus.tabungan.index'));
 
         $response->assertStatus(200)
-            ->assertViewIs('pengurus.tabungan.index');
+            ->assertViewIs('pengurus.simpanan.tabungan.index');
     }
 
     /**
@@ -40,8 +40,6 @@ class TabunganTest extends TestCase
      */
     public function test_pengurus_dapat_melihat_detail_tabungan()
     {
-        $this->markTestSkipped('Requires view investigation');
-
         $pengurus = $this->createPengurus();
         $user = User::factory()->create();
 
@@ -49,7 +47,7 @@ class TabunganTest extends TestCase
             ->get(route('pengurus.tabungan.detail', $user->id));
 
         $response->assertStatus(200)
-            ->assertViewIs('pengurus.tabungan.detail');
+            ->assertViewIs('pengurus.simpanan.tabungan.detail');
     }
 
     /**
@@ -132,8 +130,6 @@ class TabunganTest extends TestCase
      */
     public function test_pengurus_dapat_mengakses_halaman_kredit()
     {
-        $this->markTestSkipped('Requires view investigation');
-
         $pengurus = $this->createPengurus();
         $user = User::factory()->create();
 
