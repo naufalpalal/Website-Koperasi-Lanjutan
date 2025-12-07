@@ -33,6 +33,12 @@ Route::prefix('pengurus')->name('pengurus.')->group(function () {
         Route::post('/kunci', [PengurusSimpananWajibController::class, 'lockPeriode'])->name('lock');
         Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('edit');
         Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('updateNominal');
+        Route::get('/laporan-tahunan', [PengurusSimpananWajibController::class, 'laporanTahunan'])->name('laporanTahunan');
+        Route::get('/laporan-tahunan/download', [PengurusSimpananWajibController::class, 'downloadTahunan'])->name('laporanTahunan.download');
+        Route::get('/lihat-bukti', [PengurusSimpananWajibController::class, 'lihatBukti'])
+            ->name('lihat_bukti');
+        Route::delete('/lihat-bukti/{id}', [PengurusSimpananWajibController::class, 'hapusBukti'])
+            ->name('hapus_bukti');
     });
 
     // ============================
@@ -125,4 +131,6 @@ Route::prefix('pengurus')->name('pengurus.')->group(function () {
 
     // Dokumen
     Route::get('/dokumen/lihat/{userId}/{jenis}', [FileDokumenController::class, 'lihatDokumen'])->name('dokumen.lihat.pengurus');
+
+    Route::get('/grafik/perkembangan', [LaporanController::class, 'grafikPerkembangan']);
 });

@@ -168,9 +168,19 @@ class PengurusSimpananWajibController extends Controller
         return back()->with('success', 'Data simpanan wajib berhasil dihapus.');
     }
 
-    public function downloadExcel()
+    public function downloadExcel(Request $request)
     {
-        $simpanan = SimpananWajib::with('user')->get();
+        $request->validate([
+            'bulan' => 'required|date_format:Y-m',
+        ]);
+
+        [$tahunFilter, $bulanFilter] = explode('-', $request->bulan);
+
+        // Ambil hanya simpanan untuk bulan & tahun yang dipilih
+        $simpanan = SimpananWajib::with('user')
+            ->where('tahun', $tahunFilter)
+            ->where('bulan', $bulanFilter)
+            ->get();
 
         $filename = 'laporan_simpanan_wajib_' . date('Y-m-d_H-i-s') . '.csv';
 
@@ -183,24 +193,83 @@ class PengurusSimpananWajibController extends Controller
             $handle = fopen('php://output', 'w');
 
             // Header kolom CSV
-            fputcsv($handle, ['Nama Anggota', 'Nominal', 'Bulan', 'Tahun', 'Status', 'Tanggal Dibuat', 'Terakhir Diupdate']);
+            fputcsv($handle, ['Nama Anggota', 'Nama Pengurus', 'Nominal', 'Bulan', 'Tahun', 'Status', 'Tanggal Dibuat', 'Terakhir Diupdate']);
 
             // Data isi CSV
             foreach ($simpanan as $s) {
                 fputcsv($handle, [
                     $s->user->nama ?? '-',
+                    $s->pengurus->nama ?? '-',
                     $s->nilai,
                     $s->bulan,
                     $s->tahun,
                     ucfirst($s->status),
-                    $s->created_at ? $s->created_at->format('d-m-Y H:i:s') : '-',
-                    $s->updated_at ? $s->updated_at->format('d-m-Y H:i:s') : '-',
+                    $s->created_at ? $s->created_at->translatedFormat('j F Y H:i') : '-',
+                    $s->updated_at ? $s->updated_at->translatedFormat('j F Y H:i') : '-',
                 ]);
             }
 
             fclose($handle);
         }, 200, $headers);
     }
+
+    // Laporan Simpanan Wajib Tahunan
+    public function laporanTahunan(Request $request)
+    {
+        // Ambil tahun filter, default tahun ini
+        $tahunFilter = $request->get('tahun', now()->year);
+
+        // Ambil data simpanan wajib per anggota per tahun
+        $laporanTahunan = SimpananWajib::select('users_id', 'tahun')
+            ->selectRaw('SUM(nilai) as total_simpanan')
+            ->where('tahun', $tahunFilter)
+            ->groupBy('users_id', 'tahun')
+            ->with('user')
+            ->get();
+
+        return view('pengurus.simpanan.wajib_2.laporan_tahunan', compact('laporanTahunan', 'tahunFilter'));
+    }
+
+    // Download Excel Simpanan Wajib Tahunan
+    public function downloadTahunan(Request $request)
+    {
+        // Validasi input tahun
+        $tahunFilter = $request->get('tahun', now()->year);
+
+        // Ambil total simpanan per anggota untuk tahun tersebut
+        $simpanan = SimpananWajib::select('users_id', 'tahun')
+            ->selectRaw('SUM(nilai) as total_simpanan')
+            ->where('tahun', $tahunFilter)
+            ->groupBy('users_id', 'tahun')
+            ->with('user')
+            ->get();
+
+        $filename = 'laporan_simpanan_wajib_tahunan_' . $tahunFilter . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        return response()->stream(function () use ($simpanan) {
+            $handle = fopen('php://output', 'w');
+
+            // Header kolom CSV
+            fputcsv($handle, ['Nama Anggota', 'Tahun', 'Total Simpanan']);
+
+            // Data isi CSV
+            foreach ($simpanan as $s) {
+                fputcsv($handle, [
+                    $s->user->nama ?? '-',
+                    $s->tahun,
+                    $s->total_simpanan,
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
 
     public function lockPeriode(Request $request)
     {
@@ -216,6 +285,30 @@ class PengurusSimpananWajibController extends Controller
             ->update(['is_locked' => true]);
 
         return back()->with('success', 'Periode berhasil dikunci. Data tidak bisa diubah lagi.');
+    }
+
+    // Lihat bukti pembayaran anggota yang gagal
+    public function lihatBukti()
+    {
+        $data = SimpananWajib::where('status', 'Diajukan')->get();
+
+        return view('pengurus.simpanan.wajib_2.lihat_bukti', compact('data'));
+    }
+
+    // Hapus bukti pembayaran
+    public function hapusBukti($id)
+    {
+        $item = SimpananWajib::findOrFail($id);
+
+        // Hapus file bukti jika ada di public/storage/bukti_transfer
+        if ($item->bukti_transfer && file_exists(public_path('storage/bukti_transfer/' . $item->bukti_transfer))) {
+            unlink(public_path('storage/bukti_transfer/' . $item->bukti_transfer));
+        }
+
+        $item->delete();
+
+        return redirect()->route('pengurus.simpanan.wajib_2.lihat_bukti')
+            ->with('success', 'Data bukti pembayaran berhasil dihapus.');
     }
 
 }

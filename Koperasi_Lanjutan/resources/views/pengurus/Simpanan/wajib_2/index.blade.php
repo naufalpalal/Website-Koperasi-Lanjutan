@@ -33,7 +33,7 @@
 
             <button id="btnGenerate" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                 @if(!$master) data-nominal-empty="true" @endif>
-                generate periode
+                Generate Tagihan
             </button>
         </div>
     </div>
@@ -143,7 +143,7 @@
             <div class="flex gap-3">
                 <button type="submit"
                         class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-                    Simpan Perubahan
+                    Simpan Status
                 </button>
             </div>
         </div>

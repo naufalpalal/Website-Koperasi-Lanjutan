@@ -24,6 +24,8 @@ Route::put('/profile/combined', [ProfileController::class, 'updateCombined'])->n
 
 // Simpanan Wajib
 Route::get('/anggota/simpanan', [SimpananWajibController::class, 'index'])->name('user.simpanan.wajib.index');
+Route::post('/simpanan-wajib/upload', [SimpananWajibController::class, 'uploadBukti'])->name('simpanan-wajib.upload');
+Route::get('/simpanan-wajib/hubungi-bendahara', [SimpananWajibController::class, 'hubungiBendahara'])->name('simpanan-wajib.hubungi-bendahara');
 
 // Simpanan Sukarela
 Route::prefix('simpanan-sukarela-anggota')->name('user.simpanan.sukarela.')->group(function () {

@@ -1,110 +1,131 @@
 @extends('pengurus.index')
 
 @section('content')
-<div class="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
-    <h3 class="text-2xl font-bold mb-6 text-gray-800">Kelola Simpanan Wajib</h3>
+    <div class="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
+        <h3 class="text-2xl font-bold mb-6 text-gray-800">Kelola Simpanan Wajib</h3>
 
-    {{-- Filter Bulan --}}
-    <div class="mb-4 flex items-center justify-between">
-        <form id="bulanForm" method="GET" action="" class="flex items-center gap-2">
-            <label for="filterBulan" class="font-medium mr-2">Periode</label>
-            <select id="filterBulan" name="bulan"
+        {{-- Filter Bulan --}}
+        <div class="mb-4 flex items-center justify-between">
+            <form id="bulanForm" method="GET" action="" class="flex items-center gap-2">
+                <label for="filterBulan" class="font-medium mr-2">Periode</label>
+                <select id="filterBulan" name="bulan"
                     class="border rounded px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     onchange="this.form.submit()">
-                @if($bulan->isEmpty())
-                    <option value="">{{ __('Belum ada data') }}</option>
-                @else
-                    @foreach($bulan as $b)
-                        <option value="{{ $b }}" {{ request('bulan', now()->format('Y-m')) == $b ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::parse($b.'-01')->translatedFormat('F Y') }}
-                        </option>
-                    @endforeach
-                @endif
-            </select>
-        </form>
+                    @if($bulan->isEmpty())
+                        <option value="">{{ __('Belum ada data') }}</option>
+                    @else
+                        @foreach($bulan as $b)
+                            <option value="{{ $b }}" {{ request('bulan', now()->format('Y-m')) == $b ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::parse($b . '-01')->translatedFormat('F Y') }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
+            </form>
 
-        {{-- Tombol Add & Edit Nominal --}}
-        <div class="flex items-center gap-3">
-            <a href="{{ route('pengurus.simpanan.wajib_2.download') }}" 
-            class="text-green-600 hover:text-green-700 transition" 
-            title="Download Excel">
-                <!-- Icon download -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                <path fill-rule="evenodd" d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V10.5Z" clip-rule="evenodd" />
-                </svg>
-            </a>
+            {{-- Tombol Add & Edit Nominal --}}
+            <div class="flex items-center gap-3">
+                <form action="{{ route('pengurus.simpanan.wajib_2.download') }}" method="GET">
+                    <input type="hidden" name="bulan" value="{{ $periodeFilter }}">
+                    <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+                        <!-- ICON Download (warna putih mengikuti text-white) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                            <path fill-rule="evenodd"
+                                d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V10.5Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <!-- TEKS Pendek -->
+                        Download Tagihan
+                    </button>
+                </form>
+                {{-- Download Laporan Tahunan --}}
+                <form action="{{ route('pengurus.simpanan.wajib_2.laporanTahunan.download') }}" method="GET">
+                    <input type="hidden" name="tahun" value="{{ now()->year }}">
+                    <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-700 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                            <path d="M12 3v12m0 0l-3-3m3 3l3-3M4 21h16" />
+                        </svg>
+                        Download Laporan Tahunan
+                    </button>
+                </form>
 
-            <button id="masuk" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                @if(!$master) data-nominal-empty="true" @endif>
-                setting/add
-            </button>
-        </div>
-  
-    </div>
+                <button id="masuk" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                    @if(!$master) data-nominal-empty="true" @endif>
+                    Atur Simpanan
+                </button>
+            </div>
 
-    {{-- Search --}}
-    <div class="mb-4">
-        <div class="flex items-center gap-2 w-full md:w-96">
-            <input id="searchInput" type="text" placeholder="Cari nama anggota..." 
-                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <button id="btnSearch" type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                Cari
-            </button>
-        </div>
-    </div>
-
-    {{-- Daftar anggota dan simpanan --}}
-    <form action="{{ route('pengurus.simpanan.wajib_2.updateStatus') }}" method="POST">
-        @csrf
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border rounded-lg shadow">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-700 text-left">
-                        <th class="px-4 py-2">Nama Anggota</th>
-                        <th class="px-4 py-2">Nominal</th>
-                        <th class="px-4 py-2">Bulan</th>
-                        <th class="px-4 py-2">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="anggotaTableBody">
-                    @forelse($anggota as $a)
-                        @php
-                            $simpanan = $simpananBulanIni->get($a->id);
-                        @endphp
-                        <tr class="border-t hover:bg-gray-50">
-                            <td class="px-4 py-2">{{ $a->nama }}</td>
-                            <td class="px-4 py-2">
-                                {{ $simpanan ? 'Rp '.number_format($simpanan->nilai, 0, ',', '.') : '-' }}
-                            </td>
-                            <td class="px-4 py-2">
-                                {{ $simpanan ? \Carbon\Carbon::createFromDate($simpanan->tahun, $simpanan->bulan, 1)->translatedFormat('F Y') : '-' }}
-                            </td>
-                            <td class="px-4 py-2">
-                                {{ $simpanan ? $simpanan->status : '-' }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-4">Belum ada data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
         </div>
 
-        {{-- Pagination controls (client-side) --}}
-        <div class="mt-4 flex justify-center" id="paginationContainer"></div>
-
-        {{-- Aksi bawah --}}
-        <div class="flex items-center justify-between mt-6">
-            <a href="{{ route('pengurus.simpanan.wajib_2.riwayat', $a->id ?? 0) }}"
-               class="text-blue-600 hover:underline">
-                Riwayat
-            </a>
-
-            <div class="flex gap-3">
+        {{-- Search --}}
+        <div class="mb-4">
+            <div class="flex items-center gap-2 w-full md:w-96">
+                <input id="searchInput" type="text" placeholder="Cari nama anggota..."
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                <button id="btnSearch" type="button"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                    Cari
+                </button>
             </div>
         </div>
+
+        {{-- Daftar anggota dan simpanan --}}
+        <form action="{{ route('pengurus.simpanan.wajib_2.updateStatus') }}" method="POST">
+            @csrf
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border rounded-lg shadow">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700 text-left">
+                            <th class="px-4 py-2">Nama Anggota</th>
+                            <th class="px-4 py-2">Nominal</th>
+                            <th class="px-4 py-2">Bulan</th>
+                            <th class="px-4 py-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anggotaTableBody">
+                        @forelse($anggota as $a)
+                            @php
+                                $simpanan = $simpananBulanIni->get($a->id);
+                            @endphp
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-2">{{ $a->nama }}</td>
+                                <td class="px-4 py-2">
+                                    {{ $simpanan ? 'Rp ' . number_format($simpanan->nilai, 0, ',', '.') : '-' }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ $simpanan ? \Carbon\Carbon::createFromDate($simpanan->tahun, $simpanan->bulan, 1)->translatedFormat('F Y') : '-' }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ $simpanan ? $simpanan->status : '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-4">Belum ada data</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination controls (client-side) --}}
+            <div class="mt-4 flex justify-center" id="paginationContainer"></div>
+
+            {{-- Aksi bawah --}}
+            <div class="flex items-center justify-between mt-6">
+                <div class="flex gap-4">
+                    <a href="{{ route('pengurus.simpanan.wajib_2.riwayat', $a->id ?? 0) }}"
+                        class="text-blue-600 hover:underline">
+                        Riwayat
+                    </a>
+                    <a href="{{ route('pengurus.simpanan.wajib_2.lihat_bukti') }}" class="text-blue-600 hover:underline">
+                        Lihat bukti pembayaran
+                    </a>
+                </div>
+            </div>
+    </div>
     </form>
-</div>
+    </div>
 @endsection

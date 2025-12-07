@@ -144,6 +144,12 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="mb-4">
+                            <label for="simpanan_sukarela" class="form-label">Simpanan Sukarela Pertama
+                                (Opsional)</label>
+                            <input type="text" id="simpanan_sukarela" name="simpanan_sukarela"
+                                class="block w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                        </div>
                     </div>
                 </div>
 
@@ -163,5 +169,5 @@
         </div>
     </div>
 
-<script src="{{ asset('assets/js/show-password.js') }}"></script>
+    <script src="{{ asset('assets/js/show-password.js') }}"></script>
 </x-guest-layout>

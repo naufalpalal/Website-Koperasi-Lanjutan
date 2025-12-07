@@ -18,6 +18,7 @@ class SimpananWajib extends Model
         'tahun',
         'bulan',
         'status',
+        'bukti_transfer',
         'pengurus_id',
         'users_id',
     ];
