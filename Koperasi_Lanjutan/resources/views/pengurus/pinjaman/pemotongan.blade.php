@@ -42,12 +42,12 @@
                     📄 <span>Daftar Pengajuan</span>
                 </a>
 
-                <a href="{{ route('pengurus.settings.index') }}"
+                <a href="{{ route('pengurus.pinjaman.settings.index') }}"
                     class="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm shadow-sm transition">
                     ⚙️ <span>Setting Tenor & Bunga</span>
                 </a>
 
-                <a href="{{ route('pengurus.angsuran.pengajuan') }}"
+                <a href="{{ route('pengurus.pinjaman.pengajuan-angsuran.index') }}"
                     class="flex items-center gap-1.5 bg-purple-500 hover:bg-purple-600 text-white px-3 py-1.5 rounded-lg text-sm shadow-sm transition">
                     🧾 <span>Pengajuan Angsuran</span>
                 </a>

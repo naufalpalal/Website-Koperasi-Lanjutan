@@ -8,26 +8,67 @@ use App\Models\Pengurus\PinjamanSetting;
 
 class PinjamanSettingController extends Controller
 {
-    // tampilkan semua tenor & bunga
+    // Tampilkan daftar paket pinjaman
     public function index()
     {
-        $settings = PinjamanSetting::all();
-        return view('pengurus.pinjaman.settings', compact('settings'));
+        $pakets = PinjamanSetting::all();
+        return view('pengurus.pinjaman.pengaturan.index', compact('pakets'));
     }
 
-    // simpan setting baru
+    public function create()
+    {
+        return view('pengurus.pinjaman.pengaturan.create');
+    }
+
+
+
+    // Simpan paket pinjaman baru
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'nama_paket' => 'required|string|max:50',
+            'nominal' => 'required|integer|min:100000',
             'tenor' => 'required|integer|min:1|max:36',
             'bunga' => 'required|numeric|min:0|max:100',
         ]);
 
-        PinjamanSetting::create([
-            'tenor' => $request->tenor,
-            'bunga' => $request->bunga,
-        ]);
+        // Tambahkan default status
+        $validated['status'] = true;
 
-        return back()->with('success', 'Setting tenor & bunga berhasil ditambahkan.');
+        // Simpan data paket pinjaman
+        PinjamanSetting::create($validated);
+
+        // Redirect ke halaman tabel paket pinjaman
+        return redirect()
+            ->route('pengurus.pinjaman.settings.index')
+            ->with('success', 'Paket pinjaman berhasil ditambahkan!');
     }
+
+
+    // Hidupkan / Matikan paket pinjaman
+    public function toggleStatus($id)
+    {
+        $paket = PinjamanSetting::findOrFail($id);
+
+        $paket->status = !$paket->status; // balik statusnya
+        $paket->save();
+
+        $pesan = $paket->status
+            ? 'Paket berhasil diaktifkan.'
+            : 'Paket berhasil dinonaktifkan.';
+
+        return back()->with('success', $pesan);
+    }
+
+    public function destroy($id)
+    {
+        $paket = PinjamanSetting::findOrFail($id);
+
+        $paket->delete();
+
+        return redirect()
+            ->route('pengurus.pinjaman.settings.index')
+            ->with('success', 'Paket pinjaman berhasil dihapus.');
+    }
+
 }

@@ -115,16 +115,5 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ]
         );
-
-        // Seed Pinjaman Settings (10 & 20 bulan)
-        DB::table('pinjaman_settings')->updateOrInsert(
-            ['tenor' => 10],
-            ['bunga' => 1.5, 'created_at' => now(), 'updated_at' => now()]
-        );
-
-        DB::table('pinjaman_settings')->updateOrInsert(
-            ['tenor' => 20],
-            ['bunga' => 2.0, 'created_at' => now(), 'updated_at' => now()]
-        );
     }
 }

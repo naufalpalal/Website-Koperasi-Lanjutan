@@ -9,6 +9,12 @@ use App\Models\Pengurus\Angsuran as AngsuranPinjaman;
 
 class PengajuanAngsuranController extends Controller
 {
+    // FIX WAJIB → route memanggil index()
+    public function index()
+    {
+        return $this->pengajuanList();
+    }
+
     public function pengajuanList()
     {
         $pengajuan = PengajuanAngsuran::with(['user', 'pinjaman'])
@@ -22,11 +28,8 @@ class PengajuanAngsuranController extends Controller
     {
         $pengajuan = PengajuanAngsuran::findOrFail($id);
 
-        // Update status utama menjadi ACC
         $pengajuan->update(['status' => 'disetujui']);
 
-        // Ubah status angsuran yang dipilih menjadi lunas
-        // Note: angsuran_ids sudah di-cast ke array di Model
         $angsuranIds = $pengajuan->angsuran_ids;
 
         AngsuranPinjaman::whereIn('id', $angsuranIds)
@@ -45,7 +48,4 @@ class PengajuanAngsuranController extends Controller
 
         return back()->with('success', 'Pengajuan angsuran ditolak.');
     }
-
-
-
 }

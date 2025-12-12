@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class PinjamanSetting extends Model
 {
-    protected $fillable = ['tenor', 'bunga'];
+    protected $fillable = [
+        'nama_paket',
+        'nominal',
+        'tenor',
+        'bunga',
+        'status',
+    ];
+
 }

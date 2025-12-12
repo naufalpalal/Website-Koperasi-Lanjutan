@@ -158,23 +158,43 @@ Route::middleware(['auth:web'])->group(function () {
     // -------------------------------
     Route::prefix('anggota')->group(function () {
 
-        // Pinjaman
-        Route::get('/pinjaman/create', [PinjamanAnggotaController::class, 'create'])
-            ->name('user.pinjaman.create');
+        // === Halaman utama pinjaman (ajukan / status / angsuran) ===
+        Route::get(
+            '/pinjaman',
+            [PinjamanAnggotaController::class, 'index']
+        )
+            ->name('user.pinjaman.index');
 
-        Route::post('/pinjaman/store', [PinjamanAnggotaController::class, 'store'])
+        // === Ajukan pinjaman baru ===
+        Route::post(
+            '/pinjaman/store',
+            [PinjamanAnggotaController::class, 'store']
+        )
             ->name('user.pinjaman.store');
 
-        Route::post('/pinjaman/{id}/upload', [PinjamanAnggotaController::class, 'upload'])
+        // === Upload dokumen pinjaman (2 PDF) ===
+        Route::post(
+            '/pinjaman/{id}/upload',
+            [PinjamanAnggotaController::class, 'upload']
+        )
             ->name('user.pinjaman.upload');
 
-        // Angsuran
-        Route::get('/angsuran/pilih/{pinjaman}', [AngsuranAnggotaController::class, 'pilihBulan'])
-            ->name('anggota.angsuran.pilih');
+        // === Pilih angsuran yg ingin dilunasi ===
+        Route::post(
+            '/pinjaman/{id}/angsuran/pilih',
+            [PinjamanAnggotaController::class, 'pilihAngsuran']
+        )
+            ->name('user.angsuran.pilih');
 
-        Route::post('/angsuran/bayar/{pinjaman}', [AngsuranAnggotaController::class, 'bayar'])
-            ->name('anggota.angsuran.bayar');
+        // === Kirim bukti bayar angsuran ===
+        Route::post(
+            '/pinjaman/{id}/angsuran/bayar',
+            [PinjamanAnggotaController::class, 'bayarAngsuran']
+        )
+            ->name('user.angsuran.bayar');
+
     });
+
 });
 
 
@@ -190,10 +210,8 @@ Route::post('/pengurus/logout', [PengurusController::class, 'logout'])->name('pe
 // AREA PENGURUS
 // ===============================
 Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
-
     // Dashboard
     Route::get('/dashboard', [PengurusController::class, 'dashboard'])->name('pengurus.dashboard.index');
-
 
     // ============================
     // SIMPANAN WAJIB
@@ -229,78 +247,123 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     // ============================
     // TABUNGAN PENGURUS
     // ============================
-    Route::middleware('role.pengurus:bendahara,superadmin,ketua')->prefix('tabungan')->group(function () {
-        Route::get('/', [Tabungan2Controller::class, 'index'])
-            ->name('pengurus.tabungan.index');
-        Route::get('/pengurus/tabungan/download-excel', [Tabungan2Controller::class, 'downloadExcel'])
-            ->name('pengurus.tabungan.download.excel');
-        Route::get('/{id}', [Tabungan2Controller::class, 'detail'])
-            ->name('pengurus.tabungan.detail');
-        // Kredit
-        Route::get('/kredit/{id}', [Tabungan2Controller::class, 'kredit'])
-            ->name('pengurus.tabungan.kredit');
-        Route::post('/kredit/store', [Tabungan2Controller::class, 'storeKredit'])
-            ->name('pengurus.tabungan.kredit.store');
-        // Tambah Saldo
-        Route::get('/{id}/tambah', [Tabungan2Controller::class, 'create'])
-            ->name('pengurus.tabungan.create');
-        Route::post('/store', [Tabungan2Controller::class, 'store'])
-            ->name('pengurus.tabungan.store');
-        // Debit
-        Route::get('/debit/{id}', [Tabungan2Controller::class, 'debit'])
-            ->name('pengurus.tabungan.debit');
-        Route::post('/debit/store', [Tabungan2Controller::class, 'storeDebit'])
-            ->name('pengurus.tabungan.debit.store');
-        Route::get('/potong-semua', [Tabungan2Controller::class, 'potongSemua'])
-            ->name('pengurus.tabungan.potong_semua');
-        Route::get('/potong-semua/download', [Tabungan2Controller::class, 'downloadPotonganExcel'])
-            ->name('pengurus.tabungan.potong_semua.download');
-        // Approve / Reject
-        Route::put('/{id}/terima', [Tabungan2Controller::class, 'approve'])
-            ->name('pengurus.tabungan.terima');
-        Route::put('/{id}/tolak', [Tabungan2Controller::class, 'reject'])
-            ->name('pengurus.tabungan.tolak');
-    });
+    Route::middleware('role.pengurus:bendahara,superadmin,ketua')
+        ->prefix('tabungan')
+        ->group(function () {
+
+            // Dashboard Tabungan
+            Route::get('/', [Tabungan2Controller::class, 'index'])
+                ->name('pengurus.tabungan.index');
+
+            // Download Excel utama
+            Route::get('/download-excel', [Tabungan2Controller::class, 'downloadExcel'])
+                ->name('pengurus.tabungan.download.excel');
+
+            // Detail
+            Route::get('/{id}', [Tabungan2Controller::class, 'detail'])
+                ->name('pengurus.tabungan.detail');
+
+            // Kredit
+            Route::get('/kredit/{id}', [Tabungan2Controller::class, 'kredit'])
+                ->name('pengurus.tabungan.kredit');
+
+            Route::post('/kredit/store', [Tabungan2Controller::class, 'storeKredit'])
+                ->name('pengurus.tabungan.kredit.store');
+
+            // Tambah saldo
+            Route::get('/{id}/tambah', [Tabungan2Controller::class, 'create'])
+                ->name('pengurus.tabungan.create');
+
+            Route::post('/store', [Tabungan2Controller::class, 'store'])
+                ->name('pengurus.tabungan.store');
+
+            // Debit
+            Route::get('/debit/{id}', [Tabungan2Controller::class, 'debit'])
+                ->name('pengurus.tabungan.debit');
+
+            Route::post('/debit/store', [Tabungan2Controller::class, 'storeDebit'])
+                ->name('pengurus.tabungan.debit.store');
+
+            // Potong semua
+            Route::get('/potong-semua', [Tabungan2Controller::class, 'potongSemua'])
+                ->name('pengurus.tabungan.potong_semua');
+
+            Route::get('/potong-semua/download', [Tabungan2Controller::class, 'downloadPotonganExcel'])
+                ->name('pengurus.tabungan.potong_semua.download');
+
+            // Approve / Reject
+            Route::put('/{id}/terima', [Tabungan2Controller::class, 'approve'])
+                ->name('pengurus.tabungan.terima');
+
+            Route::put('/{id}/tolak', [Tabungan2Controller::class, 'reject'])
+                ->name('pengurus.tabungan.tolak');
+        });
+
 
 
     // ============================
     // PINJAMAN PENGURUS
     // ============================
     Route::prefix('pinjaman')->group(function () {
+
+        // ---- LIST & DETAIL ----
         Route::get('/', [PinjamanController::class, 'index'])->name('pengurus.pinjaman.index');
         Route::get('/pengajuan', [PinjamanController::class, 'pengajuan'])->name('pengurus.pinjaman.pengajuan');
         Route::get('/pemotongan', [AngsuranController::class, 'periodePotongan'])->name('pengurus.pinjaman.pemotongan');
         Route::get('/download', [PinjamanController::class, 'downloadExcel'])->name('pengurus.pinjaman.download');
-        Route::post('/{id}/approve', [PinjamanController::class, 'approve'])->name('pengurus.pinjaman.approve');
-        Route::post('/{id}/reject', [PinjamanController::class, 'reject'])->name('pengurus.pinjaman.reject');
-
-        Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])->name('pengurus.angsuran.index');
-        Route::post('/pinjaman/{id}/status', [AngsuranController::class, 'updateStatus'])->name('pengurus.pinjaman.updateStatus');
-
-        // Setting
-        Route::get('/settings', [PinjamanSettingController::class, 'index'])->name('pengurus.settings.index');
-        Route::post('/settings', [PinjamanSettingController::class, 'store'])->name('pengurus.settings.store');
-
         Route::get('/{id}', [PinjamanController::class, 'show'])->name('pengurus.pinjaman.show');
 
+        // ---- ACTION PENGAJUAN PINJAMAN ----
+        Route::post('/{id}/approve', [PinjamanController::class, 'approve'])
+            ->name('pengurus.pinjaman.approve');
+        Route::post('/{id}/reject', [PinjamanController::class, 'reject'])
+            ->name('pengurus.pinjaman.reject');
+
+        // ---- ANGSURAN ----
+        Route::get('/angsuran/{id}', [AngsuranController::class, 'index'])
+            ->name('pengurus.angsuran.index');
+
+        // PERBAIKAN: HAPUS prefix 'pinjaman' di dalam prefix 'pinjaman'
+        Route::post('/{id}/status', [AngsuranController::class, 'updateStatus'])
+            ->name('pengurus.pinjaman.updateStatus');
+
+        // ---- SETTINGS PAKET PINJAMAN ----
+        Route::prefix('settings')->group(function () {
+
+            Route::get('/index', [PinjamanSettingController::class, 'index'])
+                ->name('pengurus.pinjaman.settings.index');
+            Route::get('/create', [PinjamanSettingController::class, 'create'])
+                ->name('pengurus.pinjaman.settings.create');
+            Route::post('/store', [PinjamanSettingController::class, 'store'])
+                ->name('pengurus.pinjaman.settings.store');
+            Route::delete('/paket/{id}/delete', [PinjamanSettingController::class, 'destroy'])
+                ->name('pengurus.pinjaman.paket.delete');
+
+
+            Route::post('/paket/{id}/toggle-status', [PinjamanSettingController::class, 'toggleStatus'])
+                ->name('pengurus.pinjaman.paket.toggle');
+
+        });
+
+        // ---- TOGGLE AKTIF / NON-AKTIF PAKET ----
+        Route::post('/settings/{id}/toggle', [PinjamanSettingController::class, 'toggleStatus'])
+            ->name('pengurus.pinjaman.settings.toggle');
+
+
+        // ---- PENGAJUAN ANGSURAN ----
         Route::prefix('pengajuan-angsuran')->group(function () {
-            // List semua pengajuan angsuran
-            Route::get(
-                '/',
-                [PengajuanAngsuranController::class, 'pengajuanList']
-            )->name('pengurus.angsuran.pengajuan');
-            // ACC pengajuan
-            Route::post(
-                '/{id}/acc',
-                [PengajuanAngsuranController::class, 'accPengajuan']
-            )->name('pengurus.angsuran.pengajuan.acc');
-            // Tolak pengajuan
-            Route::post(
-                '/{id}/tolak',
-                [PengajuanAngsuranController::class, 'tolakPengajuan']
-            )->name('pengurus.angsuran.pengajuan.tolak');
+
+            Route::get('/', [PengajuanAngsuranController::class, 'index'])
+                ->name('pengurus.pinjaman.pengajuan-angsuran.index');
+
+            Route::post('/{id}/acc', [PengajuanAngsuranController::class, 'accPengajuan'])
+                ->name('pengurus.pinjaman.pengajuan-angsuran.acc');
+
+            Route::post('/{id}/tolak', [PengajuanAngsuranController::class, 'tolakPengajuan'])
+                ->name('pengurus.pinjaman.pengajuan-angsuran.tolak');
         });
     });
+
 
     // ===============================
     // LAPORAN PENGURUS
@@ -317,20 +380,51 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
         ->prefix('anggota')
         ->group(function () {
 
-            Route::get('/', [KelolaAnggotController::class, 'index'])->name('pengurus.anggota.index');
-            Route::get('/create', [KelolaAnggotController::class, 'create'])->name('pengurus.anggota.create');
-            Route::post('/', [KelolaAnggotController::class, 'store'])->name('pengurus.anggota.store');
-            Route::get('/download-excel', [KelolaAnggotController::class, 'downloadExcel'])->name('pengurus.anggota.download');
-            Route::get('/verifikasi', [KelolaAnggotController::class, 'verifikasi'])->name('pengurus.anggota.verifikasi');
-            Route::post('/{id}/approve', [KelolaAnggotController::class, 'approve'])->name('pengurus.anggota.approve');
-            Route::post('/{id}/reject', [KelolaAnggotController::class, 'reject'])->name('pengurus.anggota.reject');
-            Route::get('/tidak-aktif', [KelolaAnggotController::class, 'nonaktif'])->name('pengurus.anggota.nonaktif');
-            Route::get('/{id}/edit', [KelolaAnggotController::class, 'edit'])->name('pengurus.anggota.edit');
-            Route::put('/{id}', [KelolaAnggotController::class, 'update'])->name('pengurus.anggota.update');
-            Route::delete('/{id}', [KelolaAnggotController::class, 'destroy'])->name('pengurus.anggota.destroy');
-            Route::post('/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])->name('pengurus.anggota.toggleStatus');
-            Route::put('/restore/{id}', [KelolaAnggotController::class, 'restore'])->name('pengurus.anggota.restore');
+            // ---- LIST & DATA ----
+            Route::get('/', [KelolaAnggotController::class, 'index'])
+                ->name('pengurus.anggota.index');
+
+            Route::get('/verifikasi', [KelolaAnggotController::class, 'verifikasi'])
+                ->name('pengurus.anggota.verifikasi');
+
+            Route::get('/tidak-aktif', [KelolaAnggotController::class, 'nonaktif'])
+                ->name('pengurus.anggota.nonaktif');
+
+            // ---- DOWNLOAD ----
+            Route::get('/download-excel', [KelolaAnggotController::class, 'downloadExcel'])
+                ->name('pengurus.anggota.download');
+
+            // ---- CRUD ----
+            Route::get('/create', [KelolaAnggotController::class, 'create'])
+                ->name('pengurus.anggota.create');
+
+            Route::post('/', [KelolaAnggotController::class, 'store'])
+                ->name('pengurus.anggota.store');
+
+            Route::get('/{id}/edit', [KelolaAnggotController::class, 'edit'])
+                ->name('pengurus.anggota.edit');
+
+            Route::put('/{id}', [KelolaAnggotController::class, 'update'])
+                ->name('pengurus.anggota.update');
+
+            Route::delete('/{id}', [KelolaAnggotController::class, 'destroy'])
+                ->name('pengurus.anggota.destroy');
+
+            // ---- RESTORE ----
+            Route::put('/restore/{id}', [KelolaAnggotController::class, 'restore'])
+                ->name('pengurus.anggota.restore.data');
+
+            // ---- STATUS & VERIFIKASI ----
+            Route::post('/{id}/approve', [KelolaAnggotController::class, 'approve'])
+                ->name('pengurus.anggota.approve');
+
+            Route::post('/{id}/reject', [KelolaAnggotController::class, 'reject'])
+                ->name('pengurus.anggota.reject');
+
+            Route::post('/{id}/toggle-status', [KelolaAnggotController::class, 'toggleStatus'])
+                ->name('pengurus.anggota.toggleStatus');
         });
+
 });
 
 

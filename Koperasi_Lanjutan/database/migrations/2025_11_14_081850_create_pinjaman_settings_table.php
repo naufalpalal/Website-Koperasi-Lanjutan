@@ -12,8 +12,13 @@ return new class extends Migration {
     {
         Schema::create('pinjaman_settings', function (Blueprint $table) {
             $table->id();
-            $table->integer('tenor'); // dalam bulan
-            $table->decimal('bunga', 5, 2); // persen per bulan
+
+            $table->string('nama_paket');   // Paket A, Paket B, dll
+            $table->integer('nominal');     // Nominal pinjaman
+            $table->integer('tenor');       // Tenor dalam bulan
+            $table->decimal('bunga', 5, 2); // Bunga persen
+            $table->boolean('status')->default(true); // aktif / nonaktif
+
             $table->timestamps();
         });
 
