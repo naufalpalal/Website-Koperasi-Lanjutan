@@ -216,19 +216,31 @@ class PengurusSimpananWajibController extends Controller
     // Laporan Simpanan Wajib Tahunan
     public function laporanTahunan(Request $request)
     {
-        // Ambil tahun filter, default tahun ini
-        $tahunFilter = $request->get('tahun', now()->year);
+        $tahun = $request->get('tahun', now()->year);
+        $startMonth = $request->get('start', 1);
+        $endMonth = $request->get('end', 12);
 
-        // Ambil data simpanan wajib per anggota per tahun
-        $laporanTahunan = SimpananWajib::select('users_id', 'tahun')
-            ->selectRaw('SUM(nilai) as total_simpanan')
-            ->where('tahun', $tahunFilter)
-            ->groupBy('users_id', 'tahun')
-            ->with('user')
+        $data = SimpananWajib::with('user')
+            ->where('tahun', $tahun)
+            ->whereBetween('bulan', [$startMonth, $endMonth])
             ->get();
 
-        return view('pengurus.simpanan.wajib_2.laporan_tahunan', compact('laporanTahunan', 'tahunFilter'));
+        $laporan = [];
+
+        foreach ($data->groupBy('users_id') as $userId => $items) {
+
+            $laporan[] = [
+                'nama' => $items->first()->user->nama ?? '-',
+                'total' => $items->sum('nilai'),
+                'dibayar' => $items->where('status', 'Dibayar')->count(),
+                'gagal' => $items->where('status', 'Gagal')->count(),
+                'diajukan' => $items->where('status', 'Diajukan')->count(),
+            ];
+        }
+
+        return view('pengurus.simpanan.wajib_2.laporan_tahunan', compact('laporan', 'tahun', 'startMonth', 'endMonth'));
     }
+
 
     // Download Excel Simpanan Wajib Tahunan
     public function downloadTahunan(Request $request)
