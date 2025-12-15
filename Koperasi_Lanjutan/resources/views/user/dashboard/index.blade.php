@@ -49,7 +49,7 @@
             </a>
 
             <!-- Pengajuan Pinjaman -->
-            <a href="{{ route('user.pinjaman.index') }}"
+            <a href="{{ route('user.pinjaman.create') }}"
                 class="group bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-rose-500">
 
                 <div class="flex items-center justify-between mb-4">

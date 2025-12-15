@@ -3,6 +3,7 @@
 namespace App\Models\Pengurus;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Pinjaman;
 
 class PinjamanSetting extends Model
 {
@@ -13,5 +14,10 @@ class PinjamanSetting extends Model
         'bunga',
         'status',
     ];
+
+    public function pinjaman()
+    {
+        return $this->hasMany(Pinjaman::class, 'paket_id');
+    }
 
 }

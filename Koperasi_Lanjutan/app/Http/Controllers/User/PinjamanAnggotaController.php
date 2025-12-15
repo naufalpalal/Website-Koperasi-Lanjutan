@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Helpers\Bulan;
 use App\Http\Controllers\Controller;
 use App\Models\Pinjaman;
 use App\Models\PengajuanAngsuran;
@@ -13,177 +14,103 @@ use App\Models\Pengurus\PinjamanSetting as PaketPinjaman;
 
 class PinjamanAnggotaController extends Controller
 {
-    /* ============================================================
-       HELPER: Konversi nama bulan Indonesia → format Carbon
-    ============================================================ */
-    private function convertBulan($bulanTahun)
-    {
-        if (!$bulanTahun || !str_contains($bulanTahun, ' '))
-            return null;
-
-        $map = [
-            'Januari' => 'January',
-            'Februari' => 'February',
-            'Maret' => 'March',
-            'April' => 'April',
-            'Mei' => 'May',
-            'Juni' => 'June',
-            'Juli' => 'July',
-            'Agustus' => 'August',
-            'September' => 'September',
-            'Oktober' => 'October',
-            'November' => 'November',
-            'Desember' => 'December',
-        ];
-
-        [$nama, $tahun] = explode(' ', $bulanTahun);
-        return ($map[$nama] ?? null) . " " . $tahun;
-    }
-
-
-    /* ============================================================
-       HELPER: Hitung masa keanggotaan user (bulan)
-    ============================================================ */
-    private function hitungMasaKeanggotaan($user)
-    {
-        if (!$user->bulan_masuk)
-            return 0;
-
-        $converted = $this->convertBulan($user->bulan_masuk);
-        if (!$converted)
-            return 0;
-
-        $masuk = Carbon::parse($converted);
-        return $masuk->diffInMonths(now());
-    }
-
-
-    /* ============================================================
-       HALAMAN INDEX / CREATE
-    ============================================================ */
-    public function index()
+    public function create()
     {
         $user = Auth::user();
 
-        // ============================================
-        // VALIDASI & PARSING KOLOM 'bulan_masuk'
-        // ============================================
+        // Ambil semua paket pinjaman
+        $paketPinjaman = PaketPinjaman::where('status', 1)->get();
+
+        return view('user.pinjaman.create', compact('paketPinjaman'));
+    }
+
+    /* ============================================================
+       SIMPAN PENGAJUAN PINJAMAN
+    ============================================================ */
+    public function store(Request $request, $paketId)
+    {
+        $user = Auth::user();
+
+        // ===============================
+        // VALIDASI BULAN MASUK
+        // ===============================
         $bulanMasuk = strtolower(trim($user->bulan_masuk));
-        // contoh data: "Mei 2023"
-
-        // Normalisasi spasi ganda
         $bulanMasuk = preg_replace('/\s+/', ' ', $bulanMasuk);
-
-        // Pecah menjadi dua bagian
         $parts = explode(' ', $bulanMasuk);
 
-        if (count($parts) !== 2) {
-            throw new \Exception("Format bulan_masuk tidak valid. Gunakan format: 'Mei 2023'. Nilai sekarang: {$bulanMasuk}");
+       $bulan = Bulan::indoToEnglish($parts[0]);
+
+        if (count($parts) !== 2 || !isset($map[$parts[0]])) {
+            return back()->with('modal', [
+                'title' => 'Data Tidak Valid',
+                'message' => 'Data bulan masuk anggota bermasalah. Hubungi pengurus.',
+                'type' => 'error',
+            ]);
         }
 
         [$bulanIndo, $tahun] = $parts;
+        $tanggalGabung = Carbon::parse("1 {$bulan[$bulanIndo]} {$tahun}");
+        $lamaBulan = $tanggalGabung->diffInMonths(now());
 
-        // Map bulan
-        $monthMap = [
-            'januari' => 'January',
-            'februari' => 'February',
-            'maret' => 'March',
-            'april' => 'April',
-            'mei' => 'May',
-            'juni' => 'June',
-            'juli' => 'July',
-            'agustus' => 'August',
-            'september' => 'September',
-            'oktober' => 'October',
-            'november' => 'November',
-            'desember' => 'December',
-        ];
-
-        if (!array_key_exists($bulanIndo, $monthMap)) {
-            throw new \Exception("Nama bulan tidak dikenali: {$bulanIndo}");
+        // ===============================
+        // BLOKIR JIKA < 6 BULAN
+        // ===============================
+        if ($lamaBulan < 6) {
+            return back()->with('modal', [
+                'title' => 'Belum Bisa Mengajukan Pinjaman',
+                'message' => "Masa keanggotaan Anda baru {$lamaBulan} bulan.\nMinimal 6 bulan.",
+                'type' => 'warning',
+            ]);
         }
 
-        // Buat tanggal Carbon valid
-        $tanggalGabung = Carbon::parse("1 {$monthMap[$bulanIndo]} {$tahun}");
+        // ===============================
+        // VALIDASI PAKET
+        // ===============================
+        $paket = PaketPinjaman::where('id', $paketId)
+            ->where('status', 1)
+            ->first();
 
-        // ============================================
-        // HITUNG LAMA KEANGGOTAAN
-        // ============================================
-        $lamaBulan = (int) $tanggalGabung->diffInMonths(now());
-        $bolehPinjam = $lamaBulan >= 6;
-        $sisaBulan = max(0, 6 - $lamaBulan);
+        if (!$paket) {
+            return back()->with('modal', [
+                'title' => 'Paket Tidak Ditemukan',
+                'message' => 'Paket pinjaman tidak valid.',
+                'type' => 'error',
+            ]);
+        }
 
-        // ============================================
-        // JIKA BELUM 6 BULAN → KOSONGKAN PAKET
-        // ============================================
-        $paketPinjaman = $bolehPinjam
-            ? PaketPinjaman::where('status', 1)->orderBy('tenor', 'ASC')->get()
-            : collect([]); // kirim array kosong supaya tidak muncul paket
+        // ===============================
+        // SIMPAN PINJAMAN
+        // ===============================
+        $pinjaman = Pinjaman::create([
+            'user_id' => $user->id,
+            'paket_id' => $paket->id,
+            'nominal' => $paket->nominal,
+            'tenor' => $paket->tenor,
+            'bunga' => $paket->bunga,
+            'status' => 'pending',
+        ]);
 
-        return view('user.pinjaman.index', compact(
-            'paketPinjaman',
-            'bolehPinjam',
-            'sisaBulan'
-        ));
+        return redirect()
+            ->route('user.pinjaman.dokumen', ['id' => $pinjaman->id])
+            ->with('modal', [
+                'title' => 'Berhasil',
+                'message' => 'Pengajuan pinjaman berhasil diajukan.',
+                'type' => 'success',
+            ]);
     }
-
-
-
 
 
     /* ============================================================
-       STORE PENGAJUAN PINJAMAN
+       TAMPIL DOKUMEN PINJAMAN
     ============================================================ */
-    public function store(Request $request)
+    public function showDokumen($id)
     {
-        $user = auth()->user();
-        $userId = $user->id;
+        $pinjaman = Pinjaman::with('paket')->findOrFail($id);
 
-        // Cek masa keanggotaan 6 bulan
-        $masa = $this->hitungMasaKeanggotaan($user);
-        if ($masa < 6) {
-            $sisa = 6 - $masa;
-            return back()->with('error', "Belum 6 bulan jadi anggota. Sisa $sisa bulan.");
-        }
-
-        // Cek pinjaman sebelumnya
-        $lama = Pinjaman::where('user_id', $userId)->latest()->first();
-
-        if ($lama) {
-
-            if ($lama->status === 'pending')
-                return back()->with('error', 'Masih ada pinjaman yang pending.');
-
-            if ($lama->status === 'disetujui') {
-                $angsuran = Angsuran::where('pinjaman_id', $lama->id)->get();
-
-                $belum = $angsuran->contains(fn($a) => strtolower($a->status) !== 'lunas');
-
-                if ($belum)
-                    return back()->with('error', 'Masih punya angsuran yang belum lunas.');
-            }
-        }
-
-        // Validasi input
-        $request->validate([
-            'nominal' => 'required|numeric|min:100000',
-            'tenor' => 'required|integer|min:1',
-            'bunga' => 'required|numeric|min:0',
+        return view('user.pinjaman.dokumen', [
+            'pinjaman' => $pinjaman
         ]);
-
-        // Simpan pengajuan
-        Pinjaman::create([
-            'user_id' => $userId,
-            'nominal' => $request->nominal,
-            'tenor' => $request->tenor,
-            'bunga' => $request->bunga,
-            'status' => 'pending'
-        ]);
-
-        return redirect()->route('user.pinjaman.create')
-            ->with('success', 'Pengajuan berhasil dikirim!');
     }
-
 
     /* ============================================================
        UPLOAD DOKUMEN (2 file PDF)

@@ -156,45 +156,12 @@ Route::middleware(['auth:web'])->group(function () {
     // -------------------------------
     // PINJAMAN ANGGOTA
     // -------------------------------
-    Route::prefix('anggota')->group(function () {
-
-        // === Halaman utama pinjaman (ajukan / status / angsuran) ===
-        Route::get(
-            '/pinjaman',
-            [PinjamanAnggotaController::class, 'index']
-        )
-            ->name('user.pinjaman.index');
-
-        // === Ajukan pinjaman baru ===
-        Route::post(
-            '/pinjaman/store',
-            [PinjamanAnggotaController::class, 'store']
-        )
-            ->name('user.pinjaman.store');
-
-        // === Upload dokumen pinjaman (2 PDF) ===
-        Route::post(
-            '/pinjaman/{id}/upload',
-            [PinjamanAnggotaController::class, 'upload']
-        )
-            ->name('user.pinjaman.upload');
-
-        // === Pilih angsuran yg ingin dilunasi ===
-        Route::post(
-            '/pinjaman/{id}/angsuran/pilih',
-            [PinjamanAnggotaController::class, 'pilihAngsuran']
-        )
-            ->name('user.angsuran.pilih');
-
-        // === Kirim bukti bayar angsuran ===
-        Route::post(
-            '/pinjaman/{id}/angsuran/bayar',
-            [PinjamanAnggotaController::class, 'bayarAngsuran']
-        )
-            ->name('user.angsuran.bayar');
-
+    Route::prefix('pinjaman')->group(function () {
+        Route::get('/create', [PinjamanAnggotaController::class, 'create'])->name('user.pinjaman.create');
+        Route::post('/store/{paketId}', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
+        Route::get('/dokumen/{id}', [PinjamanAnggotaController::class, 'showDokumen'])->name('user.pinjaman.dokumen');
+        Route::post('/upload/{id}', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
     });
-
 });
 
 

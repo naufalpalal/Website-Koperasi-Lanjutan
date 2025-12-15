@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('Layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard Koperasi</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="resources/js/script.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-</head>
+@section('layout')
 
-<body class="bg-blue-100 min-h-screen flex flex-col">
-    <!-- Main Content -->
+    {{-- Sidebar Pengurus --}}
+    @include('pengurus.layouts.sidebar')
+
+    {{-- Main Content --}}
     <main class="flex-1 px-8 py-6 md:ml-64">
-        <div class="flex-1 p-6">
+        <div class="p-6">
             @yield('content')
         </div>
     </main>
 
-    <!-- Footer Navigation -->
-    @include('pengurus.layouts.sidebar')
-
-    <!-- JS eksternal -->
+    {{-- JS khusus pengurus --}}
     <script src="{{ asset('assets/js/simpanan.js') }}"></script>
     <script src="{{ asset('assets/js/checklist.js') }}"></script>
     <script src="{{ asset('assets/js/register.js') }}"></script>
@@ -32,7 +21,7 @@
     <script src="{{ asset('assets/js/simpananwajib_listnomor.js') }}"></script>
     <script src="{{ asset('assets/js/simpananwajib_search.js') }}"></script>
     <script src="{{ asset('assets/js/bendahara-setting.js') }}"></script>
-    @yield('scripts')
-</body>
 
-</html>
+    @yield('scripts')
+
+@endsection

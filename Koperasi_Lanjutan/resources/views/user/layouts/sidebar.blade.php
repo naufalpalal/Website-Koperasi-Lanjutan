@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div>
-                    <a href="{{ route('user.pinjaman.index') }}"
+                    <a href="{{ route('user.pinjaman.create') }}"
                         class="flex items-center px-4 sm:px-6 py-3 rounded-lg mb-2 mx-2 sm:mx-0 transition-colors duration-200 hover:bg-green-700 text-sm sm:text-base">
                         <span class="truncate">Pinjaman</span>
                     </a>
