@@ -100,6 +100,9 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/download', [FileDokumenController::class, 'dokumenverifikasi'])->name('dokumen.download');
     Route::get('/upload', [FileDokumenController::class, 'dashboardUpload'])->name('dokumen.upload');
     Route::post('/upload', [FileDokumenController::class, 'uploadDokumen'])->name('dokumen.upload.store');
+    // UPLOAD BUKTI SIMPANAN WAJIB (ANGGOTA)
+    Route::post('/simpanan/upload', [SimpananWajibController::class, 'uploadBukti'])
+        ->name('simpanan-wajib.upload');
 
     Route::get('/anggota/pinjaman/dokumen/{tipe}', [PinjamanDokumenController::class, 'generate'])->name('anggota.pinjaman.download');
 });
@@ -185,15 +188,20 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     // ============================
     Route::prefix('simpanan-wajib')->group(function () {
         Route::get('/', [PengurusSimpananWajibController::class, 'dashboard'])->name('pengurus.simpanan.wajib_2.dashboard');
-        Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib.index');
-        Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib.generate');
-        Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib.updateStatus');
-        Route::get('/riwayat/{id}', [PengurusSimpananWajibController::class, 'riwayat'])->name('pengurus.simpanan.wajib.riwayat');
-        Route::get('/download', [PengurusSimpananWajibController::class, 'downloadExcel'])->name('pengurus.simpanan.wajib.download');
-
+        Route::get('/edit', [PengurusSimpananWajibController::class, 'index'])->name('pengurus.simpanan.wajib_2.index');
+        Route::post('/generate', [PengurusSimpananWajibController::class, 'generate'])->name('pengurus.simpanan.wajib_2.generate');
+        Route::post('/update-status', [PengurusSimpananWajibController::class, 'updateStatus'])->name('pengurus.simpanan.wajib_2.updateStatus');
+        Route::get('/riwayat/{id}', [PengurusSimpananWajibController::class, 'riwayat'])->name('pengurus.simpanan.wajib_2.riwayat');
+        Route::get('/download', [PengurusSimpananWajibController::class, 'downloadExcel'])->name('pengurus.simpanan.wajib_2.download');
+        Route::get('/lihat-bukti/{id}', [PengurusSimpananWajibController::class, 'lihatBukti'])->name('pengurus.simpanan.wajib_2.lihat_bukti');
+        Route::get('/hapus-bukti/{id}', [PengurusSimpananWajibController::class, 'hapusBukti'])->name('pengurus.simpanan.wajib_2.hapus_bukti');
+        Route::get('/laporan-tahunan', [PengurusSimpananWajibController::class, 'laporanTahunan'])
+            ->name('pengurus.simpanan.wajib_2.laporan_tahunan');
+        Route::get('/laporan-tahunan/download', [PengurusSimpananWajibController::class, 'downloadTahunan'])
+            ->name('pengurus.simpanan.wajib_2.download_tahunan');
         // Master nominal
-        Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('pengurus.simpanan.wajib.edit');
-        Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib.updateNominal');
+        Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('pengurus.simpanan.wajib_2.edit');
+        Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib_2.updateNominal');
     });
 
     // ============================
