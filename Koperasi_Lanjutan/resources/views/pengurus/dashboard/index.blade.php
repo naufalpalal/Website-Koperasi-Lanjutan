@@ -1,5 +1,4 @@
 @extends('pengurus.index')
-@extends('pengurus.layouts.sidebar')
 
 @section('content')
     @php
