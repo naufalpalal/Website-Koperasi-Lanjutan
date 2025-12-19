@@ -24,31 +24,47 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
-                <form action="{{ route('pengurus.simpanan.wajib_2.download') }}" method="GET" class="inline-flex items-center">
-                    <input type="hidden" name="bulan" value="{{ $periodeFilter }}">
-                    <button type="submit"
-                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                <!-- Compact download dropdown using details/summary -->
+                <details class="relative inline-block">
+                    <summary
+                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm cursor-pointer hover:bg-indigo-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd"
                                 d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V10.5Z"
                                 clip-rule="evenodd" />
                         </svg>
-                        Tagihan
-                    </button>
-                </form>
+                        Download
+                        <svg class="w-3 h-3 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-md z-50 p-2">
+                        <!-- Tagihan (current periode) -->
+                        <form action="{{ route('pengurus.simpanan.wajib_2.download') }}" method="GET" class="mb-2">
+                            <input type="hidden" name="bulan" value="{{ $periodeFilter }}">
+                            <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md shadow hover:bg-green-700 transition">
+                                    <span>Download Tagihan (Periode)</span>
+                                </button>
+                        </form>
 
-                <form action="{{ route('pengurus.simpanan.wajib_2.download_tahunan') }}" method="GET" class="inline-flex items-center">
-                    <select name="periode" class="border text-sm px-2 py-1 rounded-md">
-                        <option value="3">3B</option>
-                        <option value="6">6B</option>
-                        <option value="12" selected>12B</option>
-                    </select>
-                    <button type="submit" class="ml-1 px-3 py-1.5 bg-yellow-600 text-white rounded-md text-sm hover:bg-yellow-700 transition">
-                        Laporan
-                    </button>
-                </form>
+                        <div class="border-t my-1"></div>
 
-                <button id="masuk" class="ml-1 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-blue-700 transition"
+                        <!-- Laporan period select -->
+                        <form action="{{ route('pengurus.simpanan.wajib_2.download_tahunan') }}" method="GET" class="flex items-center gap-2 mt-2">
+                            <select name="periode" class="border text-sm px-2 py-1 rounded-md w-24">
+                                <option value="3">3B</option>
+                                <option value="6">6B</option>
+                                <option value="12" selected>12B</option>
+                            </select>
+                            <button type="submit" class="px-2 py-1 bg-yellow-600 text-white rounded-md text-sm">Laporan</button>
+                        </form>
+                    </div>
+                </details>
+
+                <!-- Atur button (compact) -->
+                <button id="masuk" class="bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-blue-700 transition"
                     @if(!$master) data-nominal-empty="true" @endif>
                     Atur
                 </button>

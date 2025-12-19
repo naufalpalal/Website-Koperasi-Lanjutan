@@ -10,7 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-blue-100 min-h-screen flex">
+<body class="bg-blue-100 min-h-screen flex flex-col">
 
     @yield('layout')
 

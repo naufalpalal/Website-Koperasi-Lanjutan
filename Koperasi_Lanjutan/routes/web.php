@@ -182,6 +182,10 @@ Route::post('/pengurus/logout', [PengurusController::class, 'logout'])->name('pe
 Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     // Dashboard
     Route::get('/dashboard', [PengurusController::class, 'dashboard'])->name('pengurus.dashboard.index');
+    Route::get('/laporan/csv-bulanan',
+    [PengurusController::class, 'downloadCsvBulanan']
+)->name('pengurus.laporan.csv.bulanan');
+
 
     // ============================
     // SIMPANAN WAJIB
@@ -199,6 +203,11 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.simpanan.wajib_2.laporan_tahunan');
         Route::get('/laporan-tahunan/download', [PengurusSimpananWajibController::class, 'downloadTahunan'])
             ->name('pengurus.simpanan.wajib_2.download_tahunan');
+        Route::get(
+            '/grafik',
+            [PengurusSimpananWajibController::class, 'grafikTahunan']
+        )->name('pengurus.simpanan.wajib_2.simpanan.wajib.grafik');
+
         // Master nominal
         Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('pengurus.simpanan.wajib_2.edit');
         Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib_2.updateNominal');

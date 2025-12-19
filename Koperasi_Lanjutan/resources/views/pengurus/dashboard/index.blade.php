@@ -14,10 +14,24 @@
 
     <div class="px-4 py-6">
         <!-- Header -->
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Dashboard {{ $roleLabel }}</h1>
-            <p class="text-gray-600">Ringkasan operasional dan statistik koperasi</p>
+        <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">
+                Dashboard {{ $roleLabel }}
+            </h1>
+            <p class="text-gray-600 text-sm">
+                Ringkasan operasional dan statistik koperasi
+            </p>
         </div>
+
+        <div class="flex gap-2">
+            <a href="{{ route('pengurus.laporan.csv.bulanan', ['tahun' => now()->year]) }}"
+                class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2
+                       rounded-md text-sm hover:bg-green-700 transition shadow">
+                 Download Laporan
+            </a>
+        </div>
+    </div>
 
         <!-- Stats Cards Row -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-4 mb-6">

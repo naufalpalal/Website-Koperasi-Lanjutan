@@ -241,7 +241,26 @@ class PengurusSimpananWajibController extends Controller
         return view('pengurus.simpanan.wajib_2.laporan_tahunan', compact('laporan', 'tahun', 'startMonth', 'endMonth'));
     }
 
+    public function grafikTahunan(Request $request)
+    {
+        $tahun = $request->get('tahun', now()->year);
 
+        $data = SimpananWajib::select('users_id')
+            ->selectRaw('SUM(nilai) as total')
+            ->where('tahun', $tahun)
+            ->groupBy('users_id')
+            ->with('user')
+            ->get();
+
+        $labels = $data->pluck('user.nama');
+        $values = $data->pluck('total');
+
+        return view('pengurus.simpanan.wajib_2.grafik', compact(
+            'labels',
+            'values',
+            'tahun'
+        ));
+    }
     // Download Excel Simpanan Wajib Tahunan
     public function downloadTahunan(Request $request)
     {
