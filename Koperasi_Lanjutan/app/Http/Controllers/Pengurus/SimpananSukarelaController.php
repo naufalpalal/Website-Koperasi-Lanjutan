@@ -39,23 +39,31 @@ class SimpananSukarelaController extends Controller
 
     public function update(Request $request)
     {
-        $ids = $request->input('ids', []); // id yang dicentang
+        // ambil semua data yang tampil di halaman
+        $allIds = SimpananSukarela::where('status', 'diajukan')
+            ->pluck('id')
+            ->toArray();
 
-        // Semua pengajuan yang masih diajukan bulan ini
-        $pengajuan = SimpananSukarela::where('status', 'Diajukan')->get();
+        // yang dicentang
+        $checkedIds = $request->input('ids', []);
 
-        foreach ($pengajuan as $item) {
-            if (in_array($item->id, $ids)) {
-                // Kalau dicentang → Dibayar
-                $item->update(['status' => 'Dibayar']);
-            } else {
-                // Kalau tidak dicentang → tetap Diajukan (atau bisa diberi status khusus "Gagal/Libur")
-                $item->update(['status' => 'Diajukan']);
-            }
+        // 1️⃣ yang dicentang → BERHASIL
+        if (!empty($checkedIds)) {
+            SimpananSukarela::whereIn('id', $checkedIds)
+                ->update(['status' => 'dibayar']);
         }
 
-        return redirect()->back()->with('success', 'Proses persetujuan simpanan berhasil diperbarui.');
+        // 2️⃣ yang TIDAK dicentang → GAGAL
+        $failedIds = array_diff($allIds, $checkedIds);
+
+        if (!empty($failedIds)) {
+            SimpananSukarela::whereIn('id', $failedIds)
+                ->update(['status' => 'gagal']);
+        }
+
+        return back()->with('success', 'Proses persetujuan berhasil disimpan');
     }
+
 
     public function approve($id)
     {
