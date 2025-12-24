@@ -23,7 +23,6 @@ class Pinjaman extends Model
         'dokumen_verifikasi',
         'bunga',
         'tenor',
-        'angsuran',
     ];
 
     // Relasi ke tabel user (anggota yang mengajukan pinjaman)

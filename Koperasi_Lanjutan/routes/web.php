@@ -164,6 +164,7 @@ Route::middleware(['auth:web'])->group(function () {
         Route::post('/store/{paketId}', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
         Route::get('/dokumen/{id}', [PinjamanAnggotaController::class, 'showDokumen'])->name('user.pinjaman.dokumen');
         Route::post('/upload/{id}', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
+        Route::get('/angsuran/{id}', [PinjamanAnggotaController::class, 'angsuran'])->name('user.pinjaman.angsuran');
     });
 });
 
@@ -182,9 +183,10 @@ Route::post('/pengurus/logout', [PengurusController::class, 'logout'])->name('pe
 Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     // Dashboard
     Route::get('/dashboard', [PengurusController::class, 'dashboard'])->name('pengurus.dashboard.index');
-    Route::get('/laporan/csv-bulanan',
-    [PengurusController::class, 'downloadCsvBulanan']
-)->name('pengurus.laporan.csv.bulanan');
+    Route::get(
+        '/laporan/csv-bulanan',
+        [PengurusController::class, 'downloadCsvBulanan']
+    )->name('pengurus.laporan.csv.bulanan');
 
 
     // ============================
@@ -308,8 +310,9 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.angsuran.index');
 
         // PERBAIKAN: HAPUS prefix 'pinjaman' di dalam prefix 'pinjaman'
-        Route::post('/{id}/status', [AngsuranController::class, 'updateStatus'])
+        Route::post('/status', [AngsuranController::class, 'updateStatus'])
             ->name('pengurus.pinjaman.updateStatus');
+
 
         // ---- SETTINGS PAKET PINJAMAN ----
         Route::prefix('settings')->group(function () {

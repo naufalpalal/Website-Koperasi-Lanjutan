@@ -33,8 +33,7 @@ class PengurusSimpananWajibController extends Controller
         // Ambil semua periode unik untuk history dropdown
         $bulan = SimpananWajib::selectRaw("CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode")
             ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->orderBy('bulan', 'desc')
+            ->orderBy('periode', 'desc') // Diubah: Urutkan berdasarkan alias 'periode'
             ->pluck('periode');
 
 
@@ -67,23 +66,6 @@ class PengurusSimpananWajibController extends Controller
 
         return view('pengurus.simpanan.wajib_2.index', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
-
-    // // Update nominal simpanan wajib (Master)
-    // public function updateNominal(Request $request)
-    // {
-    //     $request->validate([
-    //         'nilai' => 'required|integer|min:0',
-    //     ]);
-
-    //     MasterSimpananWajib::create([
-    //         'nilai' => $request->nilai,
-    //         'tahun' => now()->year,
-    //         'bulan' => now()->month,
-    //         'users_id' => auth()->id()
-    //     ]);
-
-    //     return back()->with('success', 'Nominal simpanan wajib berhasil diperbarui.');
-    // }
 
     // Generate simpanan wajib otomatis
     public function generate(Request $request)

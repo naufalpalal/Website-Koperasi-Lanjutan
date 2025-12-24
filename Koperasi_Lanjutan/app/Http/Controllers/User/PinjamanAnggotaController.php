@@ -118,74 +118,58 @@ class PinjamanAnggotaController extends Controller
        UPLOAD DOKUMEN (2 file PDF)
     ============================================================ */
     public function upload(Request $request, $id)
-{
-    $request->validate([
-        'dokumen_verifikasi' => 'required|mimes:pdf|max:2048',
-    ]);
-
-    $pinjaman = Pinjaman::findOrFail($id);
-    $user = auth()->user();
-
-    if (!$request->hasFile('dokumen_verifikasi')) {
-        return back()->with('error', 'Tidak ada dokumen yang diupload.');
-    }
-
-    $file = $request->file('dokumen_verifikasi');
-    $time = time();
-
-    $path = $file->storeAs(
-        "dokumen_pinjaman/{$user->id}",
-        "dokumen_verifikasi_{$id}_{$time}.pdf",
-        'public'
-    );
-
-    $pinjaman->update([
-        'dokumen_verifikasi' => $path,
-        'status' => 'pending',
-    ]);
-
-    return back()->with('success', 'Dokumen verifikasi berhasil diupload.');
-}
-
-
-    /* ============================================================
-       TAMPIL PEMILIHAN ANGSURAN
-    ============================================================ */
-    public function pilihAngsuran(Request $request, $id)
     {
         $request->validate([
-            'angsuran_ids' => 'required|array',
-            'angsuran_ids.*' => 'exists:angsuran_pinjaman,id',
+            'dokumen_verifikasi' => 'required|mimes:pdf|max:2048',
         ]);
 
         $pinjaman = Pinjaman::findOrFail($id);
-        $angsuran = Angsuran::whereIn('id', $request->angsuran_ids)->get();
+        $user = auth()->user();
 
-        return view('user.pinjaman.transfer', compact('pinjaman', 'angsuran'));
+        if (!$request->hasFile('dokumen_verifikasi')) {
+            return back()->with('error', 'Tidak ada dokumen yang diupload.');
+        }
+
+        $file = $request->file('dokumen_verifikasi');
+        $time = time();
+
+        $path = $file->storeAs(
+            "dokumen_pinjaman/{$user->id}",
+            "dokumen_verifikasi_{$id}_{$time}.pdf",
+            'public'
+        );
+
+        $pinjaman->update([
+            'dokumen_verifikasi' => $path,
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Dokumen verifikasi berhasil diupload.');
     }
 
 
     /* ============================================================
-       BAYAR ANGSURAN
+         TAMPIL DATA ANGSURAN PINJAMAN
     ============================================================ */
-    public function bayarAngsuran(Request $request, $id)
+    public function angsuran($id)
     {
-        $request->validate([
-            'angsuran_ids' => 'required|array',
-            'bukti_transfer' => 'required|image|max:2048',
+        // pastikan pinjaman milik user yang login
+        $pinjaman = Pinjaman::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        // ambil angsuran berdasarkan pinjaman_id
+        $angsuran = Angsuran::where('pinjaman_id', $pinjaman->id)
+            ->orderBy('bulan_ke')
+            ->get();
+
+        return view('user.pinjaman.angsuran', [
+            'pinjaman' => $pinjaman,
+            'angsuran' => $angsuran
         ]);
 
-        $path = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
-
-        PengajuanAngsuran::create([
-            'user_id' => auth()->id(),
-            'pinjaman_id' => $id,
-            'angsuran_ids' => $request->angsuran_ids,
-            'bukti_transfer' => $path,
-            'status' => 'pending',
-        ]);
-
-        return redirect()->route('user.pinjaman.create')
-            ->with('success', 'Bukti transfer dikirim. Menunggu verifikasi.');
     }
+
+
+
 }

@@ -19,28 +19,21 @@ class AngsuranController extends Controller
         return view('pengurus.pinjaman.angsuran.index', compact('pinjaman', 'angsuran'));
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request)
     {
-        $request->validate([
-            'status' => 'required|in:lunas,belum lunas',
-            'diskon' => 'nullable|numeric|min:0',
-        ]);
-
-        $angsuran = Angsuran::findOrFail($id);
-        $angsuran->status = $request->status;
-        
-        // Jika status lunas, simpan diskon (jika ada)
-        if ($request->status === 'lunas') {
-            $angsuran->diskon = $request->diskon ?? 0;
-        } else {
-            // Jika dikembalikan ke belum lunas, reset diskon
-            $angsuran->diskon = 0;
+        if (!$request->filled('angsuran_ids')) {
+            return back()->with('error', 'Pilih minimal satu angsuran');
         }
 
-        $angsuran->save();
+        Angsuran::whereIn('id', $request->angsuran_ids)
+            ->update([
+                'status' => 'lunas',
+            ]);
 
-        return back()->with('success', 'Status angsuran diperbarui');
+        return back()->with('success', 'Angsuran berhasil dilunasi');
     }
+
+
 
     public function periodePotongan(Request $request)
     {
@@ -56,8 +49,7 @@ class AngsuranController extends Controller
         $angsuran = Angsuran::with(['pinjaman.user'])
             ->whereYear('tanggal_bayar', $selectedPeriod->year)
             ->whereMonth('tanggal_bayar', $selectedPeriod->month)
-            ->where('status', 'belum_lunas')
-            ->orderBy('tanggal_bayar', 'asc')
+            ->orderBy('tanggal_bayar',)
             ->get();
 
         return view('pengurus.pinjaman.pemotongan', [

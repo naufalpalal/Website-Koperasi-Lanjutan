@@ -50,28 +50,18 @@
         <p class="text-gray-600 text-sm mb-6">
             Setelah ditandatangani, upload kembali dokumen dalam format PDF.
         </p>
+        {{-- LOGIKA STATUS --}}
+        @if ($pinjaman->status === 'draft')
+            @include('user.pinjaman.partials._upload_form')
 
-        {{-- Upload --}}
-        @if($pinjaman->status !== 'pending')
-            <form action="{{ route('user.pinjaman.upload', $pinjaman->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
+        @elseif ($pinjaman->status === 'pending')
+            @include('user.pinjaman.partials._status_pending')
 
-                <label class="block text-gray-700 font-semibold mb-2">
-                    Upload Dokumen Verifikasi (PDF)
-                </label>
+        @elseif ($pinjaman->status === 'disetujui')
+            @include('user.pinjaman.partials._status_approved')
 
-                <input type="file" name="dokumen_verifikasi" accept="application/pdf" required
-                    class="border rounded w-full p-2 mb-4">
-
-
-                <button class="bg-green-600 text-white w-full py-2 rounded-lg hover:bg-green-700 transition">
-                    ⬆️ Upload Dokumen
-                </button>
-            </form>
-        @else
-            <div class="p-4 bg-yellow-100 text-yellow-800 rounded">
-                Dokumen sudah diupload. Menunggu verifikasi pengurus.
-            </div>
+        @elseif ($pinjaman->status === 'ditolak')
+            @include('user.pinjaman.partials._status_rejected')
         @endif
 
     </div>
