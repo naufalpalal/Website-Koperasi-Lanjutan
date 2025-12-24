@@ -86,65 +86,86 @@ class PengurusController extends Controller
             $handle = fopen('php://output', 'w');
 
             // ================= HEADER CSV =================
-            fputcsv($handle, [
-                'Nama Anggota',
-                'Tahun',
-                'Bulan',
-                'Simpanan Wajib',
-                'Simpanan Sukarela',
-                'Tabungan',
-                'Pinjaman',
-                'TOTAL'
-            ]);
+            $header = ['Nama Anggota'];
+
+            foreach (range(1, 12) as $b) {
+                $header[] = "Wajib $b";
+            }
+            foreach (range(1, 12) as $b) {
+                $header[] = "Sukarela $b";
+            }
+            foreach (range(1, 12) as $b) {
+                $header[] = "Tabungan $b";
+            }
+            foreach (range(1, 12) as $b) {
+                $header[] = "Pinjaman $b";
+            }
+
+            // TOTAL
+            $header[] = "TOTAL SIMPANAN";
+            $header[] = "TOTAL PINJAMAN";
+
+            fputcsv($handle, $header);
 
             // ================= ISI CSV =================
             foreach ($users as $user) {
 
-                foreach (range(1, 12) as $bulan) {
+                $row = [$user->nama];
 
-                    // Simpanan Wajib
-                    $wajib = SimpananWajib::where('users_id', $user->id)
+                $totalWajib = 0;
+                $totalSukarela = 0;
+                $totalTabungan = 0;
+                $totalPinjaman = 0;
+
+                // Simpanan Wajib
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = SimpananWajib::where('users_id', $user->id)
                         ->where('tahun', $tahun)
                         ->where('bulan', $bulan)
                         ->sum('nilai');
 
-                    // Simpanan Sukarela
-                    $sukarela = SimpananSukarela::where('users_id', $user->id)
+                    $row[] = $nilai;
+                    $totalWajib += $nilai;
+                }
+
+                // Simpanan Sukarela
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = SimpananSukarela::where('users_id', $user->id)
                         ->whereYear('created_at', $tahun)
                         ->whereMonth('created_at', $bulan)
                         ->sum('nilai');
 
-                    // Tabungan
-                    $tabungan = Tabungan::where('users_id', $user->id)
+                    $row[] = $nilai;
+                    $totalSukarela += $nilai;
+                }
+
+                // Tabungan
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = Tabungan::where('users_id', $user->id)
                         ->whereYear('created_at', $tahun)
                         ->whereMonth('created_at', $bulan)
                         ->sum('nilai');
 
-                    // Pinjaman
-                    $pinjaman = Pinjaman::where('user_id', $user->id)
+                    $row[] = $nilai;
+                    $totalTabungan += $nilai;
+                }
+
+                // Pinjaman
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = Pinjaman::where('user_id', $user->id)
                         ->whereYear('created_at', $tahun)
                         ->whereMonth('created_at', $bulan)
                         ->sum('nominal');
 
-                    // TOTAL (tanpa pinjaman)
-                    $total = $wajib + $sukarela + $tabungan;
-
-                    // Skip baris kosong (biar CSV bersih)
-                    if ($total == 0 && $pinjaman == 0) {
-                        continue;
-                    }
-
-                    fputcsv($handle, [
-                        $user->nama,
-                        $tahun,
-                        \Carbon\Carbon::create()->month($bulan)->translatedFormat('F'),
-                        $wajib,
-                        $sukarela,
-                        $tabungan,
-                        $pinjaman,
-                        $total
-                    ]);
+                    $row[] = $nilai;
+                    $totalPinjaman += $nilai;
                 }
+
+                // TOTAL AKHIR
+                $row[] = $totalWajib + $totalSukarela + $totalTabungan;
+                $row[] = $totalPinjaman;
+
+                fputcsv($handle, $row);
             }
 
             fclose($handle);
