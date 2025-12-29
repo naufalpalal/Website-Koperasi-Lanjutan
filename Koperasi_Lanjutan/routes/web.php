@@ -221,7 +221,11 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     Route::prefix('simpanan-sukarela')->group(function () {
         Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
         Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
-        Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
+        Route::get('/generate', [SimpananSukarelaController::class, 'generatePage'])
+            ->name('pengurus.simpanan.sukarela.generate');
+
+        Route::post('/generate', [SimpananSukarelaController::class, 'generate'])
+            ->name('pengurus.simpanan.sukarela.generate.process');
         Route::post('/update', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
         Route::get('/riwayat', [SimpananSukarelaController::class, 'riwayat'])->name('pengurus.simpanan.sukarela.riwayat');
         Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');

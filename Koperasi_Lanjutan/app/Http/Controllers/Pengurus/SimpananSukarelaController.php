@@ -8,23 +8,46 @@ use App\Models\Pengurus\SimpananSukarela;
 use App\Models\User\MasterSimpananSukarela;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SimpananSukarelaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // ambil bulan dan tahun sekarang
-        $bulanSekarang = Carbon::now()->month;
-        $tahunSekarang = Carbon::now()->year;
+        // ===== DEFAULT PERIODE =====
+        $periode = $request->get('periode', now()->format('Y-m'));
+        [$tahun, $bulan] = explode('-', $periode);
 
-        // ambil data simpanan berdasarkan bulan & tahun saat ini
-        $simpanan = SimpananSukarela::with('user')
-            ->where('bulan', $bulanSekarang)
-            ->where('tahun', $tahunSekarang)
+        // ===== QUERY DASAR =====
+        $query = SimpananSukarela::with('user')
+            ->where('tahun', $tahun)
+            ->where('bulan', $bulan);
+
+        // ===== FILTER NAMA =====
+        if ($request->filled('nama')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->nama . '%');
+            });
+        }
+
+        // ===== DATA TABEL =====
+        $simpanan = $query
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString(); // biar pagination gak ilang filter
 
-        return view('pengurus.simpanan.sukarela.index', compact('simpanan', 'bulanSekarang', 'tahunSekarang'));
+        // ===== LIST PERIODE DROPDOWN =====
+        $periodeList = SimpananSukarela::select('tahun', 'bulan')
+            ->selectRaw("CONCAT(tahun,'-',LPAD(bulan,2,'0')) as periode")
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
+            ->pluck('periode');
+
+        return view(
+            'pengurus.simpanan.sukarela.index',
+            compact('simpanan', 'periode', 'periodeList')
+        );
     }
 
     public function create()
@@ -84,59 +107,97 @@ class SimpananSukarelaController extends Controller
         return redirect()->back()->with('success', 'Pengajuan simpanan ditolak.');
     }
 
+    public function generatePage()
+    {
+        $simpanan = SimpananSukarela::with('user')
+            ->where('status', 'Diajukan')
+            ->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc')
+            ->get();
+
+        return view('pengurus.simpanan.sukarela.generate', compact('simpanan'));
+    }
+
+
+
     public function generate(Request $request)
     {
         $request->validate([
-            'bulan' => 'required|numeric|min:1|max:12',
-            'tahun' => 'required|numeric|min:2000',
+            'bulan' => 'required|integer|min:1|max:12',
+            'tahun' => 'required|integer|min:2000',
         ]);
 
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
+        $bulan = (int) $request->bulan;
+        $tahun = (int) $request->tahun;
 
-        // Cek apakah bulan ini sudah digenerate sebelumnya
-        $sudahAda = SimpananSukarela::where('bulan', $bulan)
-            ->where('tahun', $tahun)
-            ->exists();
+        $periode = Carbon::create($tahun, $bulan, 1)->startOfMonth();
 
-        if ($sudahAda) {
-            return back()->with('error', "Data simpanan untuk bulan $bulan tahun $tahun sudah pernah digenerate!");
+        if ($periode->lessThan(now()->startOfMonth())) {
+            return back()->with('error', 'Tidak boleh generate periode lampau.');
         }
 
-        $anggota = User::get();
-        $jumlahTergenerate = 0;
 
-        foreach ($anggota as $a) {
+        return DB::transaction(function () use ($bulan, $tahun) {
 
-            // Ambil master khusus bulan & tahun ini
-            $master = MasterSimpananSukarela::where('users_id', $a->id)
-                ->where('status', 'Disetujui')
-                ->where('bulan', $bulan)
+            // 🔒 Lock data biar tidak double generate
+            $sudahAda = SimpananSukarela::where('bulan', $bulan)
                 ->where('tahun', $tahun)
-                ->first();
+                ->lockForUpdate()
+                ->exists();
 
-            $nominal = $master->nilai ?? 0;
-
-            if ($nominal <= 0) {
-                continue;
+            if ($sudahAda) {
+                return back()->with(
+                    'error',
+                    "Simpanan sukarela bulan $bulan tahun $tahun sudah pernah digenerate."
+                );
             }
 
-            SimpananSukarela::create([
-                'nilai' => $nominal,
-                'tahun' => $tahun,
-                'bulan' => $bulan,
-                'status' => 'Diajukan',
-                'users_id' => $a->id,
-            ]);
+            // Ambil anggota AKTIF saja
+            $anggota = User::where('status', 'aktif')->get();
 
-            $jumlahTergenerate++;
-        }
+            // Ambil master yang disetujui untuk periode ini
+            $masterMap = MasterSimpananSukarela::where('status', 'Disetujui')
+                ->where('bulan', $bulan)
+                ->where('tahun', $tahun)
+                ->get()
+                ->keyBy('users_id');
 
-        if ($jumlahTergenerate === 0) {
-            return back()->with('error', "Tidak ada simpanan sukarela yang digenerate karena tidak ada pengajuan yang disetujui untuk bulan $bulan tahun $tahun.");
-        }
+            $dataInsert = [];
 
-        return back()->with('success', "Simpanan sukarela bulan $bulan tahun $tahun berhasil digenerate untuk $jumlahTergenerate anggota.");
+            foreach ($anggota as $a) {
+                $master = $masterMap->get($a->id);
+
+                if (!$master || $master->nilai <= 0) {
+                    continue;
+                }
+
+                $dataInsert[] = [
+                    'users_id' => $a->id,
+                    'nilai' => $master->nilai,
+                    'bulan' => $bulan,
+                    'tahun' => $tahun,
+                    'status' => 'Diajukan',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            if (count($dataInsert) === 0) {
+                return back()->with(
+                    'error',
+                    "Tidak ada simpanan yang bisa digenerate untuk bulan $bulan tahun $tahun."
+                );
+            }
+
+            // 🚀 Insert massal (lebih cepat & bersih)
+            SimpananSukarela::insert($dataInsert);
+
+            return back()->with(
+                'success',
+                "Simpanan sukarela bulan $bulan tahun $tahun berhasil digenerate untuk "
+                . count($dataInsert) . " anggota."
+            );
+        });
     }
 
 

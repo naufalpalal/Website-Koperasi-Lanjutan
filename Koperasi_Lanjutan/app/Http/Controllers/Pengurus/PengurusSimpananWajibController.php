@@ -56,11 +56,14 @@ class PengurusSimpananWajibController extends Controller
             ->keyBy('users_id');
 
         // Ambil semua periode unik untuk history dropdown
-        $bulan = SimpananWajib::selectRaw("CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode")
-            ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->orderBy('bulan', 'desc')
+        $bulan = SimpananWajib::selectRaw("
+        DISTINCT tahun, bulan,
+        CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode
+    ")
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
             ->pluck('periode');
+
 
 
 
