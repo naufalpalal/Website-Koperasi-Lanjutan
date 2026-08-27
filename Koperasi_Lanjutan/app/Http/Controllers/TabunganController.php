@@ -33,7 +33,7 @@ class TabunganController extends Controller
         $user = Auth::user();
 
         $tanggal = $request->input('tanggal');
-        $status  = $request->input('status');
+        $status = $request->input('status');
 
         $query = Tabungan::where('users_id', $user->id);
 
