@@ -38,9 +38,11 @@ class PinjamanAnggotaController extends Controller
         $bulanMasuk = preg_replace('/\s+/', ' ', $bulanMasuk);
         $parts = explode(' ', $bulanMasuk);
 
-       $bulan = Bulan::indoToEnglish($parts[0]);
+        [$bulanIndo, $tahun] = $parts;
 
-        if (count($parts) !== 2 || !isset($map[$parts[0]])) {
+        $bulanEng = Bulan::indoToEnglish($bulanIndo);
+
+        if (count($parts) !== 2 || $bulanEng === null) {
             return back()->with('modal', [
                 'title' => 'Data Tidak Valid',
                 'message' => 'Data bulan masuk anggota bermasalah. Hubungi pengurus.',
@@ -48,8 +50,8 @@ class PinjamanAnggotaController extends Controller
             ]);
         }
 
-        [$bulanIndo, $tahun] = $parts;
-        $tanggalGabung = Carbon::parse("1 {$bulan[$bulanIndo]} {$tahun}");
+
+        $tanggalGabung = Carbon::parse("1 {$bulanEng} {$tahun}");
         $lamaBulan = $tanggalGabung->diffInMonths(now());
 
         // ===============================
@@ -87,7 +89,7 @@ class PinjamanAnggotaController extends Controller
             'nominal' => $paket->nominal,
             'tenor' => $paket->tenor,
             'bunga' => $paket->bunga,
-            'status' => 'pending',
+            'status' => 'draft',
         ]);
 
         return redirect()
@@ -118,84 +120,56 @@ class PinjamanAnggotaController extends Controller
     public function upload(Request $request, $id)
     {
         $request->validate([
-            'dokumen_pinjaman.*' => 'required|mimes:pdf|max:2048',
+            'dokumen_verifikasi' => 'required|mimes:pdf|max:2048',
         ]);
 
         $pinjaman = Pinjaman::findOrFail($id);
         $user = auth()->user();
 
-        if (!$request->hasFile('dokumen_pinjaman'))
-            return back()->with('error', 'Tidak ada file diupload.');
+        if (!$request->hasFile('dokumen_verifikasi')) {
+            return back()->with('error', 'Tidak ada dokumen yang diupload.');
+        }
 
-        $files = $request->file('dokumen_pinjaman');
-
-        if (count($files) < 2)
-            return back()->with('error', 'Wajib upload 2 dokumen PDF.');
-
+        $file = $request->file('dokumen_verifikasi');
         $time = time();
 
-        // Dokumen 1
-        $dok1 = $files[0]->storeAs(
-            "dokumen_pinjaman/$user->id",
-            "dokumen_pinjaman_{$id}_{$time}.pdf",
-            'public'
-        );
-
-        // Dokumen 2
-        $dok2 = $files[1]->storeAs(
-            "dokumen_pinjaman/$user->id",
-            "dokumen_verifikasi_{$id}_" . ($time + 1) . ".pdf",
+        $path = $file->storeAs(
+            "dokumen_pinjaman/{$user->id}",
+            "dokumen_verifikasi_{$id}_{$time}.pdf",
             'public'
         );
 
         $pinjaman->update([
-            'dokumen_pinjaman' => $dok1,
-            'dokumen_verifikasi' => $dok2,
+            'dokumen_verifikasi' => $path,
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Dokumen berhasil diupload.');
+        return back()->with('success', 'Dokumen verifikasi berhasil diupload.');
     }
 
 
     /* ============================================================
-       TAMPIL PEMILIHAN ANGSURAN
+         TAMPIL DATA ANGSURAN PINJAMAN
     ============================================================ */
-    public function pilihAngsuran(Request $request, $id)
+    public function angsuran($id)
     {
-        $request->validate([
-            'angsuran_ids' => 'required|array',
-            'angsuran_ids.*' => 'exists:angsuran_pinjaman,id',
+        // pastikan pinjaman milik user yang login
+        $pinjaman = Pinjaman::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        // ambil angsuran berdasarkan pinjaman_id
+        $angsuran = Angsuran::where('pinjaman_id', $pinjaman->id)
+            ->orderBy('bulan_ke')
+            ->get();
+
+        return view('user.pinjaman.angsuran', [
+            'pinjaman' => $pinjaman,
+            'angsuran' => $angsuran
         ]);
 
-        $pinjaman = Pinjaman::findOrFail($id);
-        $angsuran = Angsuran::whereIn('id', $request->angsuran_ids)->get();
-
-        return view('user.pinjaman.transfer', compact('pinjaman', 'angsuran'));
     }
 
 
-    /* ============================================================
-       BAYAR ANGSURAN
-    ============================================================ */
-    public function bayarAngsuran(Request $request, $id)
-    {
-        $request->validate([
-            'angsuran_ids' => 'required|array',
-            'bukti_transfer' => 'required|image|max:2048',
-        ]);
 
-        $path = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
-
-        PengajuanAngsuran::create([
-            'user_id' => auth()->id(),
-            'pinjaman_id' => $id,
-            'angsuran_ids' => $request->angsuran_ids,
-            'bukti_transfer' => $path,
-            'status' => 'pending',
-        ]);
-
-        return redirect()->route('user.pinjaman.create')
-            ->with('success', 'Bukti transfer dikirim. Menunggu verifikasi.');
-    }
 }

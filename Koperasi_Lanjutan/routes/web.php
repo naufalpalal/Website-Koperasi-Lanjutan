@@ -164,6 +164,7 @@ Route::middleware(['auth:web'])->group(function () {
         Route::post('/store/{paketId}', [PinjamanAnggotaController::class, 'store'])->name('user.pinjaman.store');
         Route::get('/dokumen/{id}', [PinjamanAnggotaController::class, 'showDokumen'])->name('user.pinjaman.dokumen');
         Route::post('/upload/{id}', [PinjamanAnggotaController::class, 'upload'])->name('user.pinjaman.upload');
+        Route::get('/angsuran/{id}', [PinjamanAnggotaController::class, 'angsuran'])->name('user.pinjaman.angsuran');
     });
 });
 
@@ -182,6 +183,11 @@ Route::post('/pengurus/logout', [PengurusController::class, 'logout'])->name('pe
 Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     // Dashboard
     Route::get('/dashboard', [PengurusController::class, 'dashboard'])->name('pengurus.dashboard.index');
+    Route::get(
+        '/laporan/csv-bulanan',
+        [PengurusController::class, 'downloadCsvBulanan']
+    )->name('pengurus.laporan.csv.bulanan');
+
 
     // ============================
     // SIMPANAN WAJIB
@@ -199,6 +205,11 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.simpanan.wajib_2.laporan_tahunan');
         Route::get('/laporan-tahunan/download', [PengurusSimpananWajibController::class, 'downloadTahunan'])
             ->name('pengurus.simpanan.wajib_2.download_tahunan');
+        Route::get(
+            '/grafik',
+            [PengurusSimpananWajibController::class, 'grafikTahunan']
+        )->name('pengurus.simpanan.wajib_2.simpanan.wajib.grafik');
+
         // Master nominal
         Route::get('/master/edit', [MasterSimpananWajibController::class, 'editNominal'])->name('pengurus.simpanan.wajib_2.edit');
         Route::post('/master/update-nominal', [MasterSimpananWajibController::class, 'updateNominal'])->name('pengurus.simpanan.wajib_2.updateNominal');
@@ -210,7 +221,11 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
     Route::prefix('simpanan-sukarela')->group(function () {
         Route::get('/', [SimpananSukarelaController::class, 'index'])->name('pengurus.simpanan.sukarela.index');
         Route::post('/store', [SimpananSukarelaController::class, 'store'])->name('pengurus.simpanan.sukarela.store');
-        Route::post('/generate', [SimpananSukarelaController::class, 'generate'])->name('pengurus.simpanan.sukarela.generate');
+        Route::get('/generate', [SimpananSukarelaController::class, 'generatePage'])
+            ->name('pengurus.simpanan.sukarela.generate');
+
+        Route::post('/generate', [SimpananSukarelaController::class, 'generate'])
+            ->name('pengurus.simpanan.sukarela.generate.process');
         Route::post('/update', [SimpananSukarelaController::class, 'update'])->name('pengurus.simpanan.sukarela.update');
         Route::get('/riwayat', [SimpananSukarelaController::class, 'riwayat'])->name('pengurus.simpanan.sukarela.riwayat');
         Route::get('/pengajuan', [SimpananSukarelaController::class, 'create'])->name('pengurus.simpanan.sukarela.pengajuan');
@@ -299,8 +314,9 @@ Route::middleware(['auth:pengurus'])->prefix('pengurus')->group(function () {
             ->name('pengurus.angsuran.index');
 
         // PERBAIKAN: HAPUS prefix 'pinjaman' di dalam prefix 'pinjaman'
-        Route::post('/{id}/status', [AngsuranController::class, 'updateStatus'])
+        Route::post('/status', [AngsuranController::class, 'updateStatus'])
             ->name('pengurus.pinjaman.updateStatus');
+
 
         // ---- SETTINGS PAKET PINJAMAN ----
         Route::prefix('settings')->group(function () {

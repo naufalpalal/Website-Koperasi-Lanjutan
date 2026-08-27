@@ -20,8 +20,6 @@ class PinjamanSettingController extends Controller
         return view('pengurus.pinjaman.pengaturan.create');
     }
 
-
-
     // Simpan paket pinjaman baru
     public function store(Request $request)
     {

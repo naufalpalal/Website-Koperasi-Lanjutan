@@ -33,8 +33,7 @@ class PengurusSimpananWajibController extends Controller
         // Ambil semua periode unik untuk history dropdown
         $bulan = SimpananWajib::selectRaw("CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode")
             ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->orderBy('bulan', 'desc')
+            ->orderBy('periode', 'desc') // Diubah: Urutkan berdasarkan alias 'periode'
             ->pluck('periode');
 
 
@@ -57,33 +56,19 @@ class PengurusSimpananWajibController extends Controller
             ->keyBy('users_id');
 
         // Ambil semua periode unik untuk history dropdown
-        $bulan = SimpananWajib::selectRaw("CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode")
-            ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->orderBy('bulan', 'desc')
+        $bulan = SimpananWajib::selectRaw("
+        DISTINCT tahun, bulan,
+        CONCAT(tahun, '-', LPAD(bulan, 2, '0')) as periode
+    ")
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
             ->pluck('periode');
+
 
 
 
         return view('pengurus.simpanan.wajib_2.index', compact('anggota', 'master', 'simpananBulanIni', 'bulan', 'periodeFilter'));
     }
-
-    // // Update nominal simpanan wajib (Master)
-    // public function updateNominal(Request $request)
-    // {
-    //     $request->validate([
-    //         'nilai' => 'required|integer|min:0',
-    //     ]);
-
-    //     MasterSimpananWajib::create([
-    //         'nilai' => $request->nilai,
-    //         'tahun' => now()->year,
-    //         'bulan' => now()->month,
-    //         'users_id' => auth()->id()
-    //     ]);
-
-    //     return back()->with('success', 'Nominal simpanan wajib berhasil diperbarui.');
-    // }
 
     // Generate simpanan wajib otomatis
     public function generate(Request $request)
@@ -241,7 +226,26 @@ class PengurusSimpananWajibController extends Controller
         return view('pengurus.simpanan.wajib_2.laporan_tahunan', compact('laporan', 'tahun', 'startMonth', 'endMonth'));
     }
 
+    public function grafikTahunan(Request $request)
+    {
+        $tahun = $request->get('tahun', now()->year);
 
+        $data = SimpananWajib::select('users_id')
+            ->selectRaw('SUM(nilai) as total')
+            ->where('tahun', $tahun)
+            ->groupBy('users_id')
+            ->with('user')
+            ->get();
+
+        $labels = $data->pluck('user.nama');
+        $values = $data->pluck('total');
+
+        return view('pengurus.simpanan.wajib_2.grafik', compact(
+            'labels',
+            'values',
+            'tahun'
+        ));
+    }
     // Download Excel Simpanan Wajib Tahunan
     public function downloadTahunan(Request $request)
     {

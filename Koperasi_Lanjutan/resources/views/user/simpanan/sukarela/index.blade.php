@@ -7,8 +7,6 @@
     {{-- ============================= --}}
     <div class="p-6 bg-white rounded shadow mb-6">
 
-        <h2 class="text-xl font-bold mb-4">Simpanan Sukarela</h2>
-
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
             {{-- Total Simpanan --}}
@@ -29,8 +27,7 @@
             </a>
 
             <!-- Tombol Ajukan Libur -->
-            <a
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-medium">
+            <a class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-medium">
                 Ajukan Libur
             </a>
         </div>
@@ -114,11 +111,26 @@
                                 @php
                                     $status = strtolower($item->status ?? '');
                                 @endphp
-                                <span
-                                    class="{{ $status === 'sudah' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold' }}">
-                                    {{ $status ? ucfirst($status) : 'Belum' }}
-                                </span>
+
+                                @if ($status === 'dibayar')
+                                    <span class="text-green-600 font-medium">
+                                        Berhasil
+                                    </span>
+                                @elseif ($status === 'gagal')
+                                    <span class="text-red-600 font-medium">
+                                        Gagal
+                                    </span>
+                                @elseif ($status === 'diajukan')
+                                    <span class="text-gray-500 italic">
+                                        Menunggu Keputusan
+                                    </span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
                             </td>
+
+
+
                         </tr>
                     @empty
                         <tr>

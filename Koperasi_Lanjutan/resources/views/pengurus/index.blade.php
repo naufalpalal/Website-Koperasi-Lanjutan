@@ -2,12 +2,13 @@
 
 @section('layout')
 
-    {{-- Sidebar Pengurus --}}
+
+    {{-- Sidebar --}}
     @include('pengurus.layouts.sidebar')
 
-    {{-- Main Content --}}
-    <main class="flex-1 px-8 py-6 md:ml-64">
-        <div class="p-6">
+    {{-- Main content --}}
+     <main class="flex-1 px-8 py-6 md:ml-64">
+        <div class="flex-1 p-6">
             @yield('content')
         </div>
     </main>

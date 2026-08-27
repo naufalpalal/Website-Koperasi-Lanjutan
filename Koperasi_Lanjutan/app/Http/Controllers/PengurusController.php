@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +10,6 @@ use App\Models\Pengurus\SimpananWajib;
 use App\Models\Pengurus\SimpananSukarela;
 use App\Models\Tabungan;
 use App\Models\Pinjaman;
-
 
 class PengurusController extends Controller
 {
@@ -44,45 +42,136 @@ class PengurusController extends Controller
         $request->session()->regenerateToken();
         return redirect('/pengurus/login');
     }
+
     public function dashboard()
     {
         $totalAnggota = User::where('status', 'aktif')->count();
 
-        // Total simpanan wajib dan sukarela
         $totalSimpananWajib = SimpananWajib::sum('nilai');
         $totalSimpananSukarela = SimpananSukarela::sum('nilai');
         $totalTabungan = Tabungan::sum('nilai');
+
         $totalSimpanan = $totalSimpananWajib + $totalSimpananSukarela + $totalTabungan;
 
-        // Total simpanan yang sudah dibayar
-        $totalSimpananWajibDibayar = SimpananWajib::where('status', 'Dibayar')->sum('nilai');
-        $totalSimpananSukarelaDibayar = SimpananSukarela::where('status', 'Dibayar')->sum('nilai');
-        $totalTabunganDibayar = Tabungan::where('status', 'Dibayar')->sum('nilai');
-        $totalSimpananDibayar = $totalSimpananWajibDibayar + $totalSimpananSukarelaDibayar + $totalTabunganDibayar;
-
-        // Total pinjaman (kalau modelnya ada)
         $totalPinjaman = Pinjaman::sum('nominal');
-        $totalPinjamanDibayar = Pinjaman::where('status', 'Dibayar')->sum('nominal');
+        $totalPinjamanDibayar = Pinjaman::where('status', 'dibayar')->sum('nominal');
+        $totalSimpananWajibDibayar = SimpananWajib::where('status', 'dibayar')->sum('nilai');
+        $totalSimpananSukarelaDibayar = SimpananSukarela::where('status', 'dibayar')->sum('nilai');
+        $totalTabunganDibayar = Tabungan::where('status', 'dibayar')->sum('nilai');
+        return view('pengurus.dashboard.index', compact(
+            'totalAnggota',
+            'totalSimpanan',
+            'totalSimpananWajib',
+            'totalSimpananSukarela',
+            'totalTabungan',
+            'totalPinjaman',
+            'totalPinjamanDibayar',
+            'totalSimpananWajibDibayar',
+            'totalSimpananSukarelaDibayar',
+            'totalTabunganDibayar'
+        ));
+    }
 
-        // Kirim semua variabel ke Blade
-        return view('pengurus.dashboard.index', [
-            'totalAnggota' => $totalAnggota,
+    // ================= DOWNLOAD CSV BULANAN =================
+    public function downloadCsvBulanan(Request $request)
+    {
+        $tahun = $request->get('tahun', now()->year);
 
-            // Simpanan total
-            'totalSimpanan' => $totalSimpanan,
-            'totalSimpananDibayar' => $totalSimpananDibayar,
+        $users = User::where('status', 'aktif')->get();
 
-            // Rincian simpanan wajib & sukarela
-            'totalSimpananWajib' => $totalSimpananWajib,
-            'totalSimpananWajibDibayar' => $totalSimpananWajibDibayar,
-            'totalSimpananSukarela' => $totalSimpananSukarela,
-            'totalSimpananSukarelaDibayar' => $totalSimpananSukarelaDibayar,
-            'totalTabungan' => $totalTabungan,
-            'totalTabunganDibayar' => $totalTabunganDibayar,
+        $filename = "laporan_keuangan_bulanan_$tahun.csv";
 
-            // Pinjaman
-            'totalPinjaman' => $totalPinjaman,
-            'totalPinjamanDibayar' => $totalPinjamanDibayar,
+        return response()->streamDownload(function () use ($users, $tahun) {
+
+            $handle = fopen('php://output', 'w');
+
+            // ================= HEADER CSV =================
+            $header = ['Nama Anggota'];
+
+            foreach (range(1, 12) as $b) {
+                $header[] = "Wajib $b";
+            }
+            foreach (range(1, 12) as $b) {
+                $header[] = "Sukarela $b";
+            }
+            foreach (range(1, 12) as $b) {
+                $header[] = "Tabungan $b";
+            }
+            foreach (range(1, 12) as $b) {
+                $header[] = "Pinjaman $b";
+            }
+
+            // TOTAL
+            $header[] = "TOTAL SIMPANAN";
+            $header[] = "TOTAL PINJAMAN";
+
+            fputcsv($handle, $header);
+
+            // ================= ISI CSV =================
+            foreach ($users as $user) {
+
+                $row = [$user->nama];
+
+                $totalWajib = 0;
+                $totalSukarela = 0;
+                $totalTabungan = 0;
+                $totalPinjaman = 0;
+
+                // Simpanan Wajib
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = SimpananWajib::where('users_id', $user->id)
+                        ->where('tahun', $tahun)
+                        ->where('bulan', $bulan)
+                        ->sum('nilai');
+
+                    $row[] = $nilai;
+                    $totalWajib += $nilai;
+                }
+
+                // Simpanan Sukarela
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = SimpananSukarela::where('users_id', $user->id)
+                        ->whereYear('created_at', $tahun)
+                        ->whereMonth('created_at', $bulan)
+                        ->sum('nilai');
+
+                    $row[] = $nilai;
+                    $totalSukarela += $nilai;
+                }
+
+                // Tabungan
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = Tabungan::where('users_id', $user->id)
+                        ->whereYear('created_at', $tahun)
+                        ->whereMonth('created_at', $bulan)
+                        ->sum('nilai');
+
+                    $row[] = $nilai;
+                    $totalTabungan += $nilai;
+                }
+
+                // Pinjaman
+                foreach (range(1, 12) as $bulan) {
+                    $nilai = Pinjaman::where('user_id', $user->id)
+                        ->whereYear('created_at', $tahun)
+                        ->whereMonth('created_at', $bulan)
+                        ->sum('nominal');
+
+                    $row[] = $nilai;
+                    $totalPinjaman += $nilai;
+                }
+
+                // TOTAL AKHIR
+                $row[] = $totalWajib + $totalSukarela + $totalTabungan;
+                $row[] = $totalPinjaman;
+
+                fputcsv($handle, $row);
+            }
+
+            fclose($handle);
+
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     }
 

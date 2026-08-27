@@ -20,10 +20,9 @@ class Pinjaman extends Model
         'paket_id',
         'nominal',
         'status',
-        'dokumen_pinjaman',
+        'dokumen_verifikasi',
         'bunga',
         'tenor',
-        'angsuran',
     ];
 
     // Relasi ke tabel user (anggota yang mengajukan pinjaman)

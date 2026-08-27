@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->integer('nilai');
             $table->integer('tahun');
             $table->integer('bulan');
-            $table->enum('status', ['Diajukan', 'Dibayar'])->default('Diajukan');
+            $table->enum('status', ['diajukan', 'dibayar', 'gagal'])->default('diajukan');
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

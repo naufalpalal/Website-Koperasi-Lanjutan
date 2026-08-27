@@ -3227,18 +3227,6 @@
         },
         {
             "name": "nette/utils",
-<<<<<<< HEAD
-            "version": "v4.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nette/utils.git",
-                "reference": "505a30ad386daa5211f08a318e47015b501cad30"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/505a30ad386daa5211f08a318e47015b501cad30",
-                "reference": "505a30ad386daa5211f08a318e47015b501cad30",
-=======
             "version": "v4.1.0",
             "source": {
                 "type": "git",
@@ -3249,7 +3237,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/nette/utils/zipball/fa1f0b8261ed150447979eb22e373b7b7ad5a8e0",
                 "reference": "fa1f0b8261ed150447979eb22e373b7b7ad5a8e0",
->>>>>>> cbf06520c8e8d16e9ef06f5f708b0dcb18b99d2b
                 "shasum": ""
             },
             "require": {
@@ -3323,15 +3310,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-<<<<<<< HEAD
-                "source": "https://github.com/nette/utils/tree/v4.0.9"
-            },
-            "time": "2025-10-31T00:45:47+00:00"
-=======
                 "source": "https://github.com/nette/utils/tree/v4.1.0"
             },
             "time": "2025-12-01T17:49:23+00:00"
->>>>>>> cbf06520c8e8d16e9ef06f5f708b0dcb18b99d2b
         },
         {
             "name": "nikic/php-parser",
@@ -10942,9 +10923,6 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-<<<<<<< HEAD
-    "plugin-api-version": "2.9.0"
-=======
     "plugin-api-version": "2.6.0"
->>>>>>> cbf06520c8e8d16e9ef06f5f708b0dcb18b99d2b
+
 }

@@ -1,74 +1,92 @@
 @extends('Pengurus.index')
 
 @section('content')
-    <div class="p-6 bg-white rounded shadow">
-        <h2 class="text-xl font-bold mb-4">Detail Pengajuan Pinjaman</h2>
 
-        <p><strong>Nama:</strong> {{ $pinjaman->user->nama }}</p>
-        <p><strong>Nominal:</strong> Rp{{ number_format($pinjaman->nominal, 0, ',', '.') }}</p>
+    <div class="w-full max-w-5xl mx-auto p-2 sm:p-4">
 
-        <p><strong>Status:</strong>
-            <span
-                class="px-2 py-1 rounded
-                @if ($pinjaman->status == 'pending') bg-yellow-200 text-yellow-800
-                @elseif($pinjaman->status == 'disetujui') bg-green-200 text-green-800
-                @else bg-red-200 text-red-800 @endif">
-                {{ ucfirst($pinjaman->status) }}
-            </span>
-        </p>
+        {{-- CARD UTAMA --}}
+        <div class="bg-white rounded-xl shadow-lg p-6">
 
-        <h3 class="font-bold text-lg mt-4">Dokumen Pinjaman</h3>
-        @if ($pinjaman->dokumen_pinjaman)
-            @php
-                $dokpin = $pinjaman->dokumen_pinjaman;
-                $urlPin = asset('storage/' . $dokpin);
-                $extPin = strtolower(pathinfo($dokpin, PATHINFO_EXTENSION));
-            @endphp
+            {{-- HEADER --}}
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800">
+                    Detail Pengajuan Pinjaman
+                </h2>
 
-            @if ($extPin === 'pdf')
-                <iframe src="{{ $urlPin }}" width="100%" height="500" class="border rounded-lg mt-2"></iframe>
-            @else
-                <img src="{{ $urlPin }}" class="mt-2 w-full max-w-2xl rounded shadow">
-            @endif
-        @else
-            <p class="text-red-500 italic">Tidak ada dokumen pinjaman.</p>
-        @endif
+                <span class="px-3 py-1 text-sm font-semibold rounded-full
+                        @if ($pinjaman->status == 'pending') bg-yellow-100 text-yellow-800
+                        @elseif($pinjaman->status == 'disetujui') bg-green-100 text-green-800
+                        @else bg-red-100 text-red-800 @endif">
+                    {{ ucfirst($pinjaman->status) }}
+                </span>
+            </div>
 
+            {{-- INFO PEMINJAM --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <p class="text-sm text-gray-500">Nama Pemohon</p>
+                    <p class="text-lg font-semibold">{{ $pinjaman->user->nama }}</p>
+                </div>
 
-        <h3 class="font-bold text-lg mt-6">Dokumen Verifikasi</h3>
-        @if ($pinjaman->dokumen_verifikasi)
-            @php
-                $dokver = $pinjaman->dokumen_verifikasi;
-                $urlVer = asset('storage/' . $dokver);
-                $extVer = strtolower(pathinfo($dokver, PATHINFO_EXTENSION));
-            @endphp
+                <div>
+                    <p class="text-sm text-gray-500">Nominal Pinjaman</p>
+                    <p class="text-lg font-semibold text-green-700">
+                        Rp{{ number_format($pinjaman->nominal, 0, ',', '.') }}
+                    </p>
+                </div>
+            </div>
+            <hr class="my-6">
+            <div class="relative border rounded-xl overflow-hidden bg-gray-100">
+                 {{-- PDF / GAMBAR --}}
+                @php
+                    $dokumen = $pinjaman->dokumen_verifikasi;
+                    $url = asset('storage/' . $dokumen);
+                    $ext = strtolower(pathinfo($dokumen, PATHINFO_EXTENSION));
+                @endphp
 
-            @if ($extVer === 'pdf')
-                <iframe src="{{ $urlVer }}" width="100%" height="500" class="border rounded-lg mt-2"></iframe>
-            @else
-                <img src="{{ $urlVer }}" class="mt-2 w-full max-w-2xl rounded shadow">
-            @endif
-        @else
-            <p class="text-red-500 italic">Tidak ada dokumen verifikasi.</p>
-        @endif
+                @if ($ext === 'pdf')
+                    <iframe
+                        src="{{ $url }}#toolbar=0&navpanes=0&scrollbar=0"
+                        class="w-full h-[600px] bg-white">
+                    </iframe>
+                @else
+                    <img
+                        src="{{ $url }}"
+                        class="w-full max-h-[600px] object-contain bg-white">
+                @endif
 
+                {{-- TOMBOL DOWNLOAD --}}
+                <div class="absolute bottom-3 right-3">
+                    <a href="{{ $url }}" download
+                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white
+                            text-sm font-semibold rounded-lg shadow
+                            hover:bg-blue-700 transition">
+                        ⬇ Download Dokumen
+                    </a>
+                </div>
+            </div>
 
+            <hr class="my-6">
+            {{-- AKSI --}}
+            <div class="flex flex-wrap justify-end gap-3">
+                <form action="{{ route('pengurus.pinjaman.reject', $pinjaman->id) }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition">
+                        ❌ Tolak
+                    </button>
+                </form>
 
-        {{-- Form Persetujuan --}}
-        <form action="{{ route('pengurus.pinjaman.approve', $pinjaman->id) }}" method="POST" class="mt-6">
-            @csrf
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded mt-4 hover:bg-green-700">
-                ✅ Setujui
-            </button>
-        </form>
+                <form action="{{ route('pengurus.pinjaman.approve', $pinjaman->id) }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition">
+                        ✅ Setujui
+                    </button>
+                </form>
+            </div>
 
-        {{-- Form Penolakan --}}
-        <form action="{{ route('pengurus.pinjaman.reject', $pinjaman->id) }}" method="POST" class="mt-3">
-            @csrf
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                ❌ Tolak
-            </button>
-        </form>
-
+        </div>
     </div>
+
 @endsection
