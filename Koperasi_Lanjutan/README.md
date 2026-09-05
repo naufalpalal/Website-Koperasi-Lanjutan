@@ -1,133 +1,144 @@
-# Sistem Informasi Koperasi Poliwangi
+# Dokumentasi Proyek Koperasi Lanjutan
 
-![Laravel Tests](https://github.com/naufalpalal/Website-Koperasi-Lanjutan/workflows/Laravel%20Tests/badge.svg)
-[![PHP Version](https://img.shields.io/badge/PHP-8.2%20%7C%208.3%20%7C%208.4-blue)](https://www.php.net/)
-[![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red)](https://laravel.com)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+Aplikasi web untuk pengelolaan koperasi yang berfokus pada transaksi anggota, simpanan, tabungan, pinjaman, validasi pengurus, dan laporan keuangan.
 
-Aplikasi web untuk manajemen koperasi dengan fitur simpanan, tabungan, dan pinjaman untuk anggota serta dashboard pengurus.
+## 1. Tentang Proyek
 
-## 🚀 Fitur Utama
+Proyek ini dibangun dengan Laravel 12 dan dirancang untuk membantu koperasi mengelola kegiatan administrasi secara digital. Fungsionalitas utama mencakup:
 
-### Untuk Anggota
-- 📊 Dashboard informasi keuangan
-- 💰 Simpanan Wajib & Sukarela
-- 🏦 Tabungan
-- 💳 Pengajuan Pinjaman dengan kategori tenor
-- 💸 **Diskon pelunasan angsuran**
-- 👤 Manajemen Profil
+- autentikasi anggota dan pengurus
+- simpanan wajib dan sukarela
+- tabungan anggota
+- pengajuan pinjaman dan angsuran
+- approval serta verifikasi dokumen oleh pengurus
+- laporan dan export data
 
-### Untuk Pengurus
-- 📈 Dashboard monitoring
-- 👥 Kelola Data Anggota
-- ✅ Persetujuan Pengajuan Pinjaman
-- 💼 Manajemen Simpanan & Tabungan
-- 📑 Laporan & Export Excel
-- ⚙️ Pengaturan Tenor & Bunga Pinjaman
+## 2. Tujuan
 
-## 🛠️ Tech Stack
+- meningkatkan akurasi data koperasi
+- mempercepat proses transaksi keuangan
+- memudahkan monitoring keuangan anggota dan koperasi
+- menyiapkan sistem dengan role-based access untuk pengurus dan anggota
 
-- **Framework**: Laravel 12.x
-- **PHP**: 8.2 | 8.3 | 8.4
-- **Database**: MySQL
-- **Frontend**: Tailwind CSS, Alpine.js
-- **Testing**: PHPUnit
-- **CI/CD**: GitHub Actions
+## 3. Teknologi
 
-## 📋 Requirements
+- PHP 8.2+
+- Laravel 12
+- MySQL
+- Tailwind CSS
+- Vite + Alpine.js
+- DOMPDF
+- Maatwebsite Excel
+- Pest / PHPUnit
 
-- PHP >= 8.2
-- Composer
-- MySQL >= 8.0
-- Node.js & NPM (untuk asset compilation)
+## 4. Fitur Utama
 
-## 🔧 Installation
+### Anggota
+- dashboard pribadi
+- riwayat simpanan wajib dan sukarela
+- tabungan anggota
+- pengajuan pinjaman dan angsuran
+- upload dokumen verifikasi
+- kelola profil dan password
+
+### Pengurus
+- dashboard koperasi
+- pengelolaan anggota
+- validasi simpanan
+- approval pengajuan pinjaman
+- pengaturan nominal dan tenor
+- export laporan bulanan/tahunan
+
+## 5. Struktur Proyek
+
+```text
+Koperasi_Lanjutan/
+├── app/
+├── config/
+├── database/
+├── docs/
+├── public/
+├── resources/
+├── routes/
+├── storage/
+├── tests/
+├── artisan
+├── composer.json
+├── package.json
+├── phpunit.xml
+├── README.md
+├── vite.config.js
+└── tailwind.config.js
+```
+
+## 6. Setup Awal
 
 ```bash
-# Clone repository
 git clone https://github.com/naufalpalal/Website-Koperasi-Lanjutan.git
 cd Website-Koperasi-Lanjutan/Koperasi_Lanjutan
-
-# Install dependencies
 composer install
 npm install
-
-# Copy environment file
 cp .env.example .env
-
-# Generate application key
 php artisan key:generate
+```
 
-# Configure database di .env
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=koperasi
-# DB_USERNAME=root
-# DB_PASSWORD=
+Konfigurasi database di file `.env`:
 
-# Run migrations & seeders
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=koperasi
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+## 7. Migrasi dan Seeder
+
+```bash
 php artisan migrate --seed
+```
 
-# Build assets
-npm run build
+## 8. Menjalankan Aplikasi
 
-# Start development server
+### Development
+
+```bash
+npm run dev
 php artisan serve
 ```
 
-Aplikasi akan berjalan di `http://localhost:8000`
+Akses aplikasi di:
 
-## 🧪 Testing
+```text
+http://localhost:8000
+```
+
+### Production build
 
 ```bash
-# Run all tests
+npm run build
+```
+
+## 9. Testing
+
+```bash
 php artisan test
-
-# Run tests dengan parallel
-php artisan test --parallel
-
-# Run specific test suite
-php artisan test --testsuite=Feature
-
-# Run dengan coverage (jika diperlukan)
-php artisan test --coverage
 ```
 
-## 👥 Default Login Credentials
+## 10. Dokumentasi Lengkap
 
-### Pengurus
-- **URL**: `/pengurus/login`
-- **Username**: lihat di database seeder
+Dokumentasi detail proyek tersedia di:
 
-### Anggota
-- **URL**: `/login`
-- **NIP/Username**: lihat di database seeder
+- [docs/DOKUMENTASI_PROYEK.md](docs/DOKUMENTASI_PROYEK.md)
 
-## 📁 Struktur Route
+## 11. Catatan Penting
 
-```
-routes/
-├── web.php      # Route loader utama
-├── auth.php     # Authentication routes
-├── user.php     # Anggota routes
-└── pengurus.php # Pengurus routes
-```
+- Pastikan PHP minimal versi 8.2
+- Gunakan database MySQL yang siap dan memiliki izin akses
+- Simpan file dokumen dan bukti transaksi di folder yang aman dan dapat diakses aplikasi
+- Selalu jalankan testing sebelum melakukan merge ke branch utama
 
-## 🔄 GitHub Actions CI/CD
+## 12. Lisensi
 
-Automated testing berjalan otomatis pada:
-- ✅ Push ke branch `main`, `master`, `develop`
-- ✅ Pull Request ke branch utama
-- ✅ Multiple PHP versions (8.2, 8.3, 8.4)
-- ✅ MySQL database testing
-
-Lihat status tests di tab **Actions** repository.
-
-## 📝 License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-## 🙏 Credits
-
-Built with [Laravel](https://laravel.com) - The PHP Framework for Web Artisans
+Project ini menggunakan lisensi MIT sesuai dengan Laravel project default.
